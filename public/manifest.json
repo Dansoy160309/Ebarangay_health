@@ -1,0 +1,21 @@
+{
+  "name": "E-Barangay Health System",
+  "short_name": "E-Barangay",
+  "description": "Modern Barangay Health Information System",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f9fafb",
+  "theme_color": "#0ea5e9",
+  "icons": [
+    {
+      "src": "/assets/images/LOGO (2).png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/LOGO (2).png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

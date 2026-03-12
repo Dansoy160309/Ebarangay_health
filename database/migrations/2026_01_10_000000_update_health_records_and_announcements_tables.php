@@ -1,0 +1,40 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    public function up(): void
+    {
+        Schema::table('health_records', function (Blueprint $table) {
+            if (!Schema::hasColumn('health_records', 'verified_by')) {
+                $table->foreignId('verified_by')->nullable()->constrained('users')->onDelete('set null');
+            }
+            if (!Schema::hasColumn('health_records', 'verified_at')) {
+                $table->timestamp('verified_at')->nullable();
+            }
+        });
+
+        Schema::table('announcements', function (Blueprint $table) {
+             if (!Schema::hasColumn('announcements', 'expires_at')) {
+                $table->timestamp('expires_at')->nullable();
+            }
+            if (!Schema::hasColumn('announcements', 'published_at')) {
+                $table->timestamp('published_at')->nullable();
+            }
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('health_records', function (Blueprint $table) {
+            $table->dropForeign(['verified_by']);
+            $table->dropColumn(['verified_by', 'verified_at']);
+        });
+
+        Schema::table('announcements', function (Blueprint $table) {
+            $table->dropColumn(['expires_at', 'published_at']);
+        });
+    }
+};

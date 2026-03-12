@@ -1,0 +1,28 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    public function up(): void
+    {
+        Schema::create('medicines', function (Blueprint $table) {
+            $table->id();
+            $table->string('generic_name');
+            $table->string('brand_name')->nullable();
+            $table->string('dosage_form');
+            $table->string('strength')->nullable();
+            $table->unsignedInteger('stock')->default(0);
+            $table->unsignedInteger('reorder_level')->default(0);
+            $table->date('expiration_date')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('medicines');
+    }
+};
+

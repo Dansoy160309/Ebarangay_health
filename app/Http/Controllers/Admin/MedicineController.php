@@ -1,0 +1,311 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Medicine;
+use App\Models\MedicineDistribution;
+use App\Models\MedicineSupply;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+
+class MedicineController extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = Medicine::query();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('generic_name', 'like', "%{$search}%")
+                    ->orWhere('brand_name', 'like', "%{$search}%");
+            });
+        }
+
+        $medicines = $query->orderBy('generic_name')->paginate(15)->appends($request->query());
+
+        $today = Carbon::today();
+        $lowStockIds = Medicine::whereColumn('stock', '<=', 'reorder_level')->pluck('id')->all();
+        $expiringSoonIds = Medicine::whereNotNull('expiration_date')
+            ->whereDate('expiration_date', '<=', $today->copy()->addDays(30))
+            ->pluck('id')
+            ->all();
+
+        return view('admin.medicines.index', compact('medicines', 'lowStockIds', 'expiringSoonIds'));
+    }
+
+    public function create()
+    {
+        return view('admin.medicines.create');
+    }
+
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'generic_name' => 'required|string|max:255',
+            'brand_name' => 'nullable|string|max:255',
+            'dosage_form' => 'required|string|max:255',
+            'strength' => 'nullable|string|max:255',
+            'stock' => 'required|integer|min:0',
+            'reorder_level' => 'required|integer|min:0',
+            'expiration_date' => 'nullable|date',
+        ]);
+
+        $initialStock = $data['stock'] ?? 0;
+        unset($data['stock']);
+
+        \DB::transaction(function () use ($data, $initialStock) {
+            $medicine = Medicine::create($data + ['stock' => 0]);
+
+            if ($initialStock > 0) {
+                MedicineSupply::create([
+                    'medicine_id' => $medicine->id,
+                    'batch_number' => null,
+                    'quantity' => $initialStock,
+                    'expiration_date' => $medicine->expiration_date,
+                    'supplier_name' => 'Initial Stock',
+                    'date_received' => now()->toDateString(),
+                    'received_by' => auth()->id(),
+                ]);
+
+                $medicine->increment('stock', $initialStock);
+            }
+        });
+
+        return redirect()->route('admin.medicines.index')->with('success', 'Medicine saved.');
+    }
+
+    public function edit(Medicine $medicine)
+    {
+        return view('admin.medicines.edit', compact('medicine'));
+    }
+
+    public function update(Request $request, Medicine $medicine)
+    {
+        $data = $request->validate([
+            'generic_name' => 'required|string|max:255',
+            'brand_name' => 'nullable|string|max:255',
+            'dosage_form' => 'required|string|max:255',
+            'strength' => 'nullable|string|max:255',
+            'reorder_level' => 'required|integer|min:0',
+            'expiration_date' => 'nullable|date',
+        ]);
+
+        $medicine->update($data);
+
+        return redirect()->route('admin.medicines.index')->with('success', 'Medicine updated.');
+    }
+
+    public function distributions(Request $request)
+    {
+        $query = MedicineDistribution::with(['medicine', 'patient', 'midwife']);
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('distributed_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('distributed_at', '<=', $request->date_to);
+        }
+
+        if ($request->filled('medicine_id')) {
+            $query->where('medicine_id', $request->medicine_id);
+        }
+
+        $distributions = $query->orderByDesc('distributed_at')->paginate(20)->appends($request->query());
+        $medicines = Medicine::orderBy('generic_name')->get();
+
+        return view('admin.medicines.distributions', compact('distributions', 'medicines'));
+    }
+
+    public function reports(Request $request)
+    {
+        $type = $request->input('type', 'daily');
+
+        $baseQuery = MedicineDistribution::with('medicine');
+        $supplyQuery = MedicineSupply::with('medicine');
+
+        $date = null;
+        $year = null;
+        $month = null;
+
+        if ($type === 'daily') {
+            $date = $request->input('date', Carbon::today()->toDateString());
+            $baseQuery->whereDate('distributed_at', $date);
+            $supplyQuery->whereDate('date_received', $date);
+        } elseif ($type === 'monthly') {
+            $year = (int) $request->input('year', Carbon::today()->year);
+            $month = (int) $request->input('month', Carbon::today()->month);
+            $baseQuery->whereYear('distributed_at', $year)->whereMonth('distributed_at', $month);
+            $supplyQuery->whereYear('date_received', $year)->whereMonth('date_received', $month);
+        }
+
+        $distributions = $baseQuery->get();
+        $supplies = $supplyQuery->get();
+
+        $usageByMedicine = $distributions->groupBy('medicine_id')->map(function ($group) {
+            return [
+                'medicine' => $group->first()->medicine,
+                'total_quantity' => $group->sum('quantity'),
+                'total_doses' => $group->count(),
+            ];
+        });
+
+        $supplyByMedicine = $supplies->groupBy('medicine_id')->map(function ($group) {
+            return [
+                'medicine' => $group->first()->medicine,
+                'total_quantity' => $group->sum('quantity'),
+                'total_deliveries' => $group->count(),
+            ];
+        });
+
+        $inventorySummary = Medicine::orderBy('generic_name')->get();
+
+        $totalMedicines = $inventorySummary->count();
+        $totalStock = $inventorySummary->sum('stock');
+
+        $distributedInPeriod = $distributions->sum('quantity');
+
+        $today = Carbon::today();
+
+        $lowStockCount = $inventorySummary
+            ->filter(function ($medicine) {
+                return $medicine->stock <= $medicine->reorder_level;
+            })
+            ->count();
+
+        $expiringSoonThreshold = $today->copy()->addDays(30);
+
+        $expiringSoonCount = $inventorySummary
+            ->filter(function ($medicine) use ($expiringSoonThreshold) {
+                return $medicine->expiration_date && $medicine->expiration_date->lte($expiringSoonThreshold);
+            })
+            ->count();
+
+        if ($type === 'daily') {
+            $selectedDate = Carbon::parse($date);
+            $stockStart = $selectedDate->copy()->subDays(6);
+            $stockEnd = $selectedDate->copy();
+        } else {
+            $selectedMonth = Carbon::create($year, $month, 1);
+            $stockStart = $selectedMonth->copy();
+            $stockEnd = $selectedMonth->copy()->endOfMonth();
+        }
+
+        $stockSupplyData = MedicineSupply::whereBetween('date_received', [$stockStart->toDateString(), $stockEnd->toDateString()])
+            ->selectRaw('DATE(date_received) as d, SUM(quantity) as total')
+            ->groupBy('d')
+            ->pluck('total', 'd');
+
+        $stockDistributionData = MedicineDistribution::whereBetween('distributed_at', [$stockStart->toDateString(), $stockEnd->toDateString()])
+            ->selectRaw('DATE(distributed_at) as d, SUM(quantity) as total')
+            ->groupBy('d')
+            ->pluck('total', 'd');
+
+        $stockChartLabels = [];
+        $stockChartData = [];
+        $cumulative = 0;
+
+        for ($cursor = $stockStart->copy(); $cursor->lte($stockEnd); $cursor->addDay()) {
+            $dateKey = $cursor->toDateString();
+            $netChange = ($stockSupplyData[$dateKey] ?? 0) - ($stockDistributionData[$dateKey] ?? 0);
+            $cumulative += $netChange;
+            $stockChartLabels[] = $cursor->format('M d');
+            $stockChartData[] = $cumulative;
+        }
+
+        $usageChartLabels = $usageByMedicine->map(function ($row) {
+            return $row['medicine']?->generic_name ?? 'Unknown';
+        })->values();
+
+        $usageChartData = $usageByMedicine->map(function ($row) {
+            return $row['total_quantity'];
+        })->values();
+
+        return view('admin.medicines.reports', [
+            'type' => $type,
+            'selectedDate' => $date,
+            'selectedMonth' => $month,
+            'selectedYear' => $year,
+            'distributions' => $distributions,
+            'usageByMedicine' => $usageByMedicine,
+            'inventorySummary' => $inventorySummary,
+            'supplies' => $supplies,
+            'supplyByMedicine' => $supplyByMedicine,
+            'totalMedicines' => $totalMedicines,
+            'totalStock' => $totalStock,
+            'distributedInPeriod' => $distributedInPeriod,
+            'lowStockCount' => $lowStockCount,
+            'expiringSoonCount' => $expiringSoonCount,
+            'stockChartLabels' => $stockChartLabels,
+            'stockChartData' => $stockChartData,
+            'usageChartLabels' => $usageChartLabels,
+            'usageChartData' => $usageChartData,
+        ]);
+    }
+
+    public function supplies(Request $request)
+    {
+        $query = MedicineSupply::with(['medicine', 'receiver']);
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('date_received', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('date_received', '<=', $request->date_to);
+        }
+
+        if ($request->filled('medicine_id')) {
+            $query->where('medicine_id', $request->medicine_id);
+        }
+
+        if ($request->filled('supplier_name')) {
+            $query->where('supplier_name', 'like', '%' . $request->supplier_name . '%');
+        }
+
+        $supplies = $query->orderByDesc('date_received')->paginate(20)->appends($request->query());
+        $medicines = Medicine::orderBy('generic_name')->get();
+
+        return view('admin.medicines.supplies', compact('supplies', 'medicines'));
+    }
+
+    public function createSupply()
+    {
+        $medicines = Medicine::orderBy('generic_name')->get();
+
+        return view('admin.medicines.supply-create', compact('medicines'));
+    }
+
+    public function storeSupply(Request $request)
+    {
+        $data = $request->validate([
+            'medicine_id' => 'required|exists:medicines,id',
+            'batch_number' => 'nullable|string|max:255',
+            'quantity' => 'required|integer|min:1',
+            'expiration_date' => 'nullable|date|after:today',
+            'supplier_name' => 'nullable|string|max:255',
+            'date_received' => 'required|date',
+        ]);
+
+        $medicine = Medicine::findOrFail($data['medicine_id']);
+
+        \DB::transaction(function () use ($data, $medicine) {
+            MedicineSupply::create([
+                'medicine_id' => $medicine->id,
+                'batch_number' => $data['batch_number'] ?? null,
+                'quantity' => $data['quantity'],
+                'expiration_date' => $data['expiration_date'] ?? null,
+                'supplier_name' => $data['supplier_name'] ?? null,
+                'date_received' => $data['date_received'],
+                'received_by' => auth()->id(),
+            ]);
+
+            $medicine->increment('stock', $data['quantity']);
+        });
+
+        return redirect()->route('admin.medicines.supplies')
+            ->with('success', 'Supply recorded and stock updated.');
+    }
+}
