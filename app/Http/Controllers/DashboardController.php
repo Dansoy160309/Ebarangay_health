@@ -451,7 +451,7 @@ class DashboardController extends Controller
                       ->orWhere('booked_by', $user->id);
                 })
                 ->with(['slot', 'user'])
-                ->where('scheduled_at', '>=', now())
+                ->whereDate('scheduled_at', '>=', today())
                 ->whereNotIn('status', ['completed', 'cancelled', 'rejected', 'archived'])
                 ->orderBy('scheduled_at')
                 ->limit(5)
@@ -462,10 +462,8 @@ class DashboardController extends Controller
                       ->orWhere('booked_by', $user->id);
                 })
                 ->with(['slot', 'user'])
-                ->where('scheduled_at', '>=', now())
                 ->whereNotIn('status', ['completed', 'cancelled', 'rejected', 'archived'])
                 ->orderBy('scheduled_at')
-                ->limit(50)
                 ->get();
 
             $availableSlots = Slot::with('doctor')

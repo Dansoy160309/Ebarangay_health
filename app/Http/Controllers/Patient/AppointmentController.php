@@ -162,7 +162,8 @@ class AppointmentController extends Controller
             ->first();
 
         if ($existing) {
-            return redirect()->back()->with('error', "This patient already has an active appointment for {$slot->service}.");
+            $patientName = ($patient_id == $user->id) ? 'you' : $patient->first_name;
+            return redirect()->back()->with('error', "{$patientName} already has an active appointment for {$slot->service}. Please check your upcoming appointments.");
         }
 
         // Slot Capacity Check
