@@ -75,6 +75,16 @@
     })();
   </script>
 
+  {{-- 6. Connectivity Monitoring --}}
+  <script>
+    window.addEventListener('online', () => {
+        document.dispatchEvent(new CustomEvent('connectivity-change', { detail: { online: true } }));
+    });
+    window.addEventListener('offline', () => {
+        document.dispatchEvent(new CustomEvent('connectivity-change', { detail: { online: false } }));
+    });
+  </script>
+
   <style>
     /* Custom Scrollbar */
     .custom-scrollbar::-webkit-scrollbar { width: 6px; }

@@ -122,17 +122,17 @@
                     </div>
 
                     <div class="bg-white rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-gray-100 overflow-hidden">
-                        <div class="p-6 md:p-8">
+                        <div class="p-5 md:p-8">
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                                 <h3 class="text-lg font-bold text-gray-900 flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-lg bg-blue-50 text-brand-600 flex items-center justify-center md:hidden">
+                                    <div class="w-10 h-10 rounded-lg bg-blue-50 text-brand-600 flex items-center justify-center md:hidden shrink-0">
                                         <span class="font-bold">1</span>
                                     </div>
                                     <i class="bi bi-person text-brand-500 text-xl hidden md:block"></i>
-                                    Select Patient
+                                    <span class="truncate">Select Patient</span>
                                 </h3>
                                 <button type="button" @click="showModal = true"
-                                        class="inline-flex items-center px-4 py-2 bg-brand-50 text-brand-700 text-sm font-bold rounded-xl hover:bg-brand-100 transition-colors border border-brand-100">
+                                        class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-3 sm:py-2 bg-brand-50 text-brand-700 text-sm font-bold rounded-xl hover:bg-brand-100 transition-colors border border-brand-100">
                                     <i class="bi bi-person-plus-fill mr-2"></i> Add New Patient
                                 </button>
                             </div>
