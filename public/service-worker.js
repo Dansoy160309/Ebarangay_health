@@ -1,5 +1,6 @@
-const CACHE_NAME = 'e-barangay-cache-v2';
+const CACHE_NAME = 'e-barangay-cache-v3';
 const ASSETS_TO_CACHE = [
+    '/',
     '/css/bootstrap-icons.css',
     '/css/fonts/bootstrap-icons.woff',
     '/css/fonts/bootstrap-icons.woff2',
@@ -37,26 +38,29 @@ self.addEventListener('activate', (event) => {
 
 // Fetch Event
 self.addEventListener('fetch', (event) => {
-    // 1. Skip non-GET requests (POST, etc.)
     if (event.request.method !== 'GET') return;
 
-    // 2. Skip dynamic routes that contain CSRF tokens or user-specific data
     const url = new URL(event.request.url);
-    const skipPaths = [
-        '/login', '/auth/login', '/register', '/logout', '/dashboard', 
-        '/midwife/slots', '/doctor/health-records', '/patient/health-records',
-        '/midwife/patients'
-    ];
     
-    // Bypass cache for ALL navigation requests to ensure fresh HTML
-    if (event.request.mode === 'navigate' || url.pathname === '/' || skipPaths.some(path => url.pathname.startsWith(path))) {
+    // For navigation requests, try network first, then cache, then offline page
+    if (event.request.mode === 'navigate') {
         event.respondWith(
-            fetch(event.request).catch(() => caches.match('/offline'))
+            fetch(event.request)
+                .then(response => {
+                    // Cache a copy of the page for offline viewing
+                    const copy = response.clone();
+                    caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+                    return response;
+                })
+                .catch(() => {
+                    return caches.match(event.request)
+                        .then(response => response || caches.match('/offline'));
+                })
         );
         return;
     }
 
-    // 3. For static assets, use Cache-First strategy
+    // For static assets, use Cache-First strategy
     event.respondWith(
         caches.match(event.request).then((cachedResponse) => {
             if (cachedResponse) {
@@ -65,20 +69,13 @@ self.addEventListener('fetch', (event) => {
 
             return fetch(event.request)
                 .then((networkResponse) => {
-                    // Cache only valid successful responses
-                    if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+                    if (networkResponse && networkResponse.status === 200) {
                         const responseToCache = networkResponse.clone();
                         caches.open(CACHE_NAME).then((cache) => {
                             cache.put(event.request, responseToCache);
                         });
                     }
                     return networkResponse;
-                })
-                .catch(() => {
-                    // Fallback to offline page for navigation requests
-                    if (event.request.mode === 'navigate') {
-                        return caches.match('/offline');
-                    }
                 });
         })
     );

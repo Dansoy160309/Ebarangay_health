@@ -35,18 +35,18 @@
     </div>
 
     <!-- Main Navigation Tabs -->
-    <div class="mb-10 bg-white p-2 rounded-[2rem] shadow-sm border border-gray-100 inline-flex flex-wrap gap-2">
+    <div class="mb-10 bg-white p-2 rounded-[2rem] shadow-sm border border-gray-100 flex flex-wrap gap-2 overflow-hidden">
         <a href="{{ route('healthworker.appointments.index', ['type' => 'scheduled', 'date' => request('date')]) }}"
-           class="px-8 py-4 rounded-[1.5rem] text-sm font-black uppercase tracking-widest transition-all {{ request('type') == 'scheduled' && !request('vitals_only') ? 'bg-brand-600 text-white shadow-lg shadow-brand-200' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50' }}">
-            Online Booking <span class="ml-2 opacity-50">{{ $counts['scheduled'] }}</span>
+           class="flex-1 min-w-[140px] text-center px-4 sm:px-8 py-4 rounded-[1.5rem] text-[10px] sm:text-sm font-black uppercase tracking-widest transition-all {{ request('type') == 'scheduled' && !request('vitals_only') ? 'bg-brand-600 text-white shadow-lg shadow-brand-200' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50' }}">
+            Online <span class="hidden sm:inline">Booking</span> <span class="ml-1 opacity-50">{{ $counts['scheduled'] }}</span>
         </a>
         <a href="{{ route('healthworker.appointments.index', ['type' => 'walk-in', 'date' => request('date')]) }}"
-           class="px-8 py-4 rounded-[1.5rem] text-sm font-black uppercase tracking-widest transition-all {{ request('type') == 'walk-in' ? 'bg-brand-600 text-white shadow-lg shadow-brand-200' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50' }}">
-            Walk-In <span class="ml-2 opacity-50">{{ $counts['walkin'] }}</span>
+           class="flex-1 min-w-[140px] text-center px-4 sm:px-8 py-4 rounded-[1.5rem] text-[10px] sm:text-sm font-black uppercase tracking-widest transition-all {{ request('type') == 'walk-in' ? 'bg-brand-600 text-white shadow-lg shadow-brand-200' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50' }}">
+            Walk-In <span class="ml-1 opacity-50">{{ $counts['walkin'] }}</span>
         </a>
         <a href="{{ route('healthworker.appointments.index', ['vitals_only' => 1, 'date' => request('date')]) }}"
-           class="px-8 py-4 rounded-[1.5rem] text-sm font-black uppercase tracking-widest transition-all {{ request('vitals_only') ? 'bg-orange-500 text-white shadow-lg shadow-orange-200' : 'text-gray-400 hover:text-orange-500 hover:bg-orange-50' }}">
-            Needing Vitals <span class="ml-2 opacity-50">{{ $counts['needing_vitals'] }}</span>
+           class="flex-1 min-w-[140px] text-center px-4 sm:px-8 py-4 rounded-[1.5rem] text-[10px] sm:text-sm font-black uppercase tracking-widest transition-all {{ request('vitals_only') ? 'bg-orange-500 text-white shadow-lg shadow-orange-200' : 'text-gray-400 hover:text-orange-500 hover:bg-orange-50' }}">
+            Vitals <span class="hidden sm:inline">Needed</span> <span class="ml-1 opacity-50">{{ $counts['needing_vitals'] }}</span>
         </a>
     </div>
 
