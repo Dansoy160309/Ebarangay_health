@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Appointment;
 use Carbon\Carbon;
+use App\Notifications\DefaulterRecallNotification;
 
 class DefaulterController extends Controller
 {
@@ -64,5 +65,28 @@ class DefaulterController extends Controller
     {
         $appointment->update(['status' => 'no_show']);
         return redirect()->back()->with('success', 'Appointment marked as No Show.');
+    }
+
+    /**
+     * Send a recall SMS to a defaulter
+     */
+    public function sendRecallSms(Appointment $appointment)
+    {
+        $patient = $appointment->user;
+        
+        // Ensure the patient (or guardian) has a contact number
+        $recipient = $patient->contact_no;
+        if (empty($recipient) && $patient->isDependent()) {
+            $recipient = $patient->guardian->contact_no ?? null;
+        }
+
+        if (empty($recipient)) {
+            return redirect()->back()->with('error', 'Patient or guardian has no contact number registered.');
+        }
+
+        // Send the notification
+        $patient->notify(new DefaulterRecallNotification($appointment));
+
+        return redirect()->back()->with('success', "Recall alert successfully sent to {$patient->full_name}.");
     }
 }

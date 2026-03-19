@@ -6,11 +6,14 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use App\Models\Appointment;
 
+use App\Channels\PhilSmsChannel;
+
 class UpcomingAppointmentReminder extends Notification
 {
     use Queueable;
 
     protected Appointment $appointment;
+    public $smsType = 'sms_appointment_reminders';
 
     public function __construct(Appointment $appointment)
     {
@@ -19,7 +22,22 @@ class UpcomingAppointmentReminder extends Notification
 
     public function via($notifiable): array
     {
-        return ['database'];
+        return ['database', PhilSmsChannel::class];
+    }
+
+    /**
+     * Build the SMS representation of the notification.
+     */
+    public function toSms($notifiable)
+    {
+        if (empty($notifiable->contact_no)) {
+            return [];
+        }
+
+        return [
+            'recipient' => $notifiable->contact_no,
+            'body'      => 'Reminder: You have an appointment for ' . $this->appointment->service . ' on ' . $this->appointment->formatted_date . ' at ' . $this->appointment->formatted_time . '. Please arrive 15 mins early.',
+        ];
     }
 
     public function toDatabase($notifiable): array

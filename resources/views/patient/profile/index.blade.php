@@ -92,6 +92,35 @@
                 </div>
             </div>
 
+            <!-- Preferences -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
+                <h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-3">
+                    <div class="h-10 w-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center">
+                        <i class="bi bi-bell-fill text-xl"></i>
+                    </div>
+                    Notification Preferences
+                </h3>
+                
+                <form action="{{ route('patient.profile.preferences') }}" method="POST">
+                    @csrf
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                        <div class="flex items-center gap-4">
+                            <div class="h-10 w-10 rounded-full bg-white flex items-center justify-center text-orange-500 shadow-sm">
+                                <i class="bi bi-chat-dots"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-gray-900">SMS Notifications</p>
+                                <p class="text-xs text-gray-500">Receive appointment updates via SMS</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" name="sms_notifications" value="1" onchange="this.form.submit()" class="sr-only peer" {{ $user->sms_notifications ? 'checked' : '' }}>
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                        </label>
+                    </div>
+                </form>
+            </div>
+
             <!-- Dependents Section -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
                 <h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-3">

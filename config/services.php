@@ -31,4 +31,10 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'philsms' => [
+        'api_token' => env('PHILSMS_API_KEY'),
+        'sender_id' => env('PHILSMS_SENDER_ID', 'PhilSMS'),
+        'api_url'   => env('PHILSMS_API_URL', 'https://dashboard.philsms.com/api/v3/sms/send'),
+    ],
+
 ];

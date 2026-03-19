@@ -198,9 +198,25 @@
                         </td>
                         <td class="px-10 py-8 text-right">
                             <div class="flex items-center justify-end gap-3 opacity-40 group-hover/row:opacity-100 transition-opacity">
+                                {{-- Recall SMS Button --}}
+                                @if($contactNo)
+                                <form action="{{ route('midwife.appointments.recall-sms', $appt->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" 
+                                            onclick="return confirm('Send an urgent recall SMS alert to this patient?')"
+                                            class="p-3 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm border border-blue-100 group/btn" 
+                                            title="Send Recall SMS">
+                                        <i class="bi bi-chat-dots-fill text-lg"></i>
+                                    </button>
+                                </form>
+                                @endif
+
                                 <form action="{{ route('midwife.appointments.no-show', $appt->id) }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="p-3 bg-orange-50 text-orange-600 rounded-xl hover:bg-orange-600 hover:text-white transition-all shadow-sm border border-orange-100 group/btn" title="Mark as No-Show">
+                                    <button type="submit" 
+                                            onclick="return confirm('Mark this appointment as a No-Show? This will remove it from the active defaulter list.')"
+                                            class="p-3 bg-orange-50 text-orange-600 rounded-xl hover:bg-orange-600 hover:text-white transition-all shadow-sm border border-orange-100 group/btn" 
+                                            title="Mark as No-Show">
                                         <i class="bi bi-person-dash-fill text-lg"></i>
                                     </button>
                                 </form>

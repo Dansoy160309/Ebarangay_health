@@ -16,6 +16,7 @@ Route::prefix('patient')
 
         // Profile
         Route::get('profile', [PatientProfileController::class, 'index'])->name('profile.index');
+        Route::post('profile/preferences', [PatientProfileController::class, 'updatePreferences'])->name('profile.preferences');
 
         // Announcements
         Route::resource('announcements', PatientAnnouncementController::class)

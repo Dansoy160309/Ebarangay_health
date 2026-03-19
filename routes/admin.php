@@ -99,4 +99,14 @@ Route::prefix('admin')
         Route::get('notification-logs', [AdminNotificationLogController::class, 'index'])->name('notifications.index');
         Route::post('notification-logs/{notification}/resend', [AdminNotificationLogController::class, 'resend'])
             ->name('notifications.resend');
+
+        // ===============================
+        // SMS Management
+        // ===============================
+        Route::prefix('sms')->name('sms.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\SmsSettingController::class, 'index'])->name('index');
+            Route::post('update', [\App\Http\Controllers\Admin\SmsSettingController::class, 'update'])->name('update');
+            Route::post('broadcast', [\App\Http\Controllers\Admin\SmsSettingController::class, 'broadcast'])->name('broadcast');
+            Route::post('clear-logs', [\App\Http\Controllers\Admin\SmsSettingController::class, 'clearLogs'])->name('clear-logs');
+        });
     });

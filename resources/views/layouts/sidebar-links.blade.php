@@ -240,9 +240,16 @@
 
         <a href="{{ route('admin.notifications.index') }}"
            @click="sidebarOpen = false"
-           class="{{ getLinkClasses(request()->routeIs('admin.notifications.*')) }}">
-            <i class="bi bi-bell-fill mr-4 text-2xl"></i> 
+           class="{{ getLinkClasses(request()->routeIs('admin.notifications*')) }}">
+            <i class="bi bi-bell-fill mr-3 text-xl"></i> 
             <span>Notification Logs</span>
+        </a>
+
+        <a href="{{ route('admin.sms.index') }}"
+           @click="sidebarOpen = false"
+           class="{{ getLinkClasses(request()->routeIs('admin.sms*')) }}">
+            <i class="bi bi-chat-left-dots-fill mr-3 text-xl"></i> 
+            <span>SMS Management</span>
         </a>
     @endif
 </div>
