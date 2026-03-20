@@ -3,40 +3,59 @@
 @section('title', 'DOH FHSIS Summary')
 
 @section('content')
-<div class="max-w-5xl mx-auto p-6 space-y-8 print:p-0">
-    {{-- Header --}}
-    <div class="flex justify-between items-center bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 print:shadow-none print:border-none">
-        <div class="flex items-center gap-6">
-            <div class="w-16 h-16 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-3xl shadow-inner print:hidden">
-                <i class="bi bi-file-earmark-bar-graph"></i>
+<div class="flex flex-col gap-6 sm:gap-8 print:p-0">
+    
+    {{-- Top-Aligned Compact Header --}}
+    <div class="relative z-10 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm overflow-hidden group print:hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+        
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8">
+            <div class="max-w-xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 mb-3 sm:mb-4">
+                    <i class="bi bi-file-earmark-bar-graph text-xs"></i>
+                    <span class="text-[9px] font-black uppercase tracking-widest">DOH Reporting</span>
+                </div>
+                <h1 class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-2 sm:mb-3">
+                    FHSIS <span class="text-brand-600 underline decoration-brand-200 decoration-4 underline-offset-4">Monthly Summary</span>
+                </h1>
+                <p class="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed">
+                    Barangay Health Center monthly reporting summary for maternal and child health indicators.
+                </p>
             </div>
-            <div>
-                <h1 class="text-2xl font-black text-gray-900 tracking-tight">FHSIS Monthly Summary</h1>
-                <p class="text-sm font-bold text-gray-400 uppercase tracking-widest">Barangay Health Center Reporting</p>
+
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                <form action="{{ route('admin.reports.fhsis') }}" method="GET" class="flex flex-wrap items-center gap-2">
+                    <select name="month" class="px-4 py-3 bg-gray-50 border-none rounded-xl text-[10px] font-black uppercase tracking-widest focus:ring-4 focus:ring-brand-500/10 transition-all appearance-none shadow-inner">
+                        @foreach(range(1, 12) as $m)
+                            <option value="{{ sprintf('%02d', $m) }}" {{ $month == $m ? 'selected' : '' }}>{{ date('F', mktime(0, 0, 0, $m, 1)) }}</option>
+                        @endforeach
+                    </select>
+                    <select name="year" class="px-4 py-3 bg-gray-50 border-none rounded-xl text-[10px] font-black uppercase tracking-widest focus:ring-4 focus:ring-brand-500/10 transition-all appearance-none shadow-inner">
+                        @foreach(range(now()->year - 2, now()->year) as $y)
+                            <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        @endforeach
+                    </select>
+                    <button type="submit" class="p-3 bg-gray-900 text-white rounded-xl hover:bg-black transition-all active:scale-95 shadow-lg shadow-gray-200">
+                        <i class="bi bi-filter text-xs"></i>
+                    </button>
+                </form>
+                <div class="h-10 w-[1px] bg-gray-100 mx-1 hidden sm:block"></div>
+                <a href="{{ route('admin.reports.fhsis.export', ['month' => $month, 'year' => $year]) }}" 
+                   class="flex-1 sm:flex-none inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-emerald-600 text-white font-black text-[10px] sm:text-xs uppercase tracking-widest shadow-xl shadow-emerald-500/20 hover:bg-emerald-700 transition-all transform active:scale-95">
+                    <i class="bi bi-file-earmark-excel-fill mr-2"></i>
+                    Export
+                </a>
+                <button onclick="window.print()" 
+                        class="flex-1 sm:flex-none inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-brand-600 text-white font-black text-[10px] sm:text-xs uppercase tracking-widest shadow-xl shadow-brand-500/20 hover:bg-brand-700 transition-all transform active:scale-95">
+                    <i class="bi bi-printer-fill mr-2"></i>
+                    Print
+                </button>
             </div>
-        </div>
-        <div class="flex items-center gap-4 print:hidden">
-            <form action="{{ route('admin.reports.fhsis') }}" method="GET" class="flex items-center gap-3">
-                <select name="month" class="px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl text-xs font-black uppercase tracking-widest focus:ring-4 focus:ring-brand-50 transition-all">
-                    @foreach(range(1, 12) as $m)
-                        <option value="{{ sprintf('%02d', $m) }}" {{ $month == $m ? 'selected' : '' }}>{{ date('F', mktime(0, 0, 0, $m, 1)) }}</option>
-                    @endforeach
-                </select>
-                <select name="year" class="px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl text-xs font-black uppercase tracking-widest focus:ring-4 focus:ring-brand-50 transition-all">
-                    @foreach(range(now()->year - 2, now()->year) as $y)
-                        <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>{{ $y }}</option>
-                    @endforeach
-                </select>
-                <button type="submit" class="px-6 py-2 bg-brand-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-700 transition-all shadow-sm">Filter</button>
-            </form>
-            <button onclick="window.print()" class="px-6 py-2 bg-gray-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all shadow-sm">
-                <i class="bi bi-printer-fill mr-2"></i> Print Report
-            </button>
         </div>
     </div>
 
     {{-- Report Content --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 print:block">
         {{-- Maternal Health --}}
         <div class="bg-white rounded-[2.5rem] p-10 shadow-sm border border-gray-100">
             <h3 class="text-sm font-black text-purple-600 uppercase tracking-widest flex items-center gap-4 mb-10">

@@ -116,10 +116,10 @@
                         <i class="bi bi-file-earmark-pdf text-red-500"></i>
                         PDF
                     </button>
-                    <button type="button" id="exportExcelBtn" class="flex-1 px-5 py-3 rounded-xl border border-gray-200 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-all flex items-center justify-center gap-2">
+                    <a href="{{ route('admin.medicines.reports.export', request()->all()) }}" class="flex-1 px-5 py-3 rounded-xl border border-gray-200 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-all flex items-center justify-center gap-2">
                         <i class="bi bi-file-earmark-excel text-emerald-500"></i>
                         Excel
-                    </button>
+                    </a>
                 </div>
             </div>
         </form>

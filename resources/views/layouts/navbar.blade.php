@@ -1,24 +1,24 @@
-<nav class="bg-white border-b border-gray-100 h-16 sticky top-0 z-30 print:hidden">
+<nav class="bg-white border-b border-gray-100 h-16 sticky top-0 z-30 print:hidden shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
         <div class="flex justify-between items-center h-full">
 
             {{-- Left Side: Page Title --}}
-            <div class="flex items-center gap-3 sm:gap-4 overflow-hidden">
-                <button @click="sidebarOpen = true" class="md:hidden p-2 -ml-2 rounded-xl text-gray-500 hover:bg-gray-50 transition-colors shrink-0">
+            <div class="flex items-center gap-2 sm:gap-4 overflow-hidden flex-1">
+                <button @click="sidebarOpen = true" class="md:hidden p-2 rounded-xl text-gray-500 hover:bg-gray-50 transition-colors shrink-0">
                     <i class="bi bi-list text-2xl"></i>
                 </button>
-                <h2 class="text-lg sm:text-xl font-black text-gray-900 tracking-tight truncate">
+                <h2 class="text-sm sm:text-xl font-black text-gray-900 tracking-tight truncate leading-tight">
                     @yield('title', 'Dashboard')
                 </h2>
             </div>
 
             {{-- Right Side: Actions --}}
-            <div class="flex items-center gap-2 sm:gap-4">
+            <div class="flex items-center gap-1.5 sm:gap-4">
 
                 {{-- Notifications --}}
                 <div class="relative" x-data="{ open: false }">
-                    <button @click="open = !open" class="p-2.5 rounded-xl text-gray-400 hover:text-brand-600 hover:bg-brand-50 transition-all relative">
-                        <i class="bi bi-bell text-xl"></i>
+                    <button @click="open = !open" class="p-2 sm:p-2.5 rounded-xl text-gray-400 hover:text-brand-600 hover:bg-brand-50 transition-all relative">
+                        <i class="bi bi-bell text-xl sm:text-xl"></i>
                         @if($unreadCount > 0)
                             <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
                         @endif
@@ -32,7 +32,7 @@
                          x-transition:leave="transition ease-in duration-150"
                          x-transition:leave-start="opacity-100 translate-y-0"
                          x-transition:leave-end="opacity-0 translate-y-2"
-                         class="fixed inset-x-4 top-20 md:absolute md:inset-x-auto md:right-0 md:top-full md:mt-3 md:w-96 bg-white border border-gray-100 text-gray-800 shadow-2xl md:shadow-xl rounded-2xl md:rounded-xl overflow-hidden z-50 ring-1 ring-black/5"
+                         class="fixed inset-x-2 top-16 md:absolute md:inset-x-auto md:right-0 md:top-full md:mt-3 md:w-96 bg-white border border-gray-100 text-gray-800 shadow-2xl md:shadow-xl rounded-2xl md:rounded-xl overflow-hidden z-50 ring-1 ring-black/5"
                          style="display: none;"
                          x-cloak>
                         
@@ -41,7 +41,7 @@
                             <a href="{{ route('notifications.markAll') }}" class="text-sm text-brand-600 hover:text-brand-700 font-semibold">Mark all read</a>
                         </div>
 
-                        <div class="max-h-96 overflow-y-auto custom-scrollbar">
+                        <div class="max-h-[70vh] md:max-h-96 overflow-y-auto custom-scrollbar">
                             @forelse($notifications as $notification)
                                 <a href="{{ route('notifications.read', $notification->id) }}"
                                    class="flex items-start gap-4 px-5 py-4 hover:bg-gray-50 transition border-b border-gray-50 last:border-0 {{ is_null($notification->read_at) ? 'bg-brand-50/50' : '' }}">
@@ -51,15 +51,15 @@
                                         </span>
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-base font-medium text-gray-900 truncate">
+                                        <p class="text-sm sm:text-base font-medium text-gray-900 truncate">
                                             {{ \Illuminate\Support\Str::limit($notification->data['message'] ?? 'New notification', 60) }}
                                         </p>
-                                        <p class="text-sm text-gray-500 mt-1">
+                                        <p class="text-[10px] sm:text-sm text-gray-500 mt-1">
                                             {{ $notification->created_at->diffForHumans() }}
                                         </p>
                                     </div>
                                     @if(is_null($notification->read_at))
-                                        <span class="inline-block w-3 h-3 bg-brand-600 rounded-full mt-2"></span>
+                                        <span class="inline-block w-2.5 h-2.5 bg-brand-600 rounded-full mt-2"></span>
                                     @endif
                                 </a>
                             @empty
@@ -80,8 +80,8 @@
 
                 {{-- User Profile --}}
                 <div class="relative" x-data="{ open: false }">
-                    <button @click="open = !open" class="flex items-center gap-3 p-1.5 pr-3 rounded-2xl hover:bg-gray-50 transition-all border border-transparent hover:border-gray-100">
-                        <div class="w-9 h-9 rounded-xl bg-brand-100 text-brand-600 flex items-center justify-center font-black text-sm border border-brand-200 shadow-sm">
+                    <button @click="open = !open" class="flex items-center gap-2 sm:gap-3 p-1 rounded-2xl hover:bg-gray-50 transition-all border border-transparent hover:border-gray-100">
+                        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-brand-100 text-brand-600 flex items-center justify-center font-black text-sm border border-brand-200 shadow-sm">
                             {{ substr(auth()->user()->first_name, 0, 1) }}
                         </div>
                         <div class="hidden sm:block text-left">
@@ -100,30 +100,27 @@
                          x-transition:leave="transition ease-in duration-150"
                          x-transition:leave-start="opacity-100 translate-y-0"
                          x-transition:leave-end="opacity-0 translate-y-2"
-                         class="absolute right-0 mt-3 w-72 bg-white border border-gray-100 text-gray-800 shadow-2xl md:shadow-xl rounded-2xl md:rounded-xl overflow-hidden z-50 ring-1 ring-black/5"
+                         class="absolute right-0 top-full mt-3 w-56 bg-white border border-gray-100 text-gray-800 shadow-2xl rounded-2xl overflow-hidden z-50 ring-1 ring-black/5"
                          style="display: none;"
                          x-cloak>
                         
-                        <div class="px-5 py-4 border-b border-gray-100 bg-gray-50">
-                            <p class="text-lg font-bold text-gray-900 truncate">{{ auth()->user()->full_name }}</p>
-                            <p class="text-base text-gray-600 truncate">{{ auth()->user()->email }}</p>
+                        <div class="p-4 border-b border-gray-50 bg-gray-50/50">
+                            <p class="text-xs font-black text-gray-900 leading-none truncate">{{ auth()->user()->full_name }}</p>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1.5">{{ auth()->user()->email }}</p>
                         </div>
 
-                        <div class="py-2">
-                            <a href="{{ match(auth()->user()->role) {
-                                'admin' => route('admin.profile.index'),
-                                'health_worker' => route('healthworker.profile.index'),
-                                default => route('patient.profile.index'),
-                            } }}" class="block px-5 py-3 text-base text-gray-700 hover:bg-gray-50 hover:text-brand-600 font-medium">
-                                <i class="bi bi-person mr-3 text-lg"></i> Profile
-                            </a>
-                        </div>
-
-                        <div class="border-t border-gray-100 py-2">
-                            <form method="POST" action="{{ route('logout') }}">
+                        <div class="p-2">
+                            @if(auth()->user()->role === 'patient')
+                                <a href="{{ route('patient.profile.index') }}" class="flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-gray-600 hover:text-brand-600 hover:bg-brand-50 rounded-xl transition-all group">
+                                    <i class="bi bi-person text-lg opacity-50 group-hover:opacity-100 transition-opacity"></i>
+                                    My Profile
+                                </a>
+                            @endif
+                            <form action="{{ route('logout') }}" method="POST">
                                 @csrf
-                                <button type="submit" class="w-full text-left px-5 py-3 text-base text-red-600 hover:bg-red-50 font-medium">
-                                    <i class="bi bi-box-arrow-right mr-3 text-lg"></i> Sign Out
+                                <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-red-500 hover:bg-red-50 rounded-xl transition-all group text-left">
+                                    <i class="bi bi-box-arrow-right text-lg opacity-50 group-hover:opacity-100 transition-opacity"></i>
+                                    Logout
                                 </button>
                             </form>
                         </div>

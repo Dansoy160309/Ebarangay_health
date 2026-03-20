@@ -3,137 +3,88 @@
 @section('title', 'Medicine Supply History')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-    {{-- Breadcrumbs --}}
-    <nav class="flex mb-8" aria-label="Breadcrumb">
-        <ol class="inline-flex items-center space-x-1 md:space-x-2 text-[11px] font-black uppercase tracking-widest">
-            <li class="inline-flex items-center">
-                <a href="{{ route('admin.dashboard') }}" class="text-gray-400 hover:text-brand-600 transition-colors flex items-center">
-                    <i class="bi bi-house-door mr-2"></i>
-                    Dashboard
-                </a>
-            </li>
-            <li>
-                <div class="flex items-center text-gray-300">
-                    <i class="bi bi-chevron-right mx-2 text-[8px]"></i>
-                    <a href="{{ route('admin.medicines.index') }}" class="text-gray-400 hover:text-brand-600 transition-colors">Inventory</a>
+<div class="flex flex-col gap-6 sm:gap-8">
+    
+    {{-- Top-Aligned Compact Header --}}
+    <div class="relative z-10 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+        
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8">
+            <div class="max-w-xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 mb-3 sm:mb-4">
+                    <i class="bi bi-clock-history text-xs"></i>
+                    <span class="text-[9px] font-black uppercase tracking-widest">Transaction Logs</span>
                 </div>
-            </li>
-            <li>
-                <div class="flex items-center text-gray-900">
-                    <i class="bi bi-chevron-right mx-2 text-[8px]"></i>
-                    <span>Supply History</span>
-                </div>
-            </li>
-        </ol>
-    </nav>
-
-    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-        <div>
-            <div class="inline-flex items-center px-3 py-1 rounded-full bg-brand-50 text-brand-600 text-[10px] font-black uppercase tracking-widest mb-4">
-                <i class="bi bi-clock-history mr-2"></i>
-                Transaction Logs
+                <h1 class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-2 sm:mb-3">
+                    Supply <span class="text-brand-600 underline decoration-brand-200 decoration-4 underline-offset-4">History</span>
+                </h1>
+                <p class="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed">
+                    Track and manage medicine replenishment records and supplier deliveries.
+                </p>
             </div>
-            <h1 class="text-5xl font-black text-gray-900 tracking-tight">Supply History</h1>
-            <p class="text-gray-500 font-medium mt-2">Track and manage medicine replenishment records.</p>
-        </div>
-        <div class="flex items-center gap-3">
-            <a href="{{ route('admin.medicines.index') }}" class="inline-flex items-center px-6 py-3.5 rounded-2xl border border-gray-200 text-sm font-bold text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95 shadow-sm">
-                <i class="bi bi-arrow-left mr-2 text-gray-400"></i>
-                Inventory
-            </a>
-            <a href="{{ route('admin.medicines.supplies.create') }}" class="inline-flex items-center px-8 py-3.5 rounded-2xl bg-brand-600 text-white text-sm font-black hover:bg-brand-700 transition-all active:scale-95 shadow-xl shadow-brand-200">
-                <i class="bi bi-plus-lg mr-2"></i>
-                Add Supply
-            </a>
+
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                <a href="{{ route('admin.medicines.index') }}" 
+                   class="flex-1 sm:flex-none inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-white border border-gray-200 text-gray-700 font-black text-[10px] sm:text-xs uppercase tracking-widest shadow-sm hover:bg-gray-50 transition-all active:scale-95">
+                    <i class="bi bi-arrow-left mr-2"></i>
+                    Inventory
+                </a>
+                <a href="{{ route('admin.medicines.supplies.create') }}" 
+                   class="flex-1 sm:flex-none inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-brand-600 text-white font-black text-[10px] sm:text-xs uppercase tracking-widest shadow-xl shadow-brand-500/20 hover:bg-brand-700 hover:scale-105 transition-all transform group">
+                    <i class="bi bi-plus-lg mr-2 group-hover:rotate-90 transition-transform"></i>
+                    Add Supply
+                </a>
+            </div>
         </div>
     </div>
 
-    @if(session('success'))
-        <div class="mb-8 rounded-3xl border border-green-100 bg-green-50/50 p-4 text-sm text-green-800 flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-300">
-            <div class="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 flex-shrink-0">
-                <i class="bi bi-check-lg"></i>
+    {{-- Search & Action Bar --}}
+    <div class="bg-white rounded-[2rem] shadow-lg shadow-gray-200/50 border border-gray-100 p-5 sm:p-6">
+        <form method="GET" class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            {{-- Quick Links --}}
+            <div class="flex items-center p-1 bg-gray-50 rounded-xl border border-gray-100 overflow-x-auto no-scrollbar">
+                <a href="{{ route('admin.medicines.index') }}" 
+                   class="px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-600 transition-all whitespace-nowrap">
+                    Inventory
+                </a>
+                <a href="{{ route('admin.medicines.distributions') }}" 
+                   class="px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-600 transition-all whitespace-nowrap">
+                    Distributions
+                </a>
+                <a href="{{ route('admin.medicines.reports') }}" 
+                   class="px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-600 transition-all whitespace-nowrap">
+                    Reports
+                </a>
             </div>
-            <div class="font-semibold">{{ session('success') }}</div>
-        </div>
-    @endif
 
-    {{-- Filters Card --}}
-    <div class="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/40 border border-gray-100 p-8 mb-8">
-        <div class="flex items-center gap-3 mb-6">
-            <div class="h-10 w-10 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center">
-                <i class="bi bi-filter-right text-xl"></i>
-            </div>
-            <h2 class="text-lg font-bold text-gray-900">Filter Records</h2>
-        </div>
-        
-        <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div class="space-y-2">
-                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">From Date</label>
+            {{-- Filters --}}
+            <div class="flex flex-wrap items-center gap-3">
                 <div class="relative group">
-                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
-                        <i class="bi bi-calendar-event"></i>
-                    </div>
                     <input type="date" name="date_from" value="{{ request('date_from') }}"
-                           class="w-full pl-11 pr-4 py-3 bg-gray-50 border-transparent rounded-2xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 text-sm font-medium transition-all">
+                           class="pl-4 pr-4 py-2.5 bg-gray-50 border-none rounded-xl focus:ring-4 focus:ring-brand-500/10 focus:bg-white transition-all text-[10px] font-black uppercase tracking-widest text-gray-700 shadow-inner">
                 </div>
-            </div>
-
-            <div class="space-y-2">
-                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">To Date</label>
+                <div class="text-gray-300 font-black text-[10px]">TO</div>
                 <div class="relative group">
-                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
-                        <i class="bi bi-calendar-check"></i>
-                    </div>
                     <input type="date" name="date_to" value="{{ request('date_to') }}"
-                           class="w-full pl-11 pr-4 py-3 bg-gray-50 border-transparent rounded-2xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 text-sm font-medium transition-all">
+                           class="pl-4 pr-4 py-2.5 bg-gray-50 border-none rounded-xl focus:ring-4 focus:ring-brand-500/10 focus:bg-white transition-all text-[10px] font-black uppercase tracking-widest text-gray-700 shadow-inner">
                 </div>
-            </div>
-
-            <div class="space-y-2">
-                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Medicine</label>
-                <div class="relative group">
-                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
-                        <i class="bi bi-capsule"></i>
-                    </div>
-                    <select name="medicine_id" class="w-full pl-11 pr-4 py-3 bg-gray-50 border-transparent rounded-2xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 text-sm font-medium transition-all appearance-none">
-                        <option value="">All Medicines</option>
-                        @foreach($medicines as $medicine)
-                            <option value="{{ $medicine->id }}" @selected(request('medicine_id') == $medicine->id)>
-                                {{ $medicine->generic_name }} {{ $medicine->brand_name ? '('.$medicine->brand_name.')' : '' }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
-            <div class="space-y-2">
-                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Supplier</label>
-                <div class="relative group">
-                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
-                        <i class="bi bi-truck"></i>
-                    </div>
-                    <input type="text" name="supplier_name" value="{{ request('supplier_name') }}"
-                           class="w-full pl-11 pr-4 py-3 bg-gray-50 border-transparent rounded-2xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 text-sm font-medium transition-all placeholder:text-gray-400" placeholder="Search supplier...">
-                </div>
-            </div>
-
-            <div class="md:col-span-4 flex items-center justify-between pt-2">
-                <div class="flex items-center gap-3">
-                    <button type="submit" class="inline-flex items-center px-8 py-3 rounded-2xl bg-gray-900 text-white text-sm font-bold hover:bg-black transition-all active:scale-95 shadow-lg shadow-gray-200">
-                        <i class="bi bi-search mr-2"></i>
-                        Apply Filters
-                    </button>
-                    @if(request()->hasAny(['date_from','date_to','medicine_id','supplier_name']))
-                        <a href="{{ route('admin.medicines.supplies') }}" class="inline-flex items-center px-6 py-3 rounded-2xl text-sm font-bold text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-all">
-                            <i class="bi bi-x-lg mr-2"></i>
-                            Clear
-                        </a>
-                    @endif
-                </div>
-                <div class="text-xs font-bold text-gray-400">
-                    Showing <span class="text-gray-900">{{ $supplies->firstItem() ?? 0 }}</span> to <span class="text-gray-900">{{ $supplies->lastItem() ?? 0 }}</span> of <span class="text-gray-900">{{ $supplies->total() }}</span> records
-                </div>
+                <select name="medicine_id" onchange="this.form.submit()"
+                        class="pl-4 pr-10 py-2.5 bg-gray-50 border-none rounded-xl focus:ring-4 focus:ring-brand-500/10 focus:bg-white transition-all text-[10px] font-black uppercase tracking-widest text-gray-700 shadow-inner appearance-none">
+                    <option value="">All Medicines</option>
+                    @foreach($medicines as $medicine)
+                        <option value="{{ $medicine->id }}" @selected(request('medicine_id') == $medicine->id)>
+                            {{ $medicine->generic_name }}
+                        </option>
+                    @endforeach
+                </select>
+                <button type="submit" class="p-2.5 bg-gray-900 text-white rounded-xl hover:bg-black transition-all active:scale-95 shadow-lg shadow-gray-200">
+                    <i class="bi bi-search text-xs"></i>
+                </button>
+                @if(request()->hasAny(['date_from', 'date_to', 'medicine_id', 'supplier_name']))
+                    <a href="{{ route('admin.medicines.supplies') }}" class="p-2.5 bg-gray-100 text-gray-500 rounded-xl hover:bg-gray-200 transition-all">
+                        <i class="bi bi-x-lg text-xs"></i>
+                    </a>
+                @endif
             </div>
         </form>
     </div>
@@ -141,51 +92,21 @@
     {{-- History Table --}}
     <div class="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/40 border border-gray-100 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-100">
+            <table class="w-full text-left border-collapse">
                 <thead>
-                    <tr class="bg-gray-50/50">
-                        <th class="px-8 py-5 text-left text-[11px] font-black text-gray-400 uppercase tracking-widest">
-                            <div class="flex items-center gap-2">
-                                <i class="bi bi-calendar3"></i>
-                                Date Received
-                            </div>
-                        </th>
-                        <th class="px-8 py-5 text-left text-[11px] font-black text-gray-400 uppercase tracking-widest">
-                            <div class="flex items-center gap-2">
-                                <i class="bi bi-capsule-pill"></i>
-                                Medicine Info
-                            </div>
-                        </th>
-                        <th class="px-8 py-5 text-left text-[11px] font-black text-gray-400 uppercase tracking-widest">
-                            <div class="flex items-center gap-2">
-                                <i class="bi bi-hash"></i>
-                                Batch No.
-                            </div>
-                        </th>
-                        <th class="px-8 py-5 text-left text-[11px] font-black text-gray-400 uppercase tracking-widest">
-                            <div class="flex items-center gap-2">
-                                <i class="bi bi-box-seam"></i>
-                                Quantity
-                            </div>
-                        </th>
-                        <th class="px-8 py-5 text-left text-[11px] font-black text-gray-400 uppercase tracking-widest">
-                            <div class="flex items-center gap-2">
-                                <i class="bi bi-clock-history"></i>
-                                Expiration
-                            </div>
-                        </th>
-                        <th class="px-8 py-5 text-left text-[11px] font-black text-gray-400 uppercase tracking-widest">
-                            <div class="flex items-center gap-2">
-                                <i class="bi bi-truck"></i>
-                                Supplier & Receiver
-                            </div>
-                        </th>
+                    <tr class="bg-gray-50/50 border-b border-gray-100">
+                        <th class="px-8 py-5 text-[11px] font-black text-gray-400 uppercase tracking-[0.15em]">Date Received</th>
+                        <th class="px-8 py-5 text-[11px] font-black text-gray-400 uppercase tracking-[0.15em]">Medicine Info</th>
+                        <th class="px-8 py-5 text-[11px] font-black text-gray-400 uppercase tracking-[0.15em]">Batch No.</th>
+                        <th class="px-8 py-5 text-[11px] font-black text-gray-400 uppercase tracking-[0.15em]">Quantity</th>
+                        <th class="px-8 py-5 text-[11px] font-black text-gray-400 uppercase tracking-[0.15em]">Expiration</th>
+                        <th class="px-8 py-5 text-[11px] font-black text-gray-400 uppercase tracking-[0.15em]">Supplier & Receiver</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-50">
+                <tbody class="divide-y divide-gray-50">
                     @forelse($supplies as $supply)
                         <tr class="hover:bg-gray-50/50 transition-colors group">
-                            <td class="px-8 py-6 whitespace-nowrap">
+                            <td class="px-8 py-6">
                                 <div class="flex flex-col">
                                     <div class="text-sm font-black text-gray-900">
                                         {{ $supply->date_received?->format('M d, Y') ?? $supply->created_at->format('M d, Y') }}

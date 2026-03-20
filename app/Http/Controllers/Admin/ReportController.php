@@ -306,6 +306,100 @@ class ReportController extends Controller
     }
 
     /**
+     * Export Report Data to CSV (Excel Compatible)
+     */
+    public function exportExcel(Request $request)
+    {
+        $startDate = $request->input('start_date', now()->startOfMonth()->format('Y-m-d'));
+        $endDate = $request->input('end_date', now()->endOfMonth()->format('Y-m-d'));
+
+        $filename = "Health_Report_{$startDate}_to_{$endDate}.csv";
+
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $callback = function() use ($startDate, $endDate) {
+            $file = fopen('php://output', 'w');
+            
+            // Add UTF-8 BOM for Excel compatibility
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+
+            // --- SECTION 1: REPORT SUMMARY ---
+            fputcsv($file, ['E-BARANGAY HEALTH SYSTEM - ANALYTICS REPORT']);
+            fputcsv($file, ['Period:', $startDate . ' to ' . $endDate]);
+            fputcsv($file, ['Generated At:', now()->format('Y-m-d H:i:s')]);
+            fputcsv($file, []);
+
+            // --- SECTION 2: KEY PERFORMANCE INDICATORS ---
+            fputcsv($file, ['--- KEY PERFORMANCE INDICATORS ---']);
+            $appointmentStats = [
+                'Total Appointments' => Appointment::whereBetween('scheduled_at', [$startDate, $endDate])->count(),
+                'Completed' => Appointment::whereBetween('scheduled_at', [$startDate, $endDate])->where('status', 'completed')->count(),
+                'Pending' => Appointment::whereBetween('scheduled_at', [$startDate, $endDate])->where('status', 'pending')->count(),
+                'Cancelled' => Appointment::whereBetween('scheduled_at', [$startDate, $endDate])->where('status', 'cancelled')->count(),
+            ];
+            foreach($appointmentStats as $label => $val) {
+                fputcsv($file, [$label, $val]);
+            }
+            fputcsv($file, []);
+
+            // --- SECTION 3: SERVICE USAGE ---
+            fputcsv($file, ['--- SERVICE USAGE ---']);
+            fputcsv($file, ['Service Name', 'Total Appointments']);
+            $services = Appointment::selectRaw('service, COUNT(*) as count')
+                ->whereBetween('scheduled_at', [$startDate, $endDate])
+                ->groupBy('service')
+                ->get();
+            foreach($services as $s) {
+                fputcsv($file, [$s->service, $s->count]);
+            }
+            fputcsv($file, []);
+
+            // --- SECTION 4: TOP MORBIDITY (DISEASES) ---
+            fputcsv($file, ['--- TOP MORBIDITY / DIAGNOSES ---']);
+            fputcsv($file, ['Diagnosis', 'Total Cases']);
+            $diseases = HealthRecord::select('diagnosis', DB::raw('count(*) as count'))
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->whereNotNull('diagnosis')
+                ->groupBy('diagnosis')
+                ->orderByDesc('count')
+                ->get();
+            foreach($diseases as $d) {
+                fputcsv($file, [$d->diagnosis, $d->count]);
+            }
+            fputcsv($file, []);
+
+            // --- SECTION 5: DETAILED APPOINTMENTS ---
+            fputcsv($file, ['--- DETAILED APPOINTMENT LOG ---']);
+            fputcsv($file, ['Date', 'Patient Name', 'Service', 'Status', 'Provider']);
+            
+            $appointments = Appointment::with(['user', 'slot.doctor'])
+                ->whereBetween('scheduled_at', [$startDate, $endDate])
+                ->orderBy('scheduled_at', 'asc')
+                ->get();
+
+            foreach($appointments as $app) {
+                fputcsv($file, [
+                    $app->scheduled_at->format('Y-m-d H:i'),
+                    $app->user->full_name,
+                    $app->service,
+                    ucfirst($app->status),
+                    $app->slot && $app->slot->doctor ? $app->slot->doctor->full_name : 'N/A'
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
      * Calendar View for Slots, Bookings, and Attendance
      */
     public function calendar(Request $request)
@@ -415,6 +509,129 @@ class ReportController extends Controller
         }
 
         return view('admin.reports.calendar', compact('events', 'viewType'));
+    }
+
+    /**
+     * Export FHSIS Summary to CSV
+     */
+    public function fhsisExport(Request $request)
+    {
+        $month = $request->input('month', now()->format('m'));
+        $year = $request->input('year', now()->format('Y'));
+        $startDate = Carbon::create($year, $month, 1)->startOfMonth();
+        $endDate = $startDate->copy()->endOfMonth();
+
+        $filename = "FHSIS_Summary_{$year}_{$month}.csv";
+
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $callback = function() use ($startDate, $endDate, $year, $month) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+
+            fputcsv($file, ['DOH FHSIS MONTHLY SUMMARY REPORT']);
+            fputcsv($file, ['Period:', Carbon::create()->month($month)->format('F') . ' ' . $year]);
+            fputcsv($file, []);
+
+            // Maternal Health
+            fputcsv($file, ['--- MATERNAL HEALTH INDICATORS ---']);
+            fputcsv($file, ['Indicator', 'Count']);
+            fputcsv($file, ['Total Prenatal Visits', Appointment::where('service', 'Prenatal')->whereBetween('scheduled_at', [$startDate, $endDate])->where('status', 'completed')->count()]);
+            fputcsv($file, ['High Risk Pregnancies', PatientProfile::where('is_high_risk', true)->whereHas('user', function($q) use ($startDate, $endDate) { $q->whereBetween('created_at', [$startDate, $endDate]); })->count()]);
+            fputcsv($file, ['Postpartum Checkups', Appointment::where('service', 'like', '%Postpartum%')->whereBetween('scheduled_at', [$startDate, $endDate])->where('status', 'completed')->count()]);
+            fputcsv($file, []);
+
+            // Child Health
+            fputcsv($file, ['--- CHILD HEALTH (FIC) ---']);
+            fputcsv($file, ['Indicator', 'Count']);
+            fputcsv($file, ['Fully Immunized Children', PatientProfile::where('is_fully_immunized', true)->whereHas('user', function($q) use ($startDate, $endDate) { $q->whereBetween('created_at', [$startDate, $endDate])->where('dob', '>=', now()->subYear()); })->count()]);
+            fputcsv($file, ['Target Infants (Month)', User::where('role', 'patient')->where('dob', '>=', now()->subYear())->whereBetween('created_at', [$startDate, $endDate])->count()]);
+            fputcsv($file, []);
+
+            // Morbidity
+            fputcsv($file, ['--- TOP MORBIDITY (DISEASES) ---']);
+            fputcsv($file, ['Diagnosis', 'Total Cases']);
+            $morbidity = HealthRecord::select('diagnosis', DB::raw('count(*) as count'))
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->whereNotNull('diagnosis')
+                ->groupBy('diagnosis')
+                ->orderByDesc('count')
+                ->limit(10)
+                ->get();
+            foreach($morbidity as $m) {
+                fputcsv($file, [$m->diagnosis, $m->count]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Export Vaccine Summary to CSV
+     */
+    public function vaccineExport(Request $request)
+    {
+        $month = $request->input('month', now()->format('m'));
+        $year = $request->input('year', now()->format('Y'));
+        $startDate = Carbon::createFromDate($year, $month, 1)->startOfMonth();
+        $endDate = $startDate->copy()->endOfMonth();
+
+        $filename = "Vaccine_Usage_{$year}_{$month}.csv";
+
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $callback = function() use ($startDate, $endDate, $year, $month) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+
+            fputcsv($file, ['MONTHLY VACCINE SUPPLY & USAGE REPORT']);
+            fputcsv($file, ['Period:', Carbon::create()->month($month)->format('F') . ' ' . $year]);
+            fputcsv($file, []);
+
+            fputcsv($file, ['Vaccine Antigen', 'Manufacturer', 'Beg. Balance', 'Received', 'Administered', 'Remaining']);
+
+            $vaccines = \App\Models\Vaccine::with(['batches' => function($q) use ($endDate) {
+                $q->where('received_at', '<=', $endDate);
+            }])->get();
+
+            foreach ($vaccines as $vaccine) {
+                $vaccineName = $vaccine->name;
+                $totalReceived = $vaccine->batches->sum('quantity_received');
+                $administeredThisMonth = \App\Models\HealthRecord::whereBetween('verified_at', [$startDate, $endDate])
+                    ->where('metadata->vaccine_given', 'like', "%{$vaccineName}%")
+                    ->count();
+                $administeredBefore = \App\Models\HealthRecord::where('verified_at', '<', $startDate)
+                    ->where('metadata->vaccine_given', 'like', "%{$vaccineName}%")
+                    ->count();
+
+                fputcsv($file, [
+                    $vaccineName,
+                    $vaccine->manufacturer,
+                    $totalReceived - $administeredBefore,
+                    $vaccine->batches->whereBetween('received_at', [$startDate, $endDate])->sum('quantity_received'),
+                    $administeredThisMonth,
+                    $totalReceived - $administeredBefore - $administeredThisMonth
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     /**

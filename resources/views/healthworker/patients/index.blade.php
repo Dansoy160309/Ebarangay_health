@@ -4,69 +4,62 @@
 @section('title', 'Patients Management')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+<div class="flex flex-col gap-6 sm:gap-8">
     
-    {{-- Header Card --}}
-    <div class="bg-gradient-to-r from-brand-600 to-brand-500 rounded-[2rem] shadow-lg p-8 text-white relative overflow-hidden">
-        <div class="absolute inset-0 bg-white/5 opacity-10" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
+    {{-- Top-Aligned Compact Header --}}
+    <div class="relative z-10 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
         
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div>
-                <h1 class="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
-                    <i class="bi bi-people-fill"></i> Patient Management
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8">
+            <div class="max-w-xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 mb-3 sm:mb-4">
+                    <i class="bi bi-people-fill text-xs"></i>
+                    <span class="text-[9px] font-black uppercase tracking-widest">Master Database</span>
+                </div>
+                <h1 class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-2 sm:mb-3">
+                    Patient <span class="text-brand-600 underline decoration-brand-200 decoration-4 underline-offset-4">Management</span>
                 </h1>
-                <p class="text-brand-100 mt-2 text-lg">Manage patient records, dependents, and medical history.</p>
+                <p class="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed">
+                    Manage patient records, linked dependent accounts, and comprehensive medical histories.
+                </p>
             </div>
-            <div class="flex items-center gap-3">
+
+            <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
                 <a href="{{ route('midwife.patients.create') }}" 
-                   class="inline-flex items-center px-6 py-3 rounded-xl bg-white text-brand-600 font-bold hover:bg-brand-50 transition-all shadow-sm transform hover:-translate-y-0.5">
-                    <i class="bi bi-person-plus-fill mr-2"></i>
-                    Add Patient
+                   class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-brand-600 text-white font-black text-[10px] sm:text-xs uppercase tracking-widest shadow-xl shadow-brand-500/20 hover:bg-brand-700 hover:scale-105 transition-all transform group shrink-0">
+                    <i class="bi bi-person-plus-fill mr-2 group-hover:rotate-12 transition-transform"></i>
+                    Add New Patient
                 </a>
             </div>
         </div>
     </div>
 
-    {{-- Success Message --}}
-    @if (session('success'))
-        <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-xl shadow-sm animate-fade-in-down">
-            <div class="flex">
-                <div class="flex-shrink-0">
-                    <i class="bi bi-check-circle-fill text-green-400 text-xl"></i>
-                </div>
-                <div class="ml-3 text-sm font-medium text-green-800">
-                    {{ session('success') }}
-                </div>
-            </div>
-        </div>
-    @endif
-
-    {{-- Filter & Search Section --}}
-    <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-6">
+    {{-- Filter & Search Section (More Compact) --}}
+    <div class="bg-white rounded-[2rem] shadow-lg shadow-gray-200/50 border border-gray-100 p-5 sm:p-6">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             {{-- Filter Tabs --}}
-            <div class="flex flex-wrap gap-2 p-1 bg-gray-50 rounded-2xl w-fit">
+            <div class="flex items-center p-1 bg-gray-50 rounded-xl border border-gray-100 overflow-x-auto no-scrollbar">
                 <a href="{{ route('midwife.patients.index', ['type' => 'all']) }}"
-                   class="px-4 py-2 rounded-xl text-sm font-bold transition-all {{ $type === 'all' ? 'bg-white text-brand-600 shadow-sm' : 'text-gray-500 hover:text-gray-700' }}">
-                   <i class="bi bi-people mr-1"></i> All
+                   class="px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap {{ $type === 'all' ? 'bg-brand-600 text-white shadow-md' : 'text-gray-400 hover:text-gray-600' }}">
+                   All
                 </a>
                 <a href="{{ route('midwife.patients.index', ['type' => 'account_holder']) }}"
-                   class="px-4 py-2 rounded-xl text-sm font-bold transition-all {{ $type === 'account_holder' ? 'bg-white text-brand-600 shadow-sm' : 'text-gray-500 hover:text-gray-700' }}">
-                   <i class="bi bi-person-badge mr-1"></i> Account Holders
+                   class="px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap {{ $type === 'account_holder' ? 'bg-brand-600 text-white shadow-md' : 'text-gray-400 hover:text-gray-600' }}">
+                   Account Holders
                 </a>
                 <a href="{{ route('midwife.patients.index', ['type' => 'dependent']) }}"
-                   class="px-4 py-2 rounded-xl text-sm font-bold transition-all {{ $type === 'dependent' ? 'bg-white text-brand-600 shadow-sm' : 'text-gray-500 hover:text-gray-700' }}">
-                   <i class="bi bi-person-heart mr-1"></i> Dependents
+                   class="px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap {{ $type === 'dependent' ? 'bg-brand-600 text-white shadow-md' : 'text-gray-400 hover:text-gray-600' }}">
+                   Dependents
                 </a>
             </div>
 
             {{-- Search Input --}}
-            <div class="relative w-full lg:max-w-md">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                    <i class="bi bi-search"></i>
+            <div class="relative w-full lg:max-w-md group">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
+                    <i class="bi bi-search text-xs"></i>
                 </div>
                 <input type="text" id="searchInput" placeholder="Search by name, email, or contact..."
-                    class="w-full pl-10 pr-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-100 focus:border-brand-400 transition-all text-sm text-gray-700 placeholder-gray-400">
+                    class="w-full pl-10 pr-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-4 focus:ring-brand-500/10 focus:bg-white transition-all text-xs font-bold text-gray-700 placeholder-gray-400 shadow-inner">
             </div>
         </div>
     </div>

@@ -3,7 +3,7 @@
 @section('title', auth()->user()->isMidwife() ? 'Midwife Dashboard' : 'Doctor Dashboard')
 
 @section('content')
-<div class="max-w-7xl mx-auto p-6 space-y-6">
+<div class="flex flex-col gap-6 sm:gap-8">
 
     @php
         $user = auth()->user();
@@ -11,59 +11,61 @@
     @endphp
 
     {{-- Welcome Section --}}
-    <div class="mb-8 bg-gradient-to-r from-blue-700 to-blue-600 rounded-2xl p-6 sm:p-10 text-white shadow-lg shadow-blue-500/20 relative overflow-hidden">
-        <div class="relative z-10 max-w-2xl">
-            <h1 class="text-3xl sm:text-4xl font-bold mb-3 tracking-tight">
-                Welcome, {{ $user->isMidwife() ? $user->full_name : 'Dr. ' . $user->last_name }}! {{ $user->isMidwife() ? '🧑‍⚕️' : '👨‍⚕️' }}
+    <div class="bg-gradient-to-br from-brand-600 via-brand-500 to-indigo-600 rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 text-white shadow-xl shadow-brand-500/20 relative overflow-hidden">
+        <div class="relative z-10">
+            <h1 class="text-2xl sm:text-4xl font-black mb-2 sm:mb-3 tracking-tight leading-tight">
+                Welcome, <br class="sm:hidden"> {{ $user->isMidwife() ? $user->full_name : 'Dr. ' . $user->last_name }}! {{ $user->isMidwife() ? '🧑‍⚕️' : '👨‍⚕️' }}
             </h1>
-            <p class="text-blue-100 text-lg sm:text-xl font-light leading-relaxed">
+            <p class="text-brand-50 text-xs sm:text-lg font-medium opacity-90 max-w-xl">
                 You have {{ $upcomingToday }} appointments scheduled for today.
             </p>
             
-            <div class="mt-6 flex flex-wrap items-center gap-3">
-                <div class="flex items-center gap-2 text-sm font-medium text-white bg-white/20 px-4 py-2 rounded-lg backdrop-blur-sm border border-white/10">
-                    <i class="bi bi-calendar2-day"></i>
-                    <span>{{ now()->format('l, F j, Y') }}</span>
+            <div class="mt-6 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                <div class="flex items-center gap-2 bg-white/15 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 shadow-sm w-fit">
+                    <i class="bi bi-calendar3 text-brand-200 text-xs sm:text-sm"></i>
+                    <span class="text-[10px] sm:text-xs font-black uppercase tracking-widest">{{ now()->format('l, F j, Y') }}</span>
+                </div>
+                <div class="flex items-center gap-2 bg-white/15 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 shadow-sm w-fit">
+                    <i class="bi bi-clock text-brand-200 text-xs sm:text-sm"></i>
+                    <span class="text-[10px] sm:text-xs font-black uppercase tracking-widest">{{ now()->format('h:i A') }}</span>
                 </div>
             </div>
         </div>
         
         <!-- Decorative Elements -->
-        <div class="absolute right-0 top-0 h-full w-full sm:w-1/2 pointer-events-none">
-            <div class="absolute right-0 top-1/2 -translate-y-1/2 opacity-10 transform translate-x-1/4">
-                <i class="bi bi-heart-pulse text-[20rem]"></i>
-            </div>
+        <div class="absolute -right-10 -bottom-10 sm:-right-16 sm:-bottom-16 opacity-10 pointer-events-none">
+            <i class="bi bi-heart-pulse text-[12rem] sm:text-[18rem]"></i>
         </div>
     </div>
 
     {{-- Stats Grid --}}
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
         
         {{-- Today's Appointments --}}
-        <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-8 relative overflow-hidden group hover:shadow-md transition">
-            <div class="absolute right-0 top-0 p-6 opacity-10 group-hover:opacity-20 transition">
-                <i class="bi bi-calendar-check-fill text-8xl text-blue-600"></i>
+        <div class="bg-white rounded-[1.5rem] sm:rounded-[2rem] shadow-sm border border-gray-100 p-6 sm:p-8 relative overflow-hidden group hover:shadow-md transition">
+            <p class="text-[9px] sm:text-xs font-black text-brand-600 uppercase tracking-widest relative z-10 mb-1">Today</p>
+            <p class="text-2xl sm:text-4xl font-black text-gray-900 relative z-10">{{ $upcomingToday }}</p>
+            <div class="absolute right-0 top-0 p-4 opacity-5 group-hover:opacity-10 transition">
+                <i class="bi bi-calendar-check-fill text-6xl text-brand-600"></i>
             </div>
-            <p class="text-base font-bold text-gray-500 uppercase tracking-wider relative z-10">Today's Appointments</p>
-            <p class="text-5xl font-extrabold text-gray-900 mt-2 relative z-10">{{ $upcomingToday }}</p>
         </div>
 
         {{-- Pending Consultations --}}
-        <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-8 relative overflow-hidden group hover:shadow-md transition">
-            <div class="absolute right-0 top-0 p-6 opacity-10 group-hover:opacity-20 transition">
-                <i class="bi bi-clipboard-pulse text-8xl text-orange-500"></i>
+        <div class="bg-white rounded-[1.5rem] sm:rounded-[2rem] shadow-sm border border-gray-100 p-6 sm:p-8 relative overflow-hidden group hover:shadow-md transition">
+            <p class="text-[9px] sm:text-xs font-black text-orange-600 uppercase tracking-widest relative z-10 mb-1">Pending</p>
+            <p class="text-2xl sm:text-4xl font-black text-gray-900 relative z-10">{{ $pendingConsultations }}</p>
+            <div class="absolute right-0 top-0 p-4 opacity-5 group-hover:opacity-10 transition">
+                <i class="bi bi-clipboard-pulse text-6xl text-orange-500"></i>
             </div>
-            <p class="text-base font-bold text-gray-500 uppercase tracking-wider relative z-10">Pending Consultations</p>
-            <p class="text-5xl font-extrabold text-gray-900 mt-2 relative z-10">{{ $pendingConsultations }}</p>
         </div>
 
         {{-- Total Patients --}}
-        <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-8 relative overflow-hidden group hover:shadow-md transition">
-            <div class="absolute right-0 top-0 p-6 opacity-10 group-hover:opacity-20 transition">
-                <i class="bi bi-people-fill text-8xl text-green-600"></i>
+        <div class="bg-white rounded-[1.5rem] sm:rounded-[2rem] shadow-sm border border-gray-100 p-6 sm:p-8 relative overflow-hidden group hover:shadow-md transition">
+            <p class="text-[9px] sm:text-xs font-black text-green-600 uppercase tracking-widest relative z-10 mb-1">Patients</p>
+            <p class="text-2xl sm:text-4xl font-black text-gray-900 relative z-10">{{ $totalPatients }}</p>
+            <div class="absolute right-0 top-0 p-4 opacity-5 group-hover:opacity-10 transition">
+                <i class="bi bi-people-fill text-6xl text-green-600"></i>
             </div>
-            <p class="text-base font-bold text-gray-500 uppercase tracking-wider relative z-10">Total Patients</p>
-            <p class="text-5xl font-extrabold text-gray-900 mt-2 relative z-10">{{ $totalPatients }}</p>
         </div>
     </div>
 

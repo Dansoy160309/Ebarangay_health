@@ -3,33 +3,56 @@
 @section('title', 'Monthly Vaccine Supply & Usage Report')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="flex flex-col gap-6 sm:gap-8 print:p-0">
     
-    <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 print:hidden">
-        <div>
-            <h1 class="text-3xl font-black text-gray-900 tracking-tight">Vaccine Usage Summary</h1>
-            <p class="text-sm font-bold text-gray-500 uppercase tracking-widest mt-1">DOH-Standard Monthly Supply Report</p>
-        </div>
-        <div class="flex items-center gap-3">
-            <form action="{{ route('admin.reports.vaccines') }}" method="GET" class="flex items-center gap-2">
-                <select name="month" class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-black uppercase">
-                    @for($m=1; $m<=12; $m++)
-                        <option value="{{ sprintf('%02d', $m) }}" {{ $month == sprintf('%02d', $m) ? 'selected' : '' }}>
-                            {{ date('F', mktime(0, 0, 0, $m, 1)) }}
-                        </option>
-                    @endfor
-                </select>
-                <select name="year" class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-black uppercase">
-                    @for($y=date('Y'); $y>=2024; $y--)
-                        <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>{{ $y }}</option>
-                    @endfor
-                </select>
-                <button type="submit" class="px-4 py-2 bg-gray-900 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-gray-800 transition-all">Filter</button>
-            </form>
-            <button onclick="window.print()" class="px-6 py-3 bg-brand-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-brand-700 shadow-lg shadow-brand-500/20 transition-all flex items-center gap-2">
-                <i class="bi bi-printer"></i> Print Report
-            </button>
+    {{-- Top-Aligned Compact Header --}}
+    <div class="relative z-10 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm overflow-hidden group print:hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+        
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8">
+            <div class="max-w-xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 mb-3 sm:mb-4">
+                    <i class="bi bi-shield-check text-xs"></i>
+                    <span class="text-[9px] font-black uppercase tracking-widest">Immunization Control</span>
+                </div>
+                <h1 class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-2 sm:mb-3">
+                    Vaccine <span class="text-brand-600 underline decoration-brand-200 decoration-4 underline-offset-4">Usage Summary</span>
+                </h1>
+                <p class="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed">
+                    DOH-standard monthly supply and usage report for tracking vaccine inventory and administration.
+                </p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                <form action="{{ route('admin.reports.vaccines') }}" method="GET" class="flex flex-wrap items-center gap-2">
+                    <select name="month" class="px-4 py-3 bg-gray-50 border-none rounded-xl text-[10px] font-black uppercase tracking-widest focus:ring-4 focus:ring-brand-500/10 transition-all appearance-none shadow-inner">
+                        @for($m=1; $m<=12; $m++)
+                            <option value="{{ sprintf('%02d', $m) }}" {{ $month == sprintf('%02d', $m) ? 'selected' : '' }}>
+                                {{ date('F', mktime(0, 0, 0, $m, 1)) }}
+                            </option>
+                        @endfor
+                    </select>
+                    <select name="year" class="px-4 py-3 bg-gray-50 border-none rounded-xl text-[10px] font-black uppercase tracking-widest focus:ring-4 focus:ring-brand-500/10 transition-all appearance-none shadow-inner">
+                        @for($y=date('Y'); $y>=2024; $y--)
+                            <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        @endfor
+                    </select>
+                    <button type="submit" class="p-3 bg-gray-900 text-white rounded-xl hover:bg-black transition-all active:scale-95 shadow-lg shadow-gray-200">
+                        <i class="bi bi-filter text-xs"></i>
+                    </button>
+                </form>
+                <div class="h-10 w-[1px] bg-gray-100 mx-1 hidden sm:block"></div>
+                <a href="{{ route('admin.reports.vaccines.export', ['month' => $month, 'year' => $year]) }}" 
+                   class="flex-1 sm:flex-none inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-emerald-600 text-white font-black text-[10px] sm:text-xs uppercase tracking-widest shadow-xl shadow-emerald-500/20 hover:bg-emerald-700 transition-all transform active:scale-95">
+                    <i class="bi bi-file-earmark-excel mr-2"></i>
+                    Export
+                </a>
+                <button onclick="window.print()" 
+                        class="flex-1 sm:flex-none inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-brand-600 text-white font-black text-[10px] sm:text-xs uppercase tracking-widest shadow-xl shadow-brand-500/20 hover:bg-brand-700 transition-all transform active:scale-95">
+                    <i class="bi bi-printer-fill mr-2"></i>
+                    Print
+                </button>
+            </div>
         </div>
     </div>
 
@@ -109,9 +132,13 @@
     @media print {
         body { background: white !important; }
         .max-w-7xl { max-width: 100% !important; padding: 0 !important; }
-        .bg-white { border: none !important; shadow: none !important; }
+        .bg-white { border: none !important; box-shadow: none !important; }
         table { border: 1px solid #e5e7eb !important; }
-        th { background-color: #f9fafb !important; -webkit-print-color-adjust: exact; }
+        th { 
+            background-color: #f9fafb !important; 
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
     }
 </style>
 @endsection

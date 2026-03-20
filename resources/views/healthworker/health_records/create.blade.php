@@ -4,17 +4,23 @@
 
 @section('content')
 <div class="max-w-6xl mx-auto">
-    <!-- Header -->
-    <div class="flex items-center gap-4 mb-8">
-        @php
-            $backRoute = auth()->user()->isAdmin() ? route('admin.health-records.index') : route('healthworker.health-records.index');
-        @endphp
-        <a href="{{ $backRoute }}" class="bg-white p-2 rounded-lg shadow-sm text-gray-500 hover:text-brand-600 transition">
-            <i class="bi bi-arrow-left text-xl"></i>
-        </a>
-        <div>
-            <h1 class="text-2xl font-bold text-gray-800">Create Health Record</h1>
-            <p class="text-gray-500 text-sm">Add a new medical record entry for a patient</p>
+    <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center gap-4">
+            @php
+                $backRoute = auth()->user()->isAdmin() ? route('admin.health-records.index') : route('healthworker.health-records.index');
+            @endphp
+            <a href="{{ $backRoute }}" class="bg-white p-2.5 rounded-xl shadow-sm text-gray-500 hover:text-brand-600 transition border border-gray-100">
+                <i class="bi bi-arrow-left text-xl"></i>
+            </a>
+            <div>
+                <h1 class="text-2xl font-black text-gray-900 tracking-tight">Create Health Record</h1>
+                <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">Consultation & Clinical Documentation</p>
+            </div>
+        </div>
+        <div class="hidden sm:flex flex-col items-end">
+            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 mr-1">Record Date</label>
+            <input type="date" name="created_at" form="healthRecordForm" value="{{ now()->format('Y-m-d') }}"
+                   class="rounded-xl border-gray-100 bg-white p-2 text-xs font-bold focus:ring-brand-500 focus:border-brand-500 transition shadow-sm">
         </div>
     </div>
 
@@ -22,7 +28,7 @@
         $storeRoute = auth()->user()->isAdmin() ? route('admin.health-records.store') : route('healthworker.health-records.store');
     @endphp
 
-    <form method="POST" action="{{ $storeRoute }}"
+    <form method="POST" action="{{ $storeRoute }}" id="healthRecordForm"
           x-data="{ 
             patientId: '{{ old('patient_id') ?? request('patient_id') }}',
             serviceId: '{{ old('service_id') ?? request('service_id') }}',
@@ -269,8 +275,14 @@
                     </h3>
 
                     <!-- Prenatal Fields -->
-                    <div x-show="isPrenatal" class="space-y-8">
+                    <div x-show="isPrenatal" class="space-y-8 animate-in fade-in slide-in-from-top-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="md:col-span-2 flex items-center gap-2 mb-2">
+                                <div class="w-8 h-8 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center">
+                                    <i class="bi bi-person-heart"></i>
+                                </div>
+                                <h4 class="text-sm font-black text-brand-900 uppercase tracking-widest">Pregnancy & Obstetric History</h4>
+                            </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-widest text-[10px] font-black">Last Menstrual Period (LMP)</label>
                                 <input type="date" name="metadata[lmp]" x-model="prenatal.lmp" @change="calculateEDD()"
@@ -282,15 +294,24 @@
                                     class="w-full border-gray-200 rounded-xl shadow-sm focus:border-brand-500 focus:ring-brand-500 bg-brand-50/30 font-black text-brand-700">
                                 <p class="text-[9px] text-brand-500 font-bold mt-1 uppercase tracking-widest"><i class="bi bi-info-circle"></i> Auto-computed based on LMP</p>
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-widest text-[10px] font-black">Gravida (G)</label>
-                                <input type="number" name="metadata[gravida]" x-model="prenatal.gravida" min="1"
-                                    class="w-full border-gray-200 rounded-xl shadow-sm focus:border-brand-500 focus:ring-brand-500 bg-gray-50 font-bold" placeholder="Total pregnancies">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-widest text-[10px] font-black">Gravida (G)</label>
+                                    <input type="number" name="metadata[gravida]" x-model="prenatal.gravida" min="1"
+                                        class="w-full border-gray-200 rounded-xl shadow-sm focus:border-brand-500 focus:ring-brand-500 bg-gray-50 font-bold" placeholder="0">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-widest text-[10px] font-black">Para (P)</label>
+                                    <input type="number" name="metadata[para]" x-model="prenatal.para" min="0"
+                                        class="w-full border-gray-200 rounded-xl shadow-sm focus:border-brand-500 focus:ring-brand-500 bg-gray-50 font-bold" placeholder="0">
+                                </div>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-widest text-[10px] font-black">Para (P)</label>
-                                <input type="number" name="metadata[para]" x-model="prenatal.para" min="0"
-                                    class="w-full border-gray-200 rounded-xl shadow-sm focus:border-brand-500 focus:ring-brand-500 bg-gray-50 font-bold" placeholder="Deliveries reached viability">
+                                <label class="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-widest text-[10px] font-black">Fetal Heart Tone (FHT)</label>
+                                <div class="relative">
+                                    <input type="text" name="metadata[fht]" placeholder="140" class="w-full border-gray-200 rounded-xl shadow-sm focus:border-brand-500 focus:ring-brand-500 bg-gray-50 font-bold pr-12">
+                                    <span class="absolute right-4 top-2.5 text-[10px] font-black text-gray-400 uppercase">bpm</span>
+                                </div>
                             </div>
                         </div>
 
@@ -307,63 +328,75 @@
                             </label>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-widest text-[10px] font-black">Previous Complications</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-widest text-[10px] font-black">Previous Complications / Risk Factors</label>
                                 <textarea name="metadata[previous_complications]" x-model="prenatal.complications" rows="2" 
                                     class="w-full border-gray-200 rounded-xl shadow-sm focus:border-brand-500 focus:ring-brand-500 bg-gray-50 font-bold" 
-                                    placeholder="List any previous pregnancy or delivery complications..."></textarea>
+                                    placeholder="e.g. Pre-eclampsia, gestational diabetes..."></textarea>
                             </div>
                         </div>
                     </div>
 
                     <!-- Immunization Fields -->
-                    <div x-show="isImmunization" class="space-y-8">
+                    <div x-show="isImmunization" class="space-y-8 animate-in fade-in slide-in-from-top-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="md:col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-widest text-[10px] font-black">General Condition</label>
-                                <div class="grid grid-cols-3 gap-3">
-                                    <label class="flex items-center justify-center p-3 border rounded-xl cursor-pointer transition-all"
-                                        :class="immunization.condition === 'Healthy' ? 'border-emerald-500 bg-emerald-50 text-emerald-700 ring-2 ring-emerald-200' : 'border-gray-200 hover:bg-gray-50'">
-                                        <input type="radio" name="metadata[general_condition]" value="Healthy" x-model="immunization.condition" class="sr-only">
-                                        <span class="text-xs font-black uppercase tracking-widest">Healthy</span>
-                                    </label>
-                                    <label class="flex items-center justify-center p-3 border rounded-xl cursor-pointer transition-all"
-                                        :class="immunization.condition === 'With Fever' ? 'border-orange-500 bg-orange-50 text-orange-700 ring-2 ring-orange-200' : 'border-gray-200 hover:bg-gray-50'">
-                                        <input type="radio" name="metadata[general_condition]" value="With Fever" x-model="immunization.condition" class="sr-only">
-                                        <span class="text-xs font-black uppercase tracking-widest">With Fever</span>
-                                    </label>
-                                    <label class="flex items-center justify-center p-3 border rounded-xl cursor-pointer transition-all"
-                                        :class="immunization.condition === 'Sick' ? 'border-red-500 bg-red-50 text-red-700 ring-2 ring-red-200' : 'border-gray-200 hover:bg-gray-50'">
-                                        <input type="radio" name="metadata[general_condition]" value="Sick" x-model="immunization.condition" class="sr-only">
-                                        <span class="text-xs font-black uppercase tracking-widest">Sick</span>
-                                    </label>
+                            <div class="md:col-span-2 flex items-center gap-2 mb-2">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                                    <i class="bi bi-shield-plus"></i>
                                 </div>
-                                
-                                <template x-if="temp > 37.5 && isImmunization">
-                                    <div class="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3 text-red-700">
-                                        <i class="bi bi-exclamation-triangle-fill text-xl"></i>
-                                        <p class="text-xs font-black uppercase tracking-widest leading-relaxed">
-                                            Warning: High temperature detected. Clinical guidelines recommend delaying vaccination if fever is present.
-                                        </p>
-                                    </div>
-                                </template>
+                                <h4 class="text-sm font-black text-emerald-900 uppercase tracking-widest">Vaccination & Growth Monitoring</h4>
                             </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-widest text-[10px] font-black">Vaccine Antigen Given</label>
+                                <input type="text" name="metadata[vaccine_given]" placeholder="e.g. Pentavalent, PCV"
+                                    class="w-full border-gray-200 rounded-xl shadow-sm focus:border-brand-500 focus:ring-brand-500 bg-gray-50 font-bold">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-widest text-[10px] font-black">Dose Number</label>
+                                <select name="metadata[dose_no]" class="w-full border-gray-200 rounded-xl shadow-sm focus:border-brand-500 focus:ring-brand-500 bg-gray-50 font-bold">
+                                    <option value="1">1st Dose</option>
+                                    <option value="2">2nd Dose</option>
+                                    <option value="3">3rd Dose</option>
+                                    <option value="booster">Booster</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-widest text-[10px] font-black">MUAC (cm)</label>
+                                    <input type="number" step="0.1" name="metadata[muac]" placeholder="12.5"
+                                        class="w-full border-gray-200 rounded-xl shadow-sm focus:border-brand-500 focus:ring-brand-500 bg-gray-50 font-bold text-center">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-widest text-[10px] font-black">Head Circ. (cm)</label>
+                                    <input type="number" step="0.1" name="metadata[head_circ]" placeholder="45.0"
+                                        class="w-full border-gray-200 rounded-xl shadow-sm focus:border-brand-500 focus:ring-brand-500 bg-gray-50 font-bold text-center">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-widest text-[10px] font-black">General Condition</label>
+                                <select name="metadata[general_condition]" x-model="immunization.condition"
+                                    class="w-full border-gray-200 rounded-xl shadow-sm focus:border-brand-500 focus:ring-brand-500 bg-gray-50 font-bold">
+                                    <option value="Healthy">Healthy</option>
+                                    <option value="With Fever">With Fever</option>
+                                    <option value="Sick">Sick</option>
+                                </select>
+                            </div>
+                        </div>
 
-                            <div class="md:col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-widest text-[10px] font-black">Allergy History</label>
-                                <textarea name="metadata[allergy_history]" x-model="immunization.allergies" rows="2" 
+                        <template x-if="temp > 37.5 && isImmunization">
+                            <div class="p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3 text-red-700">
+                                <i class="bi bi-exclamation-triangle-fill text-xl"></i>
+                                <p class="text-xs font-black uppercase tracking-widest leading-relaxed">
+                                    Warning: High temperature detected. Clinical guidelines recommend delaying vaccination if fever is present.
+                                </p>
+                            </div>
+                        </template>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-widest text-[10px] font-black">Remarks / Adverse Reactions</label>
+                                <textarea name="metadata[remarks]" x-model="immunization.remarks" rows="2" 
                                     class="w-full border-gray-200 rounded-xl shadow-sm focus:border-brand-500 focus:ring-brand-500 bg-gray-50 font-bold" 
-                                    placeholder="List any known allergies to vaccines or medications..."></textarea>
-                            </div>
-
-                            <div class="md:col-span-2">
-                                <label class="flex items-center gap-3 p-4 border rounded-xl cursor-pointer transition-colors"
-                                    :class="immunization.prev_reaction ? 'border-orange-500 bg-orange-50' : 'border-gray-200 hover:bg-gray-50'">
-                                    <input type="checkbox" name="metadata[previous_vaccine_reaction]" x-model="immunization.prev_reaction" value="1" class="w-5 h-5 text-orange-600 rounded focus:ring-orange-500 border-gray-300">
-                                    <div>
-                                        <span class="font-bold text-gray-900 block text-sm">Previous Vaccine Reaction</span>
-                                        <span class="text-xs text-gray-500 block">Check if the child had an adverse reaction to previous doses</span>
-                                    </div>
-                                </label>
+                                    placeholder="e.g. No reaction from previous dose, well-baby..."></textarea>
                             </div>
                         </div>
                     </div>

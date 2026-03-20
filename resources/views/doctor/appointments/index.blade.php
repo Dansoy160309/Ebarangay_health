@@ -10,121 +10,110 @@
         $providerLabel = $user->isMidwife() ? 'Midwife' : 'Doctor';
     @endphp
 
-    {{-- Header Section --}}
-    <div class="mb-10 bg-gradient-to-br from-brand-700 via-brand-600 to-brand-500 rounded-[2.5rem] p-8 sm:p-12 text-white shadow-2xl relative overflow-hidden">
-        <!-- Decorative elements -->
+    {{-- Top-Aligned Compact Header --}}
+    <div class="bg-gradient-to-br from-brand-700 via-brand-600 to-brand-500 rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 text-white shadow-xl relative overflow-hidden mb-8 group">
         <div class="absolute inset-0 bg-white/5 opacity-10" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
-        <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-white/10 rounded-full blur-3xl"></div>
-        <div class="absolute right-10 top-10 opacity-10">
-            <i class="bi bi-calendar-check text-[15rem] leading-none"></i>
-        </div>
-
-        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
+        
+        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
             <div class="max-w-xl">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-inner">
-                        <i class="bi bi-heart-pulse-fill text-2xl"></i>
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-inner">
+                        <i class="bi bi-heart-pulse-fill text-xl"></i>
                     </div>
-                    <span class="text-xs font-black uppercase tracking-[0.2em] opacity-80">Clinical Workspace</span>
+                    <span class="text-[10px] font-black uppercase tracking-[0.2em] opacity-80">Clinical Workspace</span>
                 </div>
-                <h1 class="text-4xl sm:text-5xl font-black mb-4 tracking-tight leading-tight">
+                <h1 class="text-2xl sm:text-4xl font-black mb-2 tracking-tight leading-tight">
                     My Appointments
                 </h1>
-                <p class="text-brand-50 text-lg font-medium leading-relaxed opacity-90">
-                    Welcome, {{ $providerLabel }} {{ $user->last_name }}. Manage your clinical schedule and patient consultations with ease.
+                <p class="text-brand-50 text-xs sm:text-sm font-medium leading-relaxed opacity-90">
+                    Welcome, {{ $providerLabel }} {{ $user->last_name }}. Manage your schedule and consultations.
                 </p>
             </div>
 
-            <!-- Header Stats -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 w-full lg:w-auto shrink-0">
-                <div class="bg-white/10 backdrop-blur-md p-5 rounded-3xl border border-white/20 text-center shadow-lg group hover:bg-white/20 transition-all duration-300">
-                    <p class="text-[10px] font-black uppercase tracking-widest opacity-70 mb-2">Today's Load</p>
-                    <p class="text-3xl font-black tracking-tighter">{{ $stats['today_total'] }}</p>
+            {{-- Compact Header Stats --}}
+            <div class="flex items-center gap-3 sm:gap-4 w-full lg:w-auto shrink-0 overflow-x-auto pb-2 sm:pb-0 no-scrollbar">
+                <div class="bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/20 flex flex-col items-center justify-center min-w-[100px] shadow-lg group-hover:bg-white/20 transition-all duration-300">
+                    <p class="text-[8px] font-black uppercase tracking-widest opacity-70 mb-1">Today</p>
+                    <p class="text-xl sm:text-2xl font-black tracking-tighter">{{ $stats['today_total'] }}</p>
                 </div>
-                <div class="bg-white/10 backdrop-blur-md p-5 rounded-3xl border border-white/20 text-center shadow-lg group hover:bg-white/20 transition-all duration-300">
-                    <p class="text-[10px] font-black uppercase tracking-widest opacity-70 mb-2">Ready</p>
-                    <p class="text-3xl font-black tracking-tighter text-green-300">{{ $stats['ready'] }}</p>
+                <div class="bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/20 flex flex-col items-center justify-center min-w-[100px] shadow-lg group-hover:bg-white/20 transition-all duration-300">
+                    <p class="text-[8px] font-black uppercase tracking-widest opacity-70 mb-1 text-green-200">Ready</p>
+                    <p class="text-xl sm:text-2xl font-black tracking-tighter text-green-300">{{ $stats['ready'] }}</p>
                 </div>
-                <div class="hidden sm:block bg-white/10 backdrop-blur-md p-5 rounded-3xl border border-white/20 text-center shadow-lg group hover:bg-white/20 transition-all duration-300">
-                    <p class="text-[10px] font-black uppercase tracking-widest opacity-70 mb-2">Pending Vitals</p>
-                    <p class="text-3xl font-black tracking-tighter text-orange-300">{{ $stats['pending_vitals'] }}</p>
+                <div class="bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/20 flex flex-col items-center justify-center min-w-[100px] shadow-lg group-hover:bg-white/20 transition-all duration-300">
+                    <p class="text-[8px] font-black uppercase tracking-widest opacity-70 mb-1 text-orange-200">Wait</p>
+                    <p class="text-xl sm:text-2xl font-black tracking-tighter text-orange-300">{{ $stats['pending_vitals'] }}</p>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- Action Bar & Filters --}}
-    <div class="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 p-8 mb-10">
-        <div class="flex flex-col lg:flex-row gap-8">
+    {{-- Action Bar & Filters (Made more compact) --}}
+    <div class="bg-white rounded-[2rem] shadow-lg shadow-gray-200/50 border border-gray-100 p-5 sm:p-6 mb-8">
+        <div class="flex flex-col lg:flex-row gap-6">
             
             <!-- Quick Navigation (Midwife Only) -->
             @if(auth()->user()->isMidwife())
-            <div class="flex items-center p-1.5 bg-gray-50 rounded-2xl border border-gray-100">
+            <div class="flex items-center p-1 bg-gray-50 rounded-xl border border-gray-100 shrink-0">
                 <a href="{{ route($routePrefix . '.appointments.index') }}" 
-                   class="px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all {{ request()->routeIs('midwife.appointments.*') ? 'bg-brand-600 text-white shadow-lg' : 'text-gray-400 hover:text-gray-600' }}">
+                   class="px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all {{ !request()->routeIs('midwife.slots.*') ? 'bg-brand-600 text-white shadow-md' : 'text-gray-400 hover:text-gray-600' }}">
                     Appointments
                 </a>
                 <a href="{{ route('midwife.slots.index') }}" 
-                   class="px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all {{ request()->routeIs('midwife.slots.*') ? 'bg-brand-600 text-white shadow-lg' : 'text-gray-400 hover:text-gray-600' }}">
+                   class="px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all {{ request()->routeIs('midwife.slots.*') ? 'bg-brand-600 text-white shadow-md' : 'text-gray-400 hover:text-gray-600' }}">
                     Slots
                 </a>
             </div>
             @endif
 
             <!-- Unified Filter Form -->
-            <form action="{{ route($routePrefix . '.appointments.index') }}" method="GET" class="flex-1 grid grid-cols-1 md:grid-cols-4 gap-6">
+            <form action="{{ route($routePrefix . '.appointments.index') }}" method="GET" class="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- Search -->
-                <div class="md:col-span-1">
-                    <div class="relative group">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
-                            <i class="bi bi-search"></i>
-                        </div>
-                        <input type="text" name="search" value="{{ request('search') }}" autocomplete="off"
-                               class="block w-full pl-11 pr-4 py-3.5 bg-gray-50 border-gray-100 rounded-2xl text-sm font-bold focus:ring-brand-500 focus:border-brand-500 transition-all"
-                               placeholder="Search Patient Name...">
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
+                        <i class="bi bi-search text-xs"></i>
                     </div>
+                    <input type="text" name="search" value="{{ request('search') }}" autocomplete="off"
+                           class="block w-full pl-10 pr-4 py-2.5 bg-gray-50 border-none rounded-xl text-xs font-bold focus:ring-4 focus:ring-brand-500/10 focus:bg-white transition-all shadow-inner placeholder:text-gray-400"
+                           placeholder="Patient Name...">
                 </div>
 
                 <!-- Date -->
-                <div>
-                    <div class="relative group">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
-                            <i class="bi bi-calendar3"></i>
-                        </div>
-                        <input type="date" name="date" id="dateInput" value="{{ request('date') }}"
-                               class="block w-full pl-11 pr-4 py-3.5 bg-gray-50 border-gray-100 rounded-2xl text-sm font-bold focus:ring-brand-500 focus:border-brand-500 transition-all">
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
+                        <i class="bi bi-calendar3 text-xs"></i>
                     </div>
+                    <input type="date" name="date" id="dateInput" value="{{ request('date') }}"
+                           class="block w-full pl-10 pr-4 py-2.5 bg-gray-50 border-none rounded-xl text-xs font-bold focus:ring-4 focus:ring-brand-500/10 focus:bg-white transition-all shadow-inner">
                 </div>
 
                 <!-- Status -->
-                <div>
-                    <div class="relative group">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
-                            <i class="bi bi-funnel-fill"></i>
-                        </div>
-                        <select name="status" class="block w-full pl-11 pr-10 py-3.5 bg-gray-50 border-gray-100 rounded-2xl text-sm font-bold focus:ring-brand-500 focus:border-brand-500 transition-all appearance-none cursor-pointer">
-                            <option value="">Status: Active</option>
-                            <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active Items</option>
-                            <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed</option>
-                            <option value="no_show" {{ request('status') === 'no_show' ? 'selected' : '' }}>No Show</option>
-                            <option value="archived" {{ request('status') === 'archived' ? 'selected' : '' }}>Archived</option>
-                            <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                            <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="all" {{ request('status') === 'all' ? 'selected' : '' }}>All Records</option>
-                        </select>
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
+                        <i class="bi bi-funnel-fill text-xs"></i>
                     </div>
+                    <select name="status" class="block w-full pl-10 pr-10 py-2.5 bg-gray-50 border-none rounded-xl text-xs font-black uppercase tracking-wider focus:ring-4 focus:ring-brand-500/10 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner">
+                        <option value="">Status: Active</option>
+                        <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active Items</option>
+                        <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed</option>
+                        <option value="no_show" {{ request('status') === 'no_show' ? 'selected' : '' }}>No Show</option>
+                        <option value="archived" {{ request('status') === 'archived' ? 'selected' : '' }}>Archived</option>
+                        <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                        <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="all" {{ request('status') === 'all' ? 'selected' : '' }}>All Records</option>
+                    </select>
                 </div>
 
                 <!-- Buttons -->
-                <div class="flex items-center gap-3">
-                    <button type="submit" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-brand-600/20 active:scale-[0.98] flex items-center justify-center gap-2">
-                        <i class="bi bi-filter"></i> Apply
+                <div class="flex items-center gap-2">
+                    <button type="submit" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md shadow-brand-600/20 active:scale-95 flex items-center justify-center gap-2">
+                        Apply
                     </button>
-                    <button type="button" id="btnToday" class="p-3.5 bg-gray-100 text-gray-500 rounded-2xl hover:bg-gray-200 transition-all" title="Today">
-                        <i class="bi bi-calendar-event-fill"></i>
+                    <button type="button" id="btnToday" class="p-2.5 bg-gray-100 text-gray-500 rounded-xl hover:bg-gray-200 transition-all active:scale-95 shadow-sm" title="Today">
+                        <i class="bi bi-calendar-event"></i>
                     </button>
                     @if(request()->anyFilled(['search', 'date', 'status']))
-                        <a href="{{ route($routePrefix . '.appointments.index') }}" class="p-3.5 bg-red-50 text-red-500 rounded-2xl hover:bg-red-100 transition-all" title="Clear Filters">
+                        <a href="{{ route($routePrefix . '.appointments.index') }}" class="p-2.5 bg-red-50 text-red-500 rounded-xl hover:bg-red-100 transition-all active:scale-95 shadow-sm" title="Clear Filters">
                             <i class="bi bi-x-lg"></i>
                         </a>
                     @endif

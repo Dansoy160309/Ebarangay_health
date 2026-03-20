@@ -3,35 +3,35 @@
 @section('title', 'Notifications')
 
 @section('content')
-<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12 relative overflow-hidden bg-[#fcfcfd] font-sans">
-    {{-- Decorative Background Blobs --}}
-    <div class="absolute top-0 right-0 w-[30rem] h-[30rem] bg-brand-50/20 rounded-full blur-3xl -mr-60 -mt-60 opacity-30 pointer-events-none"></div>
-    <div class="absolute bottom-0 left-0 w-[30rem] h-[30rem] bg-blue-50/20 rounded-full blur-3xl -ml-60 -mb-60 opacity-30 pointer-events-none"></div>
-
-    <!-- Header Section -->
-    <div class="bg-white rounded-[3.5rem] p-10 lg:p-14 border border-gray-100 shadow-sm relative overflow-hidden group">
-        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50"></div>
+<div class="flex flex-col gap-6 sm:gap-8">
+    
+    {{-- Top-Aligned Compact Header --}}
+    <div class="relative z-10 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
         
-        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-10">
-            <div>
-                <div class="flex items-center gap-3 mb-6">
-                    <span class="text-[10px] font-black text-brand-600 uppercase tracking-[0.3em] bg-brand-50 px-4 py-2 rounded-xl border border-brand-100/50">Communication Hub</span>
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8">
+            <div class="max-w-xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 mb-3 sm:mb-4">
+                    <i class="bi bi-bell-fill text-xs"></i>
+                    <span class="text-[9px] font-black uppercase tracking-widest">Communication Hub</span>
                 </div>
-                <h1 class="text-4xl lg:text-5xl font-black text-gray-900 tracking-tight leading-[1.1]">
-                    Your <span class="text-brand-600 underline decoration-brand-200 decoration-8 underline-offset-4">Notifications</span>
+                <h1 class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-2 sm:mb-3">
+                    Your <span class="text-brand-600 underline decoration-brand-200 decoration-4 underline-offset-4">Notifications</span>
                 </h1>
-                <p class="text-gray-400 font-bold text-sm sm:text-base mt-4 flex items-center gap-2">
+                <p class="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed">
                     Stay connected with your health center's latest updates and medical reminders.
                 </p>
             </div>
 
-            @if($notifications->whereNull('read_at')->count() > 0)
-                <a href="{{ route('notifications.markAll') }}" 
-                   class="inline-flex items-center px-8 py-5 bg-white text-gray-500 rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] border border-gray-100 hover:bg-gray-50 hover:text-brand-600 hover:border-brand-200 transition-all shadow-sm gap-4 active:scale-95">
-                    <i class="bi bi-check2-all text-xl"></i>
-                    Mark All Read
-                </a>
-            @endif
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                @if($notifications->whereNull('read_at')->count() > 0)
+                    <a href="{{ route('notifications.markAll') }}" 
+                       class="flex-1 sm:flex-none inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-white border border-gray-200 text-gray-700 font-black text-[10px] sm:text-xs uppercase tracking-widest shadow-sm hover:bg-gray-50 transition-all active:scale-95">
+                        <i class="bi bi-check2-all mr-2"></i>
+                        Mark All Read
+                    </a>
+                @endif
+            </div>
         </div>
     </div>
 

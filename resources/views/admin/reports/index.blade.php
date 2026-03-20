@@ -3,6 +3,112 @@
 @section('title', 'Reports & Analytics')
 
 @section('content')
+<style>
+    @media print {
+        /* 1. Reset Page and Margin */
+        @page {
+            size: A4 portrait;
+            margin: 1.5cm;
+        }
+
+        /* 2. Hide Web Elements */
+        .print\:hidden,
+        nav,
+        .sticky,
+        button,
+        a,
+        form,
+        .absolute.-inset-1 {
+            display: none !important;
+        }
+
+        /* 3. Layout Fixes */
+        body {
+            background-color: white !important;
+            color: black !important;
+            font-size: 10pt !important;
+        }
+
+        .min-h-screen {
+            min-height: auto !important;
+            padding-bottom: 0 !important;
+        }
+
+        .max-w-\[1600px\] {
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* 4. Force Backgrounds (Important for Charts/Badges) */
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        /* 5. Card Adjustments */
+        .bg-white {
+            border: 1px solid #eee !important;
+            box-shadow: none !important;
+        }
+
+        .rounded-\[3rem\], .rounded-\[2\.5rem\], .rounded-2xl {
+            border-radius: 1rem !important;
+        }
+
+        /* 6. Typography */
+        h1 { font-size: 24pt !important; margin-bottom: 10pt !important; }
+        h3 { font-size: 16pt !important; margin-bottom: 15pt !important; }
+        .text-4xl { font-size: 20pt !important; }
+        .text-lg { font-size: 11pt !important; }
+
+        /* 7. Grid Layouts for Print */
+        .grid {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 15pt !important;
+        }
+
+        .lg\:grid-cols-4 > * {
+            width: calc(25% - 15pt) !important;
+        }
+
+        .lg\:grid-cols-12 .lg\:col-span-4 { width: 33% !important; }
+        .lg\:grid-cols-12 .lg\:col-span-8 { width: 65% !important; }
+        
+        .md\:grid-cols-2 > * {
+            width: calc(50% - 15pt) !important;
+        }
+
+        .lg\:grid-cols-3 > * {
+            width: calc(33.33% - 15pt) !important;
+        }
+
+        /* 8. Page Breaks */
+        .break-inside-avoid {
+            page-break-inside: avoid !important;
+        }
+
+        /* 9. Header Branding (Optional: Show only on print) */
+        .print-only-header {
+            display: block !important;
+            text-align: center;
+            margin-bottom: 30pt;
+            border-bottom: 2pt solid #0ea5e9;
+            padding-bottom: 10pt;
+        }
+        
+        .print-only-header h2 { font-weight: 900; color: #0ea5e9; font-size: 18pt; }
+    }
+
+    .print-only-header { display: none; }
+</style>
+
+<div class="print-only-header">
+    <h2>E-BARANGAY HEALTH SYSTEM</h2>
+    <p class="text-xs uppercase font-bold tracking-widest text-gray-500">Official Health Analytics Report • {{ now()->format('F d, Y h:i A') }}</p>
+</div>
+
 <div class="min-h-screen bg-gray-50/50 pb-12">
     {{-- Top Navigation Bar --}}
     <nav class="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-100 mb-8">
@@ -24,6 +130,10 @@
                         <span class="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse"></span>
                         Live Analytics
                     </span>
+                    <a href="{{ route('admin.reports.export', ['start_date' => $startDate, 'end_date' => $endDate]) }}" class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-100 transition-all flex items-center gap-2 text-sm font-bold border border-emerald-100" title="Export to Excel">
+                        <i class="bi bi-file-earmark-excel"></i>
+                        <span class="hidden sm:inline">Export</span>
+                    </a>
                     <button onclick="window.print()" class="p-2 text-gray-500 hover:text-brand-600 hover:bg-brand-50 rounded-xl transition-all border border-transparent hover:border-brand-100">
                         <i class="bi bi-printer text-lg"></i>
                     </button>
@@ -32,51 +142,54 @@
         </div>
     </nav>
 
-    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-10 relative">
-        {{-- Hero Header Section --}}
-        <div class="mb-12 relative group">
-            <div class="absolute -inset-1 bg-gradient-to-r from-brand-600 to-purple-600 rounded-[3rem] blur opacity-10"></div>
-            <div class="relative bg-white rounded-[3rem] shadow-sm border border-gray-100 p-8 sm:p-12 overflow-hidden">
-                {{-- Decorative background elements --}}
-                <div class="absolute top-0 right-0 w-64 h-64 -mr-20 -mt-20 bg-brand-50/50 rounded-full blur-3xl -z-10"></div>
-                <div class="absolute bottom-0 left-0 w-48 h-48 -ml-10 -mb-10 bg-purple-50/50 rounded-full blur-3xl -z-10"></div>
-                
-                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-                    <div class="flex items-center gap-8">
-                        <div class="w-24 h-24 rounded-[2rem] bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center text-white text-4xl font-black shadow-xl shadow-brand-100">
-                            <i class="bi bi-graph-up-arrow"></i>
-                        </div>
-                        <div>
-                            <h1 class="text-4xl font-black text-gray-900 tracking-tight leading-none mb-3">Reports & Analytics</h1>
-                            <p class="text-lg font-medium text-gray-500 max-w-md leading-relaxed">
-                                Comprehensive overview of health center performance and patient health trends.
-                            </p>
-                        </div>
-                    </div>
+<div class="flex flex-col gap-6 sm:gap-8 relative">
+    {{-- Top-Aligned Compact Header --}}
+    <div class="relative z-10 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+        
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8">
+            <div class="max-w-xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 mb-3 sm:mb-4">
+                    <i class="bi bi-graph-up-arrow text-xs"></i>
+                    <span class="text-[9px] font-black uppercase tracking-widest">Analytics Dashboard</span>
+                </div>
+                <h1 class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-2 sm:mb-3">
+                    Reports & <span class="text-brand-600 underline decoration-brand-200 decoration-4 underline-offset-4">Analytics</span>
+                </h1>
+                <p class="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed">
+                    Comprehensive overview of health center performance, patient trends, and operational metrics.
+                </p>
+            </div>
 
-                    {{-- Actions & Filters --}}
-                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 print:hidden">
-                        <a href="{{ route('admin.reports.fhsis') }}" class="group flex items-center gap-3 px-8 py-4 bg-purple-600 text-white text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-purple-700 hover:shadow-xl hover:shadow-purple-100 transition-all duration-300">
-                            <i class="bi bi-file-earmark-medical text-lg group-hover:scale-110 transition-transform"></i> 
-                            FHSIS Summary
-                        </a>
-                        
-                        <div class="h-14 bg-gray-50 rounded-2xl border border-gray-100 p-1.5 flex items-center shadow-inner">
-                            <form id="filterForm" action="{{ route('admin.reports.index') }}" method="GET" class="flex items-center gap-2 h-full">
-                                <div class="flex items-center gap-2 px-4 h-full">
-                                    <input type="date" name="start_date" id="startDate" value="{{ $startDate }}" class="bg-transparent border-none text-xs font-black text-gray-700 focus:ring-0 p-0 w-28 uppercase">
-                                    <span class="text-gray-300 font-bold">→</span>
-                                    <input type="date" name="end_date" id="endDate" value="{{ $endDate }}" class="bg-transparent border-none text-xs font-black text-gray-700 focus:ring-0 p-0 w-28 uppercase">
-                                </div>
-                                <button type="submit" class="h-full px-6 bg-brand-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-700 transition-all shadow-md shadow-brand-100">
-                                    Apply
-                                </button>
-                            </form>
-                        </div>
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 print:hidden">
+                    <div class="flex items-center gap-2 p-1.5 bg-gray-50 rounded-2xl border border-gray-100 shadow-inner">
+                        <form id="filterForm" action="{{ route('admin.reports.index') }}" method="GET" class="flex items-center gap-2">
+                            <input type="date" name="start_date" id="startDate" value="{{ $startDate }}" 
+                                   class="bg-transparent border-none text-[10px] font-black text-gray-700 focus:ring-0 p-2 w-28 uppercase">
+                            <span class="text-gray-300 font-black text-[10px]">→</span>
+                            <input type="date" name="end_date" id="endDate" value="{{ $endDate }}" 
+                                   class="bg-transparent border-none text-[10px] font-black text-gray-700 focus:ring-0 p-2 w-28 uppercase">
+                            <button type="submit" class="p-2.5 bg-gray-900 text-white rounded-xl hover:bg-black transition-all active:scale-95 shadow-lg shadow-gray-200">
+                                <i class="bi bi-search text-xs"></i>
+                            </button>
+                        </form>
                     </div>
+                    <div class="h-10 w-[1px] bg-gray-100 mx-1 hidden sm:block"></div>
+                    <a href="{{ route('admin.reports.fhsis') }}" 
+                       class="flex-1 sm:flex-none inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-purple-600 text-white font-black text-[10px] sm:text-xs uppercase tracking-widest shadow-xl shadow-purple-500/20 hover:bg-purple-700 transition-all transform active:scale-95">
+                        <i class="bi bi-file-earmark-medical mr-2"></i>
+                        FHSIS
+                    </a>
+                    <a href="{{ route('admin.reports.export', ['start_date' => $startDate, 'end_date' => $endDate]) }}" 
+                       class="flex-1 sm:flex-none inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-emerald-600 text-white font-black text-[10px] sm:text-xs uppercase tracking-widest shadow-xl shadow-emerald-500/20 hover:bg-emerald-700 transition-all transform active:scale-95">
+                        <i class="bi bi-file-earmark-excel mr-2"></i>
+                        Export
+                    </a>
                 </div>
             </div>
         </div>
+    </div>
 
         {{-- Performance KPIs --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">

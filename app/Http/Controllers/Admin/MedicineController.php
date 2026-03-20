@@ -8,6 +8,7 @@ use App\Models\MedicineDistribution;
 use App\Models\MedicineSupply;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class MedicineController extends Controller
 {
@@ -55,7 +56,7 @@ class MedicineController extends Controller
         $initialStock = $data['stock'] ?? 0;
         unset($data['stock']);
 
-        \DB::transaction(function () use ($data, $initialStock) {
+        DB::transaction(function () use ($data, $initialStock) {
             $medicine = Medicine::create($data + ['stock' => 0]);
 
             if ($initialStock > 0) {
@@ -245,6 +246,116 @@ class MedicineController extends Controller
         ]);
     }
 
+    /**
+     * Export Medicine Reports to CSV
+     */
+    public function exportExcel(Request $request)
+    {
+        $type = $request->input('type', 'daily');
+        $date = $request->input('date', Carbon::today()->toDateString());
+        $year = $request->input('year', Carbon::today()->year);
+        $month = $request->input('month', Carbon::today()->month);
+
+        $filename = "Medicine_Report_{$type}_" . ($type === 'daily' ? $date : "{$year}_{$month}") . ".csv";
+
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $callback = function() use ($type, $date, $year, $month) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+
+            fputcsv($file, ['MEDICINE REPORT - ' . strtoupper($type)]);
+            fputcsv($file, ['Period:', $type === 'daily' ? $date : Carbon::create()->month($month)->format('F') . ' ' . $year]);
+            fputcsv($file, []);
+
+            // 1. Distribution Summary
+            fputcsv($file, ['--- DISTRIBUTION SUMMARY ---']);
+            fputcsv($file, ['Medicine', 'Generic Name', 'Brand Name', 'Total Units', 'Doses/Patients']);
+            
+            $distQuery = MedicineDistribution::with('medicine');
+            if ($type === 'daily') {
+                $distQuery->whereDate('distributed_at', $date);
+            } else {
+                $distQuery->whereYear('distributed_at', $year)->whereMonth('distributed_at', $month);
+            }
+            
+            $usage = $distQuery->get()->groupBy('medicine_id')->map(function ($group) {
+                return [
+                    'medicine' => $group->first()->medicine,
+                    'qty' => $group->sum('quantity'),
+                    'count' => $group->count(),
+                ];
+            });
+
+            foreach($usage as $row) {
+                fputcsv($file, [
+                    $row['medicine']->generic_name,
+                    $row['medicine']->generic_name,
+                    $row['medicine']->brand_name ?? 'Generic',
+                    $row['qty'],
+                    $row['count']
+                ]);
+            }
+            fputcsv($file, []);
+
+            // 2. Supply Summary
+            fputcsv($file, ['--- SUPPLY SUMMARY ---']);
+            fputcsv($file, ['Medicine', 'Generic Name', 'Brand Name', 'Total Qty Received', 'Batches']);
+            
+            $supplyQuery = MedicineSupply::with('medicine');
+            if ($type === 'daily') {
+                $supplyQuery->whereDate('date_received', $date);
+            } else {
+                $supplyQuery->whereYear('date_received', $year)->whereMonth('date_received', $month);
+            }
+            
+            $supplies = $supplyQuery->get()->groupBy('medicine_id')->map(function ($group) {
+                return [
+                    'medicine' => $group->first()->medicine,
+                    'qty' => $group->sum('quantity'),
+                    'count' => $group->count(),
+                ];
+            });
+
+            foreach($supplies as $row) {
+                fputcsv($file, [
+                    $row['medicine']->generic_name,
+                    $row['medicine']->generic_name,
+                    $row['medicine']->brand_name ?? 'Generic',
+                    $row['qty'],
+                    $row['count']
+                ]);
+            }
+            fputcsv($file, []);
+
+            // 3. Current Inventory
+            fputcsv($file, ['--- CURRENT INVENTORY STATUS ---']);
+            fputcsv($file, ['Medicine', 'Brand', 'Current Stock', 'Reorder Level', 'Status']);
+            
+            $medicines = Medicine::orderBy('generic_name')->get();
+            foreach($medicines as $m) {
+                $status = $m->stock <= $m->reorder_level ? 'LOW STOCK' : 'Normal';
+                fputcsv($file, [
+                    $m->generic_name,
+                    $m->brand_name ?? 'Generic',
+                    $m->stock,
+                    $m->reorder_level,
+                    $status
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
     public function supplies(Request $request)
     {
         $query = MedicineSupply::with(['medicine', 'receiver']);
@@ -291,7 +402,7 @@ class MedicineController extends Controller
 
         $medicine = Medicine::findOrFail($data['medicine_id']);
 
-        \DB::transaction(function () use ($data, $medicine) {
+        DB::transaction(function () use ($data, $medicine) {
             MedicineSupply::create([
                 'medicine_id' => $medicine->id,
                 'batch_number' => $data['batch_number'] ?? null,

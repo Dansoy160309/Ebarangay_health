@@ -3,66 +3,46 @@
 @section('title', 'Dispense Medicine')
 
 @section('content')
-<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+<div class="flex flex-col gap-6 sm:gap-8">
     
-    {{-- Breadcrumbs --}}
-    <nav class="flex" aria-label="Breadcrumb">
-        <ol class="inline-flex items-center space-x-1 md:space-x-3 text-[10px] font-black uppercase tracking-[0.2em]">
-            <li class="inline-flex items-center">
-                <a href="{{ route('dashboard') }}" class="text-gray-400 hover:text-brand-600 transition-colors flex items-center gap-2">
-                    <i class="bi bi-house-door"></i>
-                    Dashboard
-                </a>
-            </li>
-            <li>
-                <div class="flex items-center text-gray-400">
-                    <i class="bi bi-chevron-right mx-2 text-[8px] opacity-50"></i>
-                    <span class="text-gray-400">Medicines</span>
+    {{-- Top-Aligned Compact Header --}}
+    <div class="relative z-10 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+        
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8">
+            <div class="max-w-xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 mb-3 sm:mb-4">
+                    <i class="bi bi-capsule text-xs"></i>
+                    <span class="text-[9px] font-black uppercase tracking-widest">Pharmacy Management</span>
                 </div>
-            </li>
-            <li>
-                <div class="flex items-center text-gray-400">
-                    <i class="bi bi-chevron-right mx-2 text-[8px] opacity-50"></i>
-                    <span class="text-brand-600">Dispense Medicine</span>
-                </div>
-            </li>
-        </ol>
-    </nav>
-
-    {{-- Page Header --}}
-    <div class="bg-white rounded-[3.5rem] p-10 lg:p-14 border border-gray-100 shadow-sm relative overflow-hidden group">
-        <div class="absolute top-0 right-0 w-96 h-96 bg-brand-50 rounded-full blur-3xl -mr-48 -mt-48 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
-        <div class="absolute bottom-0 left-0 w-64 h-64 bg-blue-50 rounded-full blur-3xl -ml-32 -mb-32 opacity-30 group-hover:opacity-50 transition-opacity duration-700"></div>
-
-        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-12">
-            <div class="max-w-2xl">
-                <div class="inline-flex items-center gap-3 px-4 py-2 rounded-2xl bg-brand-50 text-brand-600 border border-brand-100 mb-6">
-                    <i class="bi bi-capsule text-sm animate-bounce"></i>
-                    <span class="text-[10px] font-black uppercase tracking-[0.2em]">Pharmacy Management</span>
-                </div>
-                <h1 class="text-4xl lg:text-5xl font-black text-gray-900 tracking-tight leading-[1.1]">
-                    Dispense <span class="text-brand-600 underline decoration-brand-200 decoration-8 underline-offset-4">Medicine</span>
+                <h1 class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-2 sm:mb-3">
+                    Dispense <span class="text-brand-600 underline decoration-brand-200 decoration-4 underline-offset-4">Medicine</span>
                 </h1>
-                <p class="text-gray-500 font-medium mt-6 text-lg leading-relaxed">
+                <p class="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed">
                     Record medicine distribution for patients. Use quick search to find patients and available medicine stocks.
                 </p>
             </div>
-            
-            <div class="flex flex-col gap-4 w-full lg:w-auto">
-                <div class="bg-gray-50/80 backdrop-blur-sm p-6 rounded-[2.5rem] border border-gray-100 shadow-inner flex items-center gap-4 transform hover:scale-105 transition-all duration-500">
-                    <div class="w-12 h-12 rounded-2xl bg-white flex items-center justify-center text-brand-600 shadow-sm border border-brand-50">
-                        <i class="bi bi-shield-check text-xl"></i>
+
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                <div class="bg-gray-50/80 backdrop-blur-sm px-6 py-4 rounded-2xl border border-gray-100 shadow-inner flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-brand-600 shadow-sm border border-brand-50">
+                        <i class="bi bi-shield-check text-lg"></i>
                     </div>
                     <div>
-                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Inventory Status</p>
-                        <p class="text-lg font-black text-gray-900 tracking-tight">Active & Verified</p>
+                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Inventory Status</p>
+                        <p class="text-sm font-black text-gray-900 tracking-tight">Active & Verified</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="bg-white rounded-[3.5rem] shadow-sm border border-gray-100 p-8 lg:p-12 relative overflow-hidden">
+    <div id="data-container" 
+         data-patients="{{ json_encode($patientsData) }}" 
+         data-medicines="{{ json_encode($medicinesData) }}" 
+         class="hidden"></div>
+
+    <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 p-8 lg:p-12 relative overflow-hidden">
         {{-- Flash Messages --}}
         @if(session('success'))
             <div class="mb-8 rounded-3xl border border-emerald-200 bg-emerald-50 px-6 py-4 text-sm text-emerald-800 flex items-center gap-3 animate-fade-in-down">
@@ -209,172 +189,28 @@
 </div>
 @endsection
 
-@section('scripts')
-@parent
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Build data arrays (computed server-side to avoid Blade parsing issues)
-        @php
-            $patientsData = $patients->map(function($p) {
-                return ['id' => $p->id, 'label' => $p->full_name];
-            })->values();
-            $medicinesData = $medicines->map(function($m) {
-                $label = trim($m->generic_name . ($m->brand_name ? ' (' . $m->brand_name . ')' : ''));
-                return [
-                    'id' => $m->id,
-                    'stock' => $m->stock,
-                    'label' => $label,
-                    'display' => $label . ' • Stock: ' . $m->stock,
-                ];
-            })->values();
-        @endphp
-        const patients = {!! json_encode($patientsData) !!};
-        const medicines = {!! json_encode($medicinesData) !!};
-
-        function initCombo({inputId, hiddenId, datalistId, items, initialId}) {
-            const input = document.getElementById(inputId);
-            const hidden = document.getElementById(hiddenId);
-            const list = document.getElementById(datalistId);
-
-            function renderOptions(prefix = '') {
-                const q = (prefix || '').toString().trim().toLowerCase();
-                const filtered = q.length
-                    ? items.filter(it => it.label.toLowerCase().startsWith(q))
-                    : items;
-                list.innerHTML = filtered
-                    .slice(0, 100) // cap suggestions for performance
-                    .map(it => `<option value="${(it.display ?? it.label).replace(/"/g, '&quot;')}" data-id="${it.id}" data-stock="${it.stock ?? ''}"></option>`)
-                    .join('');
-            }
-
-            function setFromLabel(label) {
-                const opt = list.querySelector(`option[value="${CSS.escape(label)}"]`);
-                if (opt && opt.dataset.id) {
-                    hidden.value = opt.dataset.id;
-                    if (opt.dataset.stock !== undefined) {
-                        const stock = Number(opt.dataset.stock || 0);
-                        const stockBadge = document.getElementById('stockBadge');
-                        const meta = document.getElementById('medicine_meta');
-                        const qty = document.getElementById('quantity');
-                        const qtyMax = document.getElementById('qtyMax');
-                        if (meta && stockBadge && qty && qtyMax) {
-                            meta.classList.remove('hidden');
-                            stockBadge.textContent = `In Stock: ${stock}`;
-                            qty.max = stock > 0 ? stock : 1;
-                            qtyMax.textContent = stock > 0 ? stock : '—';
-                        }
-                    }
-                } else {
-                    hidden.value = '';
-                    const meta = document.getElementById('medicine_meta');
-                    const qty = document.getElementById('quantity');
-                    const qtyMax = document.getElementById('qtyMax');
-                    if (meta) meta.classList.add('hidden');
-                    if (qty) qty.removeAttribute('max');
-                    if (qtyMax) qtyMax.textContent = '—';
-                }
-            }
-
-            // Initialize with all items and prefill from old value
-            renderOptions('');
-            if (initialId) {
-                const found = items.find(it => String(it.id) === String(initialId));
-                if (found) {
-                    input.value = found.display ?? found.label;
-                    // seed stock badge/max if available
-                    const qty = document.getElementById('quantity');
-                    const qtyMax = document.getElementById('qtyMax');
-                    const stockBadge = document.getElementById('stockBadge');
-                    const meta = document.getElementById('medicine_meta');
-                    if (found.stock !== undefined && qty && qtyMax && stockBadge && meta) {
-                        meta.classList.remove('hidden');
-                        stockBadge.textContent = `In Stock: ${found.stock}`;
-                        qty.max = found.stock > 0 ? found.stock : 1;
-                        qtyMax.textContent = found.stock > 0 ? found.stock : '—';
-                    }
-                }
-            }
-
-            input.addEventListener('input', () => {
-                renderOptions(input.value);
-                // If the user typed an exact option, set hidden id
-                setFromLabel(input.value);
-            });
-            input.addEventListener('change', () => setFromLabel(input.value));
-            input.addEventListener('blur', () => setFromLabel(input.value));
-        }
-
-        initCombo({
-            inputId: 'patient_search',
-            hiddenId: 'patient_id',
-            datalistId: 'patient_options',
-            items: patients,
-            initialId: document.getElementById('patient_id').value
-        });
-
-        initCombo({
-            inputId: 'medicine_search',
-            hiddenId: 'medicine_id',
-            datalistId: 'medicine_options',
-            items: medicines,
-            initialId: document.getElementById('medicine_id').value
-        });
-
-        // Guard submit: ensure hidden IDs are set
-        document.getElementById('dispense-form').addEventListener('submit', function (e) {
-            const pid = document.getElementById('patient_id').value;
-            const mid = document.getElementById('medicine_id').value;
-            const qty = document.getElementById('quantity');
-            const max = Number(qty.getAttribute('max') || 0);
-            if (!pid || !mid) {
-                e.preventDefault();
-                alert('Please select a valid Patient and Medicine from the suggestions list.');
-                return;
-            }
-            if (max && Number(qty.value) > max) {
-                e.preventDefault();
-                alert(`Quantity exceeds available stock (${max}). Please adjust.`);
-                qty.focus();
-                return;
-            }
-        });
-
-        // Presets
-        document.querySelectorAll('button.preset').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const fill = btn.getAttribute('data-fill');
-                if (fill.includes('day') && !fill.includes('x')) {
-                    document.getElementById('duration').value = fill;
-                } else {
-                    document.getElementById('frequency').value = fill;
-                }
-            });
-        });
-    });
-</script>
-@endsection
+@php
+    $patientsData = $patients->map(function($p) {
+        return ['id' => $p->id, 'label' => $p->full_name];
+    })->values();
+    $medicinesData = $medicines->map(function($m) {
+        $label = trim($m->generic_name . ($m->brand_name ? ' (' . $m->brand_name . ')' : ''));
+        return [
+            'id' => $m->id,
+            'stock' => $m->stock,
+            'label' => $label,
+            'display' => $label . ' • Stock: ' . $m->stock,
+        ];
+    })->values();
+@endphp
 
 @section('scripts')
 @parent
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Build data arrays (computed server-side to avoid Blade parsing issues)
-        @php
-            $patientsData = $patients->map(function($p) {
-                return ['id' => $p->id, 'label' => $p->full_name];
-            })->values();
-            $medicinesData = $medicines->map(function($m) {
-                $label = trim($m->generic_name . ($m->brand_name ? ' (' . $m->brand_name . ')' : ''));
-                return [
-                    'id' => $m->id,
-                    'stock' => $m->stock,
-                    'label' => $label,
-                    'display' => $label . ' • Stock: ' . $m->stock,
-                ];
-            })->values();
-        @endphp
-        const patients = {!! json_encode($patientsData) !!};
-        const medicines = {!! json_encode($medicinesData) !!};
+        const container = document.getElementById('data-container');
+        const patients = JSON.parse(container.dataset.patients || '[]');
+        const medicines = JSON.parse(container.dataset.medicines || '[]');
 
         function initCombo({inputId, hiddenId, datalistId, items, initialId}) {
             const input = document.getElementById(inputId);

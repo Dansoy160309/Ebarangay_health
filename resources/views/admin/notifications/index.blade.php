@@ -3,52 +3,36 @@
 @section('title', 'Notification Logs')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-    {{-- Breadcrumbs --}}
-    <nav class="flex mb-8" aria-label="Breadcrumb">
-        <ol class="inline-flex items-center space-x-1 md:space-x-2 text-[11px] font-black uppercase tracking-widest">
-            <li class="inline-flex items-center">
-                <a href="{{ route('admin.dashboard') }}" class="text-gray-400 hover:text-brand-600 transition-colors flex items-center">
-                    <i class="bi bi-house-door mr-2"></i>
-                    Dashboard
-                </a>
-            </li>
-            <li>
-                <div class="flex items-center text-gray-900">
-                    <i class="bi bi-chevron-right mx-2 text-[8px]"></i>
-                    <span>Notification Logs</span>
+<div class="flex flex-col gap-6 sm:gap-8">
+    
+    {{-- Top-Aligned Compact Header --}}
+    <div class="relative z-10 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+        
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8">
+            <div class="max-w-xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 mb-3 sm:mb-4">
+                    <i class="bi bi-bell-fill text-xs"></i>
+                    <span class="text-[9px] font-black uppercase tracking-widest">System Audit</span>
                 </div>
-            </li>
-        </ol>
-    </nav>
-
-    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-        <div>
-            <div class="inline-flex items-center px-3 py-1 rounded-full bg-brand-50 text-brand-600 text-[10px] font-black uppercase tracking-widest mb-4">
-                <i class="bi bi-bell-fill mr-2"></i>
-                System Audit
+                <h1 class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-2 sm:mb-3">
+                    Notification <span class="text-brand-600 underline decoration-brand-200 decoration-4 underline-offset-4">Logs</span>
+                </h1>
+                <p class="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed">
+                    Monitor all in-app notifications and system alerts sent to patients and staff.
+                </p>
             </div>
-            <h1 class="text-5xl font-black text-gray-900 tracking-tight">Notification Logs</h1>
-            <p class="text-gray-500 font-medium mt-2">Monitor all in-app notifications and resend supported messages if necessary.</p>
         </div>
     </div>
 
-    @if(session('success'))
-        <div class="mb-8 rounded-3xl border border-green-100 bg-green-50/50 p-4 text-sm text-green-800 flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-300">
-            <div class="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 flex-shrink-0">
-                <i class="bi bi-check-lg"></i>
-            </div>
-            <div class="font-semibold">{{ session('success') }}</div>
-        </div>
-    @endif
-
+    {{-- Notification List --}}
     <div class="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/40 border border-gray-100 overflow-hidden">
         <div class="px-8 py-6 border-b border-gray-50 bg-gray-50/30 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <div class="h-8 w-8 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center">
                     <i class="bi bi-list-ul"></i>
                 </div>
-                <h2 class="font-black text-gray-900 text-sm uppercase tracking-widest">All Notifications</h2>
+                <h2 class="font-black text-gray-900 text-sm uppercase tracking-widest">History Log</h2>
             </div>
             <div class="text-[11px] font-black text-gray-400 uppercase tracking-widest">
                 Showing <span class="text-gray-900">{{ $notifications->firstItem() ?? 0 }}</span> - <span class="text-gray-900">{{ $notifications->lastItem() ?? 0 }}</span> of {{ $notifications->total() }}

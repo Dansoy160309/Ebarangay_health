@@ -11,6 +11,7 @@ use App\Models\Service;
 use App\Models\Appointment;
 use App\Models\Slot;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class HealthRecordController extends Controller
 {
@@ -100,15 +101,17 @@ class HealthRecordController extends Controller
             // 1. Search for Patients (Primary Accounts and Dependents)
             if ($request->filled('search_patient')) {
                 $term = $request->search_patient;
-                $searchResults = Patient::query()
-                    // Removed whereNull('guardian_id') to allow searching dependents
+                $searchResults = User::where('role', 'patient')
                     ->where(function($q) use ($term) {
                         $q->where('first_name', 'like', "%{$term}%")
                           ->orWhere('last_name', 'like', "%{$term}%")
-                          ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$term}%"]);
+                          ->orWhere('middle_name', 'like', "%{$term}%")
+                          ->orWhere('email', 'like', "%{$term}%")
+                          ->orWhere(DB::raw("CONCAT(first_name, ' ', last_name)"), 'like', "%{$term}%")
+                          ->orWhere(DB::raw("CONCAT(first_name, ' ', middle_name, ' ', last_name)"), 'like', "%{$term}%");
                     })
-                    ->with('guardian') // Load guardian for display
-                    ->take(10)
+                    ->with('guardian')
+                    ->take(15)
                     ->get();
             }
 
@@ -154,14 +157,17 @@ class HealthRecordController extends Controller
             // 1. Search for Patients (Primary Accounts and Dependents)
             if ($request->filled('search_patient')) {
                 $term = $request->search_patient;
-                $searchResults = Patient::query()
+                $searchResults = User::where('role', 'patient')
                     ->where(function($q) use ($term) {
                         $q->where('first_name', 'like', "%{$term}%")
                           ->orWhere('last_name', 'like', "%{$term}%")
-                          ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$term}%"]);
+                          ->orWhere('middle_name', 'like', "%{$term}%")
+                          ->orWhere('email', 'like', "%{$term}%")
+                          ->orWhere(DB::raw("CONCAT(first_name, ' ', last_name)"), 'like', "%{$term}%")
+                          ->orWhere(DB::raw("CONCAT(first_name, ' ', middle_name, ' ', last_name)"), 'like', "%{$term}%");
                     })
                     ->with('guardian')
-                    ->take(10)
+                    ->take(15)
                     ->get();
             }
 
@@ -234,7 +240,10 @@ class HealthRecordController extends Controller
             'pass_to_doctor' => 'nullable|boolean',
             'doctor_id' => 'required_if:pass_to_doctor,true|nullable|exists:users,id',
             'appointment_id' => 'nullable|exists:appointments,id',
+            'created_at' => 'nullable|date',
         ]);
+
+        $createdAt = $request->filled('created_at') ? Carbon::parse($request->created_at) : now();
 
         $record = HealthRecord::create([
             'patient_id'=>$request->patient_id,
@@ -247,8 +256,9 @@ class HealthRecordController extends Controller
             'immunizations'=>$request->immunizations,
             'metadata'=>$request->metadata,
             'status'=>'active',
-            'verified_at' => now(), // Automatically verified
+            'verified_at' => $createdAt, // Automatically verified
             'verified_by' => auth()->id(), // Verified by creator (Health Worker)
+            'created_at' => $createdAt,
         ]);
 
         // 🤰 Sync Prenatal Metadata to Patient Profile if applicable

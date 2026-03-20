@@ -3,42 +3,41 @@
 @section('title', 'Health Records Management')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 relative overflow-hidden">
-    {{-- Decorative Background Blobs --}}
-    <div class="absolute top-0 right-0 w-96 h-96 bg-brand-50/50 rounded-full blur-3xl -mr-48 -mt-48 opacity-50 pointer-events-none"></div>
-    <div class="absolute bottom-0 left-0 w-96 h-96 bg-indigo-50/50 rounded-full blur-3xl -ml-48 -mb-48 opacity-50 pointer-events-none"></div>
-
-    {{-- Step 1: Search Section --}}
-    <div class="relative z-10 bg-white rounded-[3rem] p-10 lg:p-14 border border-gray-100 shadow-sm overflow-hidden group">
-        <div class="absolute top-0 right-0 w-96 h-96 bg-brand-50 rounded-full blur-3xl -mr-48 -mt-48 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+<div class="flex flex-col gap-6 sm:gap-8">
+    
+    {{-- Top-Aligned Search Section --}}
+    <div class="relative z-10 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
         
-        <div class="relative z-10">
-            <div class="inline-flex items-center gap-3 px-4 py-2 rounded-2xl bg-brand-50 text-brand-600 border border-brand-100 mb-6">
-                <i class="bi bi-folder2-open text-sm"></i>
-                <span class="text-[10px] font-black uppercase tracking-[0.2em]">Patient Archives</span>
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8">
+            <div class="max-w-xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 mb-3 sm:mb-4">
+                    <i class="bi bi-folder2-open text-xs"></i>
+                    <span class="text-[9px] font-black uppercase tracking-widest">Patient Archives</span>
+                </div>
+                <h1 class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-2 sm:mb-3">
+                    Health <span class="text-brand-600 underline decoration-brand-200 decoration-4 underline-offset-4">Records</span>
+                </h1>
+                <p class="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed">
+                    Search for a patient to access their clinical history and manage medical consultations.
+                </p>
             </div>
-            <h1 class="text-4xl lg:text-5xl font-black text-gray-900 tracking-tight leading-[1.1] mb-6">
-                Health <span class="text-brand-600 underline decoration-brand-200 decoration-8 underline-offset-4">Records</span>
-            </h1>
-            <p class="text-gray-500 font-medium text-lg leading-relaxed mb-10 max-w-2xl">
-                Search for a patient to access their clinical history, manage medical consultations, and document health interactions.
-            </p>
 
             @php($routePrefix = $routePrefix ?? 'healthworker')
-            <form method="GET" action="{{ route($routePrefix . '.health-records.index') }}" class="relative max-w-2xl">
-                <div class="flex flex-col sm:flex-row gap-4">
+            <form method="GET" action="{{ route($routePrefix . '.health-records.index') }}" class="w-full md:max-w-md">
+                <div class="flex flex-col sm:flex-row gap-3">
                     <div class="relative flex-grow group">
-                        <i class="bi bi-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-600 transition-colors"></i>
+                        <i class="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-600 transition-colors"></i>
                         <input type="text" name="search_patient" value="{{ request('search_patient') }}" 
-                            class="w-full pl-14 pr-6 py-4 bg-gray-50 border-none rounded-2xl text-sm font-bold focus:ring-4 focus:ring-brand-500/10 transition-all placeholder:text-gray-400" 
-                            placeholder="Search by name (e.g. Juan Cruz)..." autocomplete="off">
+                            class="w-full pl-11 pr-4 py-3 bg-gray-50 border-none rounded-xl text-sm font-bold focus:ring-4 focus:ring-brand-500/10 transition-all placeholder:text-gray-400 shadow-inner" 
+                            placeholder="Search by name..." autocomplete="off">
                     </div>
-                    <div class="flex gap-3">
-                        <button type="submit" class="px-8 py-4 bg-brand-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-brand-700 shadow-lg shadow-brand-500/20 transition-all active:scale-95">
+                    <div class="flex gap-2">
+                        <button type="submit" class="px-6 py-3 bg-brand-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-brand-700 shadow-lg shadow-brand-500/20 transition-all active:scale-95 shrink-0">
                             Search
                         </button>
                         @if(request('search_patient'))
-                            <a href="{{ route($routePrefix . '.health-records.index') }}" class="px-5 py-4 bg-gray-100 text-gray-500 rounded-2xl hover:bg-gray-200 transition-all active:scale-95 flex items-center justify-center shadow-sm">
+                            <a href="{{ route($routePrefix . '.health-records.index') }}" class="px-4 py-3 bg-gray-100 text-gray-500 rounded-xl hover:bg-gray-200 transition-all active:scale-95 flex items-center justify-center shadow-sm shrink-0">
                                 <i class="bi bi-arrow-counterclockwise text-lg"></i>
                             </a>
                         @endif

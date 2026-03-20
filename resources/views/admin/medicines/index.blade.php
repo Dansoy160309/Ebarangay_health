@@ -3,77 +3,65 @@
 @section('title', 'Medicines')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-    {{-- Header Section --}}
-    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
-        <div>
-            <nav class="flex mb-4" aria-label="Breadcrumb">
-                <ol class="inline-flex items-center space-x-1 md:space-x-3 text-sm font-medium text-gray-500">
-                    <li class="inline-flex items-center">
-                        <a href="{{ route('admin.dashboard') }}" class="hover:text-brand-600 transition-colors">Dashboard</a>
-                    </li>
-                    <li>
-                        <div class="flex items-center">
-                            <i class="bi bi-chevron-right text-gray-400 mx-2 text-[10px]"></i>
-                            <span class="text-gray-900">Inventory</span>
-                        </div>
-                    </li>
-                </ol>
-            </nav>
-            <h1 class="text-4xl font-black text-gray-900 tracking-tight flex items-center gap-3">
-                <span class="p-3 bg-brand-50 rounded-2xl text-brand-600 shadow-sm">
-                    <i class="bi bi-capsule-pill"></i>
-                </span>
-                Medicines
-            </h1>
-            <p class="mt-2 text-lg text-gray-500 font-medium">Manage medicine inventory and monitor stock levels.</p>
-        </div>
+@section('content')
+<div class="flex flex-col gap-6 sm:gap-8">
+    
+    {{-- Top-Aligned Compact Header --}}
+    <div class="relative z-10 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
         
-        <div class="flex flex-wrap gap-3">
-            <a href="{{ route('admin.medicines.distributions') }}" 
-               class="inline-flex items-center px-5 py-2.5 rounded-2xl border border-gray-200 text-sm font-bold text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95 shadow-sm">
-                <i class="bi bi-journal-text me-2 text-brand-500"></i>
-                Distribution Logs
-            </a>
-            <a href="{{ route('admin.medicines.supplies') }}" 
-               class="inline-flex items-center px-5 py-2.5 rounded-2xl border border-gray-200 text-sm font-bold text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95 shadow-sm">
-                <i class="bi bi-truck me-2 text-brand-500"></i>
-                Supply History
-            </a>
-            <a href="{{ route('admin.medicines.reports') }}" 
-               class="inline-flex items-center px-5 py-2.5 rounded-2xl border border-gray-200 text-sm font-bold text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95 shadow-sm">
-                <i class="bi bi-pie-chart me-2 text-brand-500"></i>
-                Reports
-            </a>
-            <a href="{{ route('admin.medicines.create') }}" 
-               class="inline-flex items-center px-6 py-2.5 rounded-2xl bg-brand-600 text-white text-sm font-bold hover:bg-brand-700 transition-all active:scale-95 shadow-lg shadow-brand-100">
-                <i class="bi bi-plus-lg me-2"></i>
-                Add Medicine
-            </a>
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8">
+            <div class="max-w-xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 mb-3 sm:mb-4">
+                    <i class="bi bi-capsule-pill text-xs"></i>
+                    <span class="text-[9px] font-black uppercase tracking-widest">Inventory Control</span>
+                </div>
+                <h1 class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-2 sm:mb-3">
+                    Medicine <span class="text-brand-600 underline decoration-brand-200 decoration-4 underline-offset-4">Inventory</span>
+                </h1>
+                <p class="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed">
+                    Manage medicine stocks, monitor expiration dates, and track distribution logs.
+                </p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                <a href="{{ route('admin.medicines.create') }}" 
+                   class="flex-1 sm:flex-none inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-brand-600 text-white font-black text-[10px] sm:text-xs uppercase tracking-widest shadow-xl shadow-brand-500/20 hover:bg-brand-700 hover:scale-105 transition-all transform group">
+                    <i class="bi bi-plus-lg mr-2 group-hover:rotate-90 transition-transform"></i>
+                    Add Medicine
+                </a>
+            </div>
         </div>
     </div>
 
-    {{-- Search & Filters --}}
-    <div class="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/40 border border-gray-100 p-6 mb-8">
-        <form method="GET" class="flex flex-col md:flex-row gap-4">
-            <div class="relative flex-grow group">
-                <i class="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-500 transition-colors"></i>
-                <input type="text" name="search" value="{{ request('search') }}" autocomplete="off"
-                       class="w-full pl-12 pr-4 py-3.5 rounded-2xl border-gray-100 bg-gray-50 focus:bg-white focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all text-sm font-medium"
-                       placeholder="Search medicines by name, brand, or dosage form...">
+    {{-- Search & Action Bar --}}
+    <div class="bg-white rounded-[2rem] shadow-lg shadow-gray-200/50 border border-gray-100 p-5 sm:p-6">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            {{-- Quick Links --}}
+            <div class="flex items-center p-1 bg-gray-50 rounded-xl border border-gray-100 overflow-x-auto no-scrollbar">
+                <a href="{{ route('admin.medicines.distributions') }}" 
+                   class="px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-600 transition-all whitespace-nowrap">
+                    Distributions
+                </a>
+                <a href="{{ route('admin.medicines.supplies') }}" 
+                   class="px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-600 transition-all whitespace-nowrap">
+                    Supplies
+                </a>
+                <a href="{{ route('admin.medicines.reports') }}" 
+                   class="px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-600 transition-all whitespace-nowrap">
+                    Reports
+                </a>
             </div>
-            <div class="flex gap-2">
-                <button type="submit" class="px-8 py-3.5 rounded-2xl bg-gray-900 text-white text-sm font-bold hover:bg-black transition-all active:scale-95 shadow-lg shadow-gray-200">
-                    Search
-                </button>
-                @if(request('search'))
-                    <a href="{{ route('admin.medicines.index') }}" 
-                       class="px-6 py-3.5 rounded-2xl bg-gray-100 text-gray-600 text-sm font-bold hover:bg-gray-200 transition-all flex items-center">
-                        Clear
-                    </a>
-                @endif
-            </div>
-        </form>
+
+            {{-- Search Input --}}
+            <form method="GET" class="relative w-full lg:max-w-md group">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
+                    <i class="bi bi-search text-xs"></i>
+                </div>
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name, brand, or form..."
+                    class="w-full pl-10 pr-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-4 focus:ring-brand-500/10 focus:bg-white transition-all text-xs font-bold text-gray-700 placeholder-gray-400 shadow-inner">
+            </form>
+        </div>
     </div>
 
     {{-- Inventory Table --}}

@@ -7,12 +7,16 @@
      x-data="{ 
         patientId: '{{ $selectedPatient?->id ?? '' }}',
         serviceId: '{{ old('service_id') ?? '' }}',
+        serviceName: '',
         loading: false,
         patientInfo: null,
         history: [],
         weight: '',
         height: '',
         bmi: '',
+        updateServiceName(el) {
+            this.serviceName = el.options[el.selectedIndex].text.toUpperCase();
+        },
         calculateBMI() {
             if(this.weight && this.height) {
                 let h_m = this.height / 100;
@@ -39,6 +43,10 @@
         },
         init() {
             if(this.patientId) this.fetchDetails();
+            this.$nextTick(() => {
+                let select = this.$refs.serviceSelect;
+                if(select && select.value) this.updateServiceName(select);
+            });
         }
      }">
 
@@ -115,21 +123,109 @@
 
                 <!-- Clinical Notes Card -->
                 <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-100 space-y-8">
-                    <div class="flex items-center justify-between">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <h3 class="text-lg font-black text-gray-900 flex items-center gap-3">
                             <i class="bi bi-file-earmark-medical-fill text-brand-600"></i>
                             Clinical Assessment
                         </h3>
-                        <div class="w-48">
-                            <select name="service_id" x-model="serviceId" required
-                                    class="w-full rounded-xl border-gray-100 bg-gray-50 p-2.5 text-xs font-black uppercase tracking-wider focus:ring-brand-500 focus:border-brand-500 transition">
-                                <option value="">Select Service</option>
-                                @foreach($services as $service)
-                                    <option value="{{ $service->id }}">{{ $service->name }}</option>
-                                @endforeach
-                            </select>
+                        <div class="flex items-center gap-3">
+                            <div class="flex flex-col">
+                                <label class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Record Date</label>
+                                <input type="date" name="created_at" value="{{ now()->format('Y-m-d') }}"
+                                       class="rounded-xl border-gray-100 bg-gray-50 p-2 text-xs font-bold focus:ring-brand-500 focus:border-brand-500 transition shadow-sm">
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Service Type</label>
+                                <select name="service_id" x-model="serviceId" x-ref="serviceSelect" @change="updateServiceName($el)" required
+                                        class="rounded-xl border-gray-100 bg-gray-50 p-2 text-xs font-black uppercase tracking-wider focus:ring-brand-500 focus:border-brand-500 transition shadow-sm">
+                                    <option value="">Select Service</option>
+                                    @foreach($services as $service)
+                                        <option value="{{ $service->id }}">{{ $service->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Dynamic Service Fields (PRENATAL) -->
+                    <template x-if="serviceName.includes('PRENATAL')">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-3xl bg-brand-50/50 border border-brand-100 animate-in fade-in slide-in-from-top-4">
+                            <div class="md:col-span-2 flex items-center gap-2 mb-2">
+                                <div class="w-8 h-8 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center">
+                                    <i class="bi bi-person-heart"></i>
+                                </div>
+                                <h4 class="text-sm font-black text-brand-900 uppercase tracking-widest">Obstetric History & Pregnancy Details</h4>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-black text-brand-400 uppercase tracking-widest ml-1">LMP (Last Menstrual Period)</label>
+                                <input type="date" name="metadata[lmp]" class="w-full rounded-xl border-white bg-white p-3 text-sm font-bold shadow-sm focus:ring-brand-500">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-black text-brand-400 uppercase tracking-widest ml-1">EDD (Estimated Due Date)</label>
+                                <input type="date" name="metadata[edd]" class="w-full rounded-xl border-white bg-white p-3 text-sm font-bold shadow-sm focus:ring-brand-500">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-2">
+                                    <label class="block text-[10px] font-black text-brand-400 uppercase tracking-widest ml-1">Gravida (G)</label>
+                                    <input type="number" name="metadata[gravida]" placeholder="0" class="w-full rounded-xl border-white bg-white p-3 text-sm font-bold shadow-sm focus:ring-brand-500 text-center">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="block text-[10px] font-black text-brand-400 uppercase tracking-widest ml-1">Para (P)</label>
+                                    <input type="number" name="metadata[para]" placeholder="0" class="w-full rounded-xl border-white bg-white p-3 text-sm font-bold shadow-sm focus:ring-brand-500 text-center">
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-black text-brand-400 uppercase tracking-widest ml-1">Fetal Heart Tone (FHT)</label>
+                                <div class="relative">
+                                    <input type="text" name="metadata[fht]" placeholder="140" class="w-full rounded-xl border-white bg-white p-3 text-sm font-bold shadow-sm focus:ring-brand-500 pr-12">
+                                    <span class="absolute right-4 top-3 text-[10px] font-black text-brand-400 uppercase">bpm</span>
+                                </div>
+                            </div>
+                            <div class="md:col-span-2 space-y-2">
+                                <label class="block text-[10px] font-black text-brand-400 uppercase tracking-widest ml-1">Previous Complications / Notes</label>
+                                <textarea name="metadata[previous_complications]" rows="2" class="w-full rounded-xl border-white bg-white p-4 text-sm font-medium shadow-sm focus:ring-brand-500" placeholder="History of miscarriage, pre-eclampsia, etc."></textarea>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- Dynamic Service Fields (IMMUNIZATION) -->
+                    <template x-if="serviceName.includes('IMMUNIZATION')">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-3xl bg-emerald-50/50 border border-emerald-100 animate-in fade-in slide-in-from-top-4">
+                            <div class="md:col-span-2 flex items-center gap-2 mb-2">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                                    <i class="bi bi-shield-plus"></i>
+                                </div>
+                                <h4 class="text-sm font-black text-emerald-900 uppercase tracking-widest">Vaccination & Growth Tracking</h4>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-black text-emerald-400 uppercase tracking-widest ml-1">Vaccine Antigen Given</label>
+                                <input type="text" name="metadata[vaccine_given]" placeholder="e.g. Pentavalent, PCV" class="w-full rounded-xl border-white bg-white p-3 text-sm font-bold shadow-sm focus:ring-emerald-500">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-black text-emerald-400 uppercase tracking-widest ml-1">Dose Number</label>
+                                <select name="metadata[dose_no]" class="w-full rounded-xl border-white bg-white p-3 text-sm font-bold shadow-sm focus:ring-emerald-500">
+                                    <option value="1">1st Dose</option>
+                                    <option value="2">2nd Dose</option>
+                                    <option value="3">3rd Dose</option>
+                                    <option value="booster">Booster</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-2">
+                                    <label class="block text-[10px] font-black text-emerald-400 uppercase tracking-widest ml-1">MUAC (cm)</label>
+                                    <input type="number" step="0.1" name="metadata[muac]" placeholder="12.5" class="w-full rounded-xl border-white bg-white p-3 text-sm font-bold shadow-sm focus:ring-emerald-500 text-center">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="block text-[10px] font-black text-emerald-400 uppercase tracking-widest ml-1">Head Circ. (cm)</label>
+                                    <input type="number" step="0.1" name="metadata[head_circ]" placeholder="45.0" class="w-full rounded-xl border-white bg-white p-3 text-sm font-bold shadow-sm focus:ring-emerald-500 text-center">
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-black text-emerald-400 uppercase tracking-widest ml-1">Remarks</label>
+                                <input type="text" name="metadata[remarks]" placeholder="e.g. Well-baby checkup" class="w-full rounded-xl border-white bg-white p-3 text-sm font-bold shadow-sm focus:ring-emerald-500">
+                            </div>
+                        </div>
+                    </template>
 
                     <!-- Consultation -->
                     <div class="space-y-3">

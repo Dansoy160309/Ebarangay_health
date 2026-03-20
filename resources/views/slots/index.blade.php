@@ -3,41 +3,40 @@
 @section('title', 'Manage Slots')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 relative overflow-hidden">
-    {{-- Decorative Background Blobs --}}
-    <div class="absolute top-0 right-0 w-96 h-96 bg-brand-50/50 rounded-full blur-3xl -mr-48 -mt-48 opacity-50 pointer-events-none"></div>
-    <div class="absolute bottom-0 left-0 w-96 h-96 bg-indigo-50/50 rounded-full blur-3xl -ml-48 -mb-48 opacity-50 pointer-events-none"></div>
-
-    <!-- Header Section -->
-    <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-        <div>
-            <div class="flex items-center gap-3 mb-3">
-                <span class="text-[10px] font-black text-brand-600 uppercase tracking-[0.3em] bg-brand-50 px-3 py-1.5 rounded-xl border border-brand-100/50 flex items-center gap-2">
-                    <span class="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse"></span>
-                    Operational Management
-                </span>
+<div class="flex flex-col gap-6 sm:gap-8">
+    
+    {{-- Top-Aligned Compact Header --}}
+    <div class="relative z-10 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+        
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8">
+            <div class="max-w-xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 mb-3 sm:mb-4">
+                    <i class="bi bi-calendar-event text-xs"></i>
+                    <span class="text-[9px] font-black uppercase tracking-widest">Operational Management</span>
+                </div>
+                <h1 class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-2 sm:mb-3">
+                    Manage <span class="text-brand-600 underline decoration-brand-200 decoration-4 underline-offset-4">Appointment Slots</span>
+                </h1>
+                <p class="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed">
+                    Configure available <span class="text-gray-900 font-black">time windows</span> and monitor clinical availability for your health center.
+                </p>
             </div>
-            <h1 class="text-4xl font-black text-gray-900 tracking-tight leading-tight">Manage Appointment Slots</h1>
-            <p class="text-gray-500 font-bold mt-2 flex items-center gap-2">
-                Configure available <span class="text-gray-900 underline decoration-brand-200 decoration-4 underline-offset-4 font-black">time windows</span> for various health services
-            </p>
-        </div>
 
-        <div class="flex items-center gap-4">
-            <a href="{{ route('midwife.slots.create') }}" 
-               class="inline-flex items-center px-8 py-4 border border-transparent text-xs font-black rounded-2xl shadow-xl shadow-brand-500/20 text-white bg-brand-600 hover:bg-brand-700 hover:-translate-y-0.5 transition-all duration-300 uppercase tracking-widest gap-3">
-                <i class="bi bi-plus-lg text-lg"></i>
-                Add New Slot
-            </a>
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                <a href="{{ route('midwife.slots.create') }}" 
+                   class="flex-1 sm:flex-none inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-brand-600 text-white font-black text-[10px] sm:text-xs uppercase tracking-widest shadow-xl shadow-brand-500/20 hover:bg-brand-700 hover:scale-105 transition-all transform group">
+                    <i class="bi bi-plus-lg mr-2 group-hover:rotate-90 transition-transform"></i>
+                    Add New Slot
+                </a>
+            </div>
         </div>
     </div>
 
     @if(session('success'))
-        <div class="relative z-10 bg-emerald-50 border border-emerald-100 p-4 rounded-2xl shadow-sm animate-fade-in-down flex items-center gap-4">
-            <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600">
-                <i class="bi bi-check-circle-fill text-xl"></i>
-            </div>
-            <p class="text-sm font-black text-emerald-800 uppercase tracking-widest">{{ session('success') }}</p>
+        <div class="rounded-3xl border border-emerald-200 bg-emerald-50 px-6 py-4 text-sm text-emerald-800 flex items-center gap-3 animate-fade-in-down">
+            <i class="bi bi-check-circle-fill text-lg"></i>
+            <div class="font-bold">{{ session('success') }}</div>
         </div>
     @endif
 
@@ -221,7 +220,10 @@
                                         </span>
                                     </div>
                                     <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden border border-gray-50">
-                                        <div class="h-full bg-gradient-to-r {{ $pct >= 100 ? 'from-red-500 to-red-400' : 'from-brand-500 to-brand-400' }} rounded-full transition-all duration-700 shadow-sm" style="width: {{ $pct }}%"></div>
+                                        @php
+                                            $barColor = $pct >= 100 ? 'from-red-500 to-red-400' : 'from-brand-500 to-brand-400';
+                                        @endphp
+                                        <div class="h-full bg-gradient-to-r {{ $barColor }} rounded-full transition-all duration-700 shadow-sm" style="width:<?php echo $pct; ?>%;"></div>
                                     </div>
                                 </div>
                             </td>
@@ -328,7 +330,7 @@
                             </span>
                         </div>
                         <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                            <div class="h-full bg-brand-600 rounded-full shadow-sm" style="width: {{ $pct }}%"></div>
+                            <div class="h-full bg-brand-600 rounded-full shadow-sm" style="width:<?php echo $pct; ?>%;"></div>
                         </div>
                     </div>
 

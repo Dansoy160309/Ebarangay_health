@@ -70,6 +70,7 @@ Route::prefix('admin')
         Route::resource('medicines', AdminMedicineController::class)->except(['show', 'destroy']);
         Route::get('medicines-distributions', [AdminMedicineController::class, 'distributions'])->name('medicines.distributions');
         Route::get('medicines-reports', [AdminMedicineController::class, 'reports'])->name('medicines.reports');
+        Route::get('medicines-reports/export', [AdminMedicineController::class, 'exportExcel'])->name('medicines.reports.export');
         Route::get('medicines-supplies', [AdminMedicineController::class, 'supplies'])->name('medicines.supplies');
         Route::get('medicines-supplies/create', [AdminMedicineController::class, 'createSupply'])->name('medicines.supplies.create');
         Route::post('medicines-supplies', [AdminMedicineController::class, 'storeSupply'])->name('medicines.supplies.store');
@@ -89,9 +90,12 @@ Route::prefix('admin')
         // Reports
         // ===============================
         Route::get('reports', [AdminReportController::class, 'index'])->name('reports.index');
+        Route::get('reports/export', [AdminReportController::class, 'exportExcel'])->name('reports.export');
         Route::get('reports/calendar', [AdminReportController::class, 'calendar'])->name('reports.calendar');
         Route::get('reports/fhsis', [AdminReportController::class, 'fhsisSummary'])->name('reports.fhsis');
+        Route::get('reports/fhsis/export', [AdminReportController::class, 'fhsisExport'])->name('reports.fhsis.export');
         Route::get('reports/vaccines', [AdminReportController::class, 'vaccineSummary'])->name('reports.vaccines');
+        Route::get('reports/vaccines/export', [AdminReportController::class, 'vaccineExport'])->name('reports.vaccines.export');
 
         // ===============================
         // Notification Logs

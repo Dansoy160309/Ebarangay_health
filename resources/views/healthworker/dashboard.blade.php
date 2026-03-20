@@ -3,30 +3,33 @@
 @section('title', 'Health Worker Dashboard')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="flex flex-col gap-6 sm:gap-8">
 
     {{-- Welcome Section --}}
-    <div class="mb-8 bg-gradient-to-r from-brand-600 to-brand-500 rounded-[2rem] p-8 sm:p-10 text-white shadow-lg relative overflow-hidden">
-        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-        <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-            <div>
-                <h1 class="text-3xl sm:text-4xl font-bold mb-2 tracking-tight flex items-center gap-3">
-                    Welcome back, {{ auth()->user()->first_name }}! <span class="text-4xl">👋</span>
-                </h1>
-                <p class="text-brand-100 text-lg font-medium leading-relaxed max-w-xl">
-                    Here's what's happening in your clinic today.
-                </p>
-            </div>
-            <div class="hidden md:block text-right bg-white/10 backdrop-blur-sm px-6 py-3 rounded-2xl border border-white/20">
-                <p class="text-3xl font-bold">{{ now()->format('h:i A') }}</p>
-                <p class="text-brand-100 font-medium">{{ now()->format('l, F j, Y') }}</p>
+    <div class="bg-gradient-to-br from-brand-600 via-brand-500 to-indigo-600 rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 text-white shadow-xl shadow-brand-500/20 relative overflow-hidden">
+        <div class="relative z-10">
+            <h1 class="text-2xl sm:text-4xl font-black mb-2 sm:mb-3 tracking-tight leading-tight">
+                Welcome back, <br class="sm:hidden"> {{ auth()->user()->first_name }}! 👋
+            </h1>
+            <p class="text-brand-50 text-xs sm:text-lg font-medium opacity-90 max-w-xl">
+                Here's what's happening in your clinic today.
+            </p>
+            
+            <div class="mt-6 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                <div class="flex items-center gap-2 bg-white/15 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 shadow-sm w-fit">
+                    <i class="bi bi-calendar3 text-brand-200 text-xs sm:text-sm"></i>
+                    <span class="text-[10px] sm:text-xs font-black uppercase tracking-widest">{{ now()->format('l, F j, Y') }}</span>
+                </div>
+                <div class="flex items-center gap-2 bg-white/15 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 shadow-sm w-fit">
+                    <i class="bi bi-clock text-brand-200 text-xs sm:text-sm"></i>
+                    <span class="text-[10px] sm:text-xs font-black uppercase tracking-widest">{{ now()->format('h:i A') }}</span>
+                </div>
             </div>
         </div>
         
         <!-- Decorative Elements -->
-        <div class="absolute right-0 bottom-0 h-full w-1/2 pointer-events-none overflow-hidden">
-            <i class="bi bi-activity absolute -right-10 -bottom-20 text-[15rem] text-white opacity-10"></i>
-            <i class="bi bi-heart-pulse absolute right-20 top-10 text-8xl text-white opacity-5"></i>
+        <div class="absolute -right-10 -bottom-10 sm:-right-16 sm:-bottom-16 opacity-10 pointer-events-none">
+            <i class="bi bi-activity text-[12rem] sm:text-[18rem]"></i>
         </div>
     </div>
 
@@ -42,73 +45,61 @@
         </div>
     @endif
 
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 sm:gap-8">
         
         {{-- Left Column: Main Content --}}
-        <div class="lg:col-span-3 space-y-8">
+        <div class="lg:col-span-3 space-y-6 sm:gap-8">
             
-    {{-- Stats Grid --}}
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+            {{-- Stats Grid --}}
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
                 {{-- Upcoming Today --}}
-                <a href="{{ route('healthworker.appointments.index') }}" class="bg-white rounded-[2rem] p-5 sm:p-6 border border-gray-100 shadow-sm flex items-center justify-between gap-3 group hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer relative overflow-hidden">
+                <a href="{{ route('healthworker.appointments.index') }}" class="bg-white rounded-[1.5rem] sm:rounded-[2rem] p-5 sm:p-6 border border-gray-100 shadow-sm flex items-center justify-between gap-3 group hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer relative overflow-hidden">
                     <div class="relative z-10">
-                        <p class="text-[10px] sm:text-xs font-bold text-brand-600 uppercase tracking-wider mb-1">Appointments Today</p>
-                        <h3 class="text-3xl sm:text-4xl font-bold text-gray-900">{{ $upcomingToday }}</h3>
+                        <p class="text-[9px] sm:text-xs font-black text-brand-600 uppercase tracking-widest mb-1">Today</p>
+                        <h3 class="text-2xl sm:text-4xl font-black text-gray-900">{{ $upcomingToday }}</h3>
                     </div>
                     <div class="w-12 h-12 sm:w-16 sm:h-16 bg-brand-50 rounded-2xl flex items-center justify-center text-brand-600 text-2xl sm:text-3xl group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shadow-sm relative z-10">
                         <i class="bi bi-calendar-event"></i>
                     </div>
-                    {{-- Decorative bg --}}
-                    <div class="absolute -right-6 -bottom-6 text-brand-50 opacity-50 group-hover:scale-110 transition duration-500">
-                        <i class="bi bi-calendar-event text-8xl"></i>
-                    </div>
                 </a>
 
                 {{-- Total Patients --}}
-                <div class="bg-white rounded-[2rem] p-5 sm:p-6 border border-gray-100 shadow-sm flex items-center justify-between gap-3 relative overflow-hidden">
+                <div class="bg-white rounded-[1.5rem] sm:rounded-[2rem] p-5 sm:p-6 border border-gray-100 shadow-sm flex items-center justify-between gap-3 relative overflow-hidden">
                     <div class="relative z-10">
-                        <p class="text-[10px] sm:text-xs font-bold text-green-600 uppercase tracking-wider mb-1">Total Patients</p>
-                        <h3 class="text-3xl sm:text-4xl font-bold text-gray-900">{{ $totalPatients }}</h3>
+                        <p class="text-[9px] sm:text-xs font-black text-green-600 uppercase tracking-widest mb-1">Patients</p>
+                        <h3 class="text-2xl sm:text-4xl font-black text-gray-900">{{ $totalPatients }}</h3>
                     </div>
                     <div class="w-12 h-12 sm:w-16 sm:h-16 bg-green-50 rounded-2xl flex items-center justify-center text-green-600 text-2xl sm:text-3xl transition-transform duration-300 shadow-sm relative z-10">
                         <i class="bi bi-people"></i>
                     </div>
-                    {{-- Decorative bg --}}
-                    <div class="absolute -right-6 -bottom-6 text-green-50 opacity-50 transition duration-500">
-                        <i class="bi bi-people text-8xl"></i>
-                    </div>
                 </div>
 
                 {{-- Needing Vitals --}}
-                <a href="{{ route('healthworker.appointments.index', ['vitals_only' => 1, 'date' => now()->toDateString()]) }}" class="bg-white rounded-[2rem] p-5 sm:p-6 border border-gray-100 shadow-sm flex items-center justify-between gap-3 group hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer relative overflow-hidden sm:col-span-2 md:col-span-1">
+                <a href="{{ route('healthworker.appointments.index', ['vitals_only' => 1, 'date' => now()->toDateString()]) }}" class="bg-white rounded-[1.5rem] sm:rounded-[2rem] p-5 sm:p-6 border border-gray-100 shadow-sm flex items-center justify-between gap-3 group hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer relative overflow-hidden">
                     <div class="relative z-10">
-                        <p class="text-[10px] sm:text-xs font-bold text-yellow-600 uppercase tracking-wider mb-1">Needing Vitals</p>
-                        <h3 class="text-3xl sm:text-4xl font-bold text-gray-900">{{ $needingVitalsCount }}</h3>
+                        <p class="text-[9px] sm:text-xs font-black text-yellow-600 uppercase tracking-widest mb-1">Vitals</p>
+                        <h3 class="text-2xl sm:text-4xl font-black text-gray-900">{{ $needingVitalsCount }}</h3>
                     </div>
                     <div class="w-12 h-12 sm:w-16 sm:h-16 bg-yellow-50 rounded-2xl flex items-center justify-center text-yellow-600 text-2xl sm:text-3xl group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shadow-sm relative z-10">
                         <i class="bi bi-clipboard2-pulse"></i>
-                    </div>
-                    {{-- Decorative bg --}}
-                    <div class="absolute -right-6 -bottom-6 text-yellow-50 opacity-50 group-hover:scale-110 transition duration-500">
-                        <i class="bi bi-clipboard2-pulse text-8xl"></i>
                     </div>
                 </a>
             </div>
 
             {{-- Today's Schedule --}}
             <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
-                <div class="px-8 py-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/30">
-                    <div>
-                        <h2 class="text-xl font-bold text-gray-900 flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center">
-                                <i class="bi bi-calendar-check text-xl"></i>
-                            </div>
-                            Today's Schedule
-                        </h2>
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1 ml-13">Daily patient agenda and consultation queue</p>
+                <div class="px-6 py-5 sm:px-8 sm:py-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gray-50/30">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center shadow-sm">
+                            <i class="bi bi-calendar-check text-xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg sm:text-xl font-black text-gray-900 tracking-tight uppercase">Today's Schedule</h2>
+                            <p class="text-[8px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Patient agenda and queue</p>
+                        </div>
                     </div>
-                    <span class="px-4 py-1.5 rounded-full bg-white border border-gray-200 text-sm font-medium text-gray-600 shadow-sm">
-                        {{ now()->format('F d, Y') }}
+                    <span class="px-4 py-1.5 rounded-full bg-white border border-gray-200 text-[10px] sm:text-xs font-black text-gray-500 uppercase tracking-widest shadow-sm w-fit">
+                        {{ now()->format('M d, Y') }}
                     </span>
                 </div>
                 

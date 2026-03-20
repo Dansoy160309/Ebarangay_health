@@ -52,31 +52,31 @@
 }" x-init="initClock()" class="flex flex-col gap-8" x-cloak>
 
     {{-- 1. Hero Welcome Banner --}}
-    <div class="bg-gradient-to-br from-brand-600 via-brand-500 to-indigo-600 rounded-[2.5rem] p-8 sm:p-10 text-white shadow-xl shadow-brand-500/20 relative overflow-hidden">
+    <div class="bg-gradient-to-br from-brand-600 via-brand-500 to-indigo-600 rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 text-white shadow-xl shadow-brand-500/20 relative overflow-hidden">
         <div class="relative z-10">
-            <h1 class="text-3xl sm:text-5xl font-black mb-4 tracking-tight leading-tight">
+            <h1 class="text-2xl sm:text-5xl font-black mb-3 sm:mb-4 tracking-tight leading-tight">
                 Good Day, <br class="sm:hidden"> {{ auth()->user()->first_name }}! 👋
             </h1>
-            <p class="text-brand-50 text-sm sm:text-lg font-medium opacity-90 mb-8 max-w-2xl">
+            <p class="text-brand-50 text-xs sm:text-lg font-medium opacity-90 mb-6 sm:mb-8 max-w-2xl">
                 Your health journey starts here. Manage appointments and view your records with ease.
             </p>
             
-            <div class="flex flex-wrap items-center gap-3">
-                <div class="flex items-center gap-2.5 bg-white/15 backdrop-blur-md px-5 py-2.5 rounded-2xl border border-white/10 shadow-sm">
-                    <i class="bi bi-calendar3 text-brand-200"></i>
-                    <span x-text="currentDate" class="text-xs font-black uppercase tracking-widest">{{ now()->format('l, F j, Y') }}</span>
+            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                <div class="flex items-center gap-2 bg-white/15 backdrop-blur-md px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl border border-white/10 shadow-sm w-fit">
+                    <i class="bi bi-calendar3 text-brand-200 text-xs sm:text-base"></i>
+                    <span x-text="currentDate" class="text-[10px] sm:text-xs font-black uppercase tracking-widest">{{ now()->format('l, F j, Y') }}</span>
                 </div>
                 
-                <div class="flex items-center gap-2.5 bg-white/15 backdrop-blur-md px-5 py-2.5 rounded-2xl border border-white/10 shadow-sm">
-                    <i class="bi bi-clock text-brand-200"></i>
-                    <span x-text="currentTime" class="text-xs font-black uppercase tracking-widest">{{ now()->format('h:i A') }}</span>
+                <div class="flex items-center gap-2 bg-white/15 backdrop-blur-md px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl border border-white/10 shadow-sm w-fit">
+                    <i class="bi bi-clock text-brand-200 text-xs sm:text-base"></i>
+                    <span x-text="currentTime" class="text-[10px] sm:text-xs font-black uppercase tracking-widest">{{ now()->format('h:i A') }}</span>
                 </div>
             </div>
         </div>
         
         <!-- Background Icon -->
-        <div class="absolute -right-16 -bottom-16 opacity-10 pointer-events-none">
-            <i class="bi bi-heart-pulse-fill text-[20rem]"></i>
+        <div class="absolute -right-10 -bottom-10 sm:-right-16 sm:-bottom-16 opacity-10 pointer-events-none">
+            <i class="bi bi-heart-pulse-fill text-[12rem] sm:text-[20rem]"></i>
         </div>
     </div>
 
@@ -145,30 +145,30 @@
     </div>
 
     {{-- 3. Stats & Quick Links --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <a href="{{ route('patient.appointments.index') }}" class="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm flex items-center justify-between group hover:border-brand-100 transition-all transform hover:-translate-y-1">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+        <a href="{{ route('patient.appointments.index') }}" class="bg-white rounded-[1.5rem] sm:rounded-[2rem] p-6 sm:p-8 border border-gray-100 shadow-sm flex items-center justify-between group hover:border-brand-100 transition-all transform hover:-translate-y-1">
             <div>
-                <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Total Appointments</p>
-                <h3 class="text-4xl font-black text-gray-900 mb-4">{{ $totalAppointments }}</h3>
-                <span class="text-xs font-black text-brand-600 group-hover:text-brand-700 uppercase tracking-widest flex items-center gap-1.5">
+                <p class="text-[9px] sm:text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1 sm:mb-2">Total Appointments</p>
+                <h3 class="text-2xl sm:text-4xl font-black text-gray-900 mb-2 sm:mb-4">{{ $totalAppointments }}</h3>
+                <span class="text-[10px] sm:text-xs font-black text-brand-600 group-hover:text-brand-700 uppercase tracking-widest flex items-center gap-1.5">
                     View History <i class="bi bi-arrow-right group-hover:translate-x-1 transition-transform"></i>
                 </span>
             </div>
-            <div class="w-16 h-16 rounded-2xl bg-brand-50 flex items-center justify-center text-brand-200 group-hover:text-brand-500 transition-colors">
-                <i class="bi bi-calendar-check text-4xl"></i>
+            <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-brand-50 flex items-center justify-center text-brand-200 group-hover:text-brand-500 transition-colors">
+                <i class="bi bi-calendar-check text-2xl sm:text-4xl"></i>
             </div>
         </a>
 
-        <a href="{{ route('patient.health-records.index') }}" class="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm flex items-center justify-between group hover:border-brand-100 transition-all transform hover:-translate-y-1">
+        <a href="{{ route('patient.health-records.index') }}" class="bg-white rounded-[1.5rem] sm:rounded-[2rem] p-6 sm:p-8 border border-gray-100 shadow-sm flex items-center justify-between group hover:border-brand-100 transition-all transform hover:-translate-y-1">
             <div>
-                <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">My Health Records</p>
-                <h3 class="text-4xl font-black text-gray-900 mb-4">{{ auth()->user()->healthRecords->count() }}</h3>
-                <span class="text-xs font-black text-brand-600 group-hover:text-brand-700 uppercase tracking-widest flex items-center gap-1.5">
+                <p class="text-[9px] sm:text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1 sm:mb-2">My Health Records</p>
+                <h3 class="text-2xl sm:text-4xl font-black text-gray-900 mb-2 sm:mb-4">{{ auth()->user()->healthRecords->count() }}</h3>
+                <span class="text-[10px] sm:text-xs font-black text-brand-600 group-hover:text-brand-700 uppercase tracking-widest flex items-center gap-1.5">
                     View Records <i class="bi bi-arrow-right group-hover:translate-x-1 transition-transform"></i>
                 </span>
             </div>
-            <div class="w-16 h-16 rounded-2xl bg-brand-50 flex items-center justify-center text-brand-200 group-hover:text-brand-500 transition-colors">
-                <i class="bi bi-file-earmark-medical text-4xl"></i>
+            <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-brand-50 flex items-center justify-center text-brand-200 group-hover:text-brand-500 transition-colors">
+                <i class="bi bi-file-earmark-medical text-2xl sm:text-4xl"></i>
             </div>
         </a>
     </div>
@@ -197,38 +197,38 @@
             @forelse($availableSlots as $slot)
                 @php $slotAvailable = $slot->isBookable(); @endphp
                 <div x-show="isSlotVisible('{{ $slot->service }}')" 
-                    class="bg-white shadow-sm rounded-[2rem] p-5 md:p-6 border border-gray-100 hover:border-brand-200 hover:shadow-xl transition-all duration-500 flex flex-col h-full group">
+                    class="bg-white shadow-sm rounded-[1.5rem] sm:rounded-[2rem] p-5 md:p-6 border border-gray-100 hover:border-brand-200 hover:shadow-xl transition-all duration-500 flex flex-col h-full group">
                     <div class="flex justify-between items-start mb-4">
-                        <div class="bg-brand-50 text-brand-700 rounded-xl px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.2em] border border-brand-100">
+                        <div class="bg-brand-50 text-brand-700 rounded-lg px-2.5 py-1 sm:px-3 sm:py-1.5 text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] border border-brand-100">
                             {{ $slot->service }}
                         </div>
-                        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full {{ $slotAvailable ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-red-50 text-red-500 border border-red-100' }}">
+                        <div class="flex items-center gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full {{ $slotAvailable ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-red-50 text-red-500 border border-red-100' }}">
                             <span class="relative flex h-1.5 w-1.5">
                                 <span class="{{ $slotAvailable ? 'bg-emerald-500' : 'bg-red-500' }} absolute inline-flex h-full w-full rounded-full opacity-75"></span>
                                 <span class="relative inline-flex rounded-full h-1.5 w-1.5 {{ $slotAvailable ? 'bg-emerald-600' : 'bg-red-600' }}"></span>
                             </span>
-                            <span class="text-[8px] font-black uppercase tracking-widest">{{ $slotAvailable ? 'Available' : 'Full' }}</span>
+                            <span class="text-[7px] sm:text-[8px] font-black uppercase tracking-widest">{{ $slotAvailable ? 'Available' : 'Full' }}</span>
                         </div>
                     </div>
                     
                     <div class="space-y-3 mb-6 flex-1">
-                        <div class="flex items-center gap-3 text-gray-700">
-                            <div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-hover:text-brand-500 transition-colors">
-                                <i class="bi bi-calendar-event text-sm"></i>
+                        <div class="flex items-center gap-2 sm:gap-3 text-gray-700">
+                            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-hover:text-brand-500 transition-colors">
+                                <i class="bi bi-calendar-event text-xs sm:text-sm"></i>
                             </div>
                             <div>
-                                <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Date</p>
-                                <p class="font-black text-gray-900 text-xs">{{ $slot->date->format('M d, Y') }}</p>
+                                <p class="text-[7px] sm:text-[8px] font-black text-gray-400 uppercase tracking-widest">Date</p>
+                                <p class="font-black text-gray-900 text-[10px] sm:text-xs">{{ $slot->date->format('M d, Y') }}</p>
                             </div>
                         </div>
                         
-                        <div class="flex items-center gap-3 text-gray-700">
-                            <div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-hover:text-brand-500 transition-colors">
-                                <i class="bi bi-person-badge text-sm"></i>
+                        <div class="flex items-center gap-2 sm:gap-3 text-gray-700">
+                            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-hover:text-brand-500 transition-colors">
+                                <i class="bi bi-person-badge text-xs sm:text-sm"></i>
                             </div>
                             <div>
-                                <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Provider</p>
-                                <p class="font-black text-gray-900 text-xs truncate max-w-[120px]">
+                                <p class="text-[7px] sm:text-[8px] font-black text-gray-400 uppercase tracking-widest">Provider</p>
+                                <p class="font-black text-gray-900 text-[10px] sm:text-xs truncate max-w-[100px] sm:max-w-[120px]">
                                     @if($slot->doctor)
                                         @if($slot->doctor->isDoctor())
                                             Dr. {{ $slot->doctor->last_name }}
@@ -244,20 +244,20 @@
                             </div>
                         </div>
 
-                        <div class="flex items-center gap-3 text-gray-700">
-                            <div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-hover:text-brand-500 transition-colors">
-                                <i class="bi bi-clock text-sm"></i>
+                        <div class="flex items-center gap-2 sm:gap-3 text-gray-700">
+                            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-hover:text-brand-500 transition-colors">
+                                <i class="bi bi-clock text-xs sm:text-sm"></i>
                             </div>
                             <div>
-                                <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Time</p>
-                                <p class="font-black text-gray-900 text-xs">{{ $slot->displayTime() }}</p>
+                                <p class="text-[7px] sm:text-[8px] font-black text-gray-400 uppercase tracking-widest">Time</p>
+                                <p class="font-black text-gray-900 text-[10px] sm:text-xs">{{ $slot->displayTime() }}</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="pt-4 border-t border-gray-50 mt-auto flex items-center justify-between mb-4">
-                        <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Remaining</span>
-                        <span class="text-xs font-black text-gray-900 bg-gray-50 px-2 py-0.5 rounded-lg border border-gray-100">{{ $slot->available }} Spots</span>
+                        <span class="text-[7px] sm:text-[8px] font-black text-gray-400 uppercase tracking-widest">Remaining</span>
+                        <span class="text-[10px] sm:text-xs font-black text-gray-900 bg-gray-50 px-2 py-0.5 rounded-lg border border-gray-100">{{ $slot->available }} Spots</span>
                     </div>
 
                     <button type="button"
@@ -267,24 +267,16 @@
                             service: '{{ $slot->service }}',
                             date: '{{ $slot->date->format('M d, Y') }}',
                             time: '{{ $slot->displayTime() }}',
-                            provider: '{{ $slot->doctor ? ($slot->doctor->isDoctor() ? 'Dr. ' . $slot->doctor->last_name : 'Midwife ' . $slot->doctor->first_name) : 'Barangay Health Center' }}'
+                            provider: '{{ $slot->doctor ? ($slot->doctor->isDoctor() ? 'Dr. '.$slot->doctor->last_name : ($slot->doctor->isMidwife() ? 'Midwife '.$slot->doctor->first_name : $slot->doctor->full_name)) : 'Health Center' }}'
                         }"
-                        class="w-full py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 shadow-md"
-                        :class="{
-                            'bg-brand-600 hover:bg-brand-700 text-white shadow-brand-500/20 hover:shadow-brand-500/40 transform hover:-translate-y-0.5 active:scale-95': {{ $slotAvailable ? 'true' : 'false' }},
-                            'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60': {{ $slotAvailable ? 'false' : 'true' }}
-                        }"
-                        {{ $slotAvailable ? '' : 'disabled' }}>
-                        @if($slotAvailable)
-                            Book <i class="bi bi-arrow-right"></i>
-                        @else
-                            Full
-                        @endif
+                        :disabled="!{{ $slotAvailable ? 'true' : 'false' }}"
+                        class="w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all shadow-lg disabled:opacity-50 disabled:shadow-none {{ $slotAvailable ? 'bg-brand-600 text-white shadow-brand-200 hover:bg-brand-700 hover:-translate-y-0.5' : 'bg-gray-100 text-gray-400 cursor-not-allowed' }}">
+                        {{ $slotAvailable ? 'Book Appointment' : 'Slot Full' }}
                     </button>
 
-                    <div x-show="hasExistingAppointment('{{ $slot->service }}')" 
-                         class="w-full py-3 rounded-xl bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase tracking-[0.2em] border border-emerald-100 flex items-center justify-center gap-2">
-                        <i class="bi bi-check-circle-fill"></i> Already Booked
+                    <div x-show="hasExistingAppointment('{{ $slot->service }}')"
+                        class="w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-orange-50 text-orange-600 border border-orange-100 font-black text-[10px] sm:text-xs uppercase tracking-widest text-center shadow-sm">
+                        Already Booked
                     </div>
                 </div>
             @empty

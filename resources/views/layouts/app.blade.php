@@ -126,6 +126,63 @@
           {{-- Main Content --}}
           <main class="flex-1 overflow-x-hidden">
               <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                  {{-- Flash Messages --}}
+                  <div class="mb-6 space-y-4">
+                      @if(session('success'))
+                      <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" 
+                           class="flex items-center justify-between p-4 bg-emerald-50 border border-emerald-100 rounded-2xl shadow-sm animate-in fade-in slide-in-from-top-4 duration-300">
+                          <div class="flex items-center gap-3">
+                              <div class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                                  <i class="bi bi-check2-circle text-xl"></i>
+                              </div>
+                              <div>
+                                  <p class="text-xs font-black text-emerald-800 uppercase tracking-widest">Success</p>
+                                  <p class="text-sm font-bold text-emerald-600 mt-0.5">{{ session('success') }}</p>
+                              </div>
+                          </div>
+                          <button @click="show = false" class="p-2 text-emerald-400 hover:text-emerald-600 transition-colors">
+                              <i class="bi bi-x-lg"></i>
+                          </button>
+                      </div>
+                      @endif
+
+                      @if(session('error'))
+                      <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 8000)" 
+                           class="flex items-center justify-between p-4 bg-red-50 border border-red-100 rounded-2xl shadow-sm animate-in fade-in slide-in-from-top-4 duration-300">
+                          <div class="flex items-center gap-3">
+                              <div class="w-10 h-10 rounded-xl bg-red-500 text-white flex items-center justify-center shadow-lg shadow-red-500/20">
+                                  <i class="bi bi-exclamation-triangle text-xl"></i>
+                              </div>
+                              <div>
+                                  <p class="text-xs font-black text-red-800 uppercase tracking-widest">Error</p>
+                                  <p class="text-sm font-bold text-red-600 mt-0.5">{{ session('error') }}</p>
+                              </div>
+                          </div>
+                          <button @click="show = false" class="p-2 text-red-400 hover:text-red-600 transition-colors">
+                              <i class="bi bi-x-lg"></i>
+                          </button>
+                      </div>
+                      @endif
+
+                      @if(session('info'))
+                      <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" 
+                           class="flex items-center justify-between p-4 bg-blue-50 border border-blue-100 rounded-2xl shadow-sm animate-in fade-in slide-in-from-top-4 duration-300">
+                          <div class="flex items-center gap-3">
+                              <div class="w-10 h-10 rounded-xl bg-blue-500 text-white flex items-center justify-center shadow-lg shadow-blue-500/20">
+                                  <i class="bi bi-info-circle text-xl"></i>
+                              </div>
+                              <div>
+                                  <p class="text-xs font-black text-blue-800 uppercase tracking-widest">Notice</p>
+                                  <p class="text-sm font-bold text-blue-600 mt-0.5">{{ session('info') }}</p>
+                              </div>
+                          </div>
+                          <button @click="show = false" class="p-2 text-blue-400 hover:text-blue-600 transition-colors">
+                              <i class="bi bi-x-lg"></i>
+                          </button>
+                      </div>
+                      @endif
+                  </div>
+
                   @yield('content')
               </div>
           </main>

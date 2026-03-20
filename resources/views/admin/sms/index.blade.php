@@ -3,31 +3,41 @@
 @section('title', 'SMS Management')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+<div class="flex flex-col gap-6 sm:gap-8">
     
-    {{-- Header --}}
-    <div class="bg-gradient-to-r from-brand-600 to-brand-500 rounded-[2rem] shadow-lg p-8 text-white relative overflow-hidden">
-        <div class="absolute inset-0 bg-white/5 opacity-10" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div>
-                <h1 class="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
-                    <i class="bi bi-chat-left-dots-fill"></i> SMS & Notifications
+    {{-- Top-Aligned Compact Header --}}
+    <div class="relative z-10 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+        
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8">
+            <div class="max-w-xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 mb-3 sm:mb-4">
+                    <i class="bi bi-chat-left-dots-fill text-xs"></i>
+                    <span class="text-[9px] font-black uppercase tracking-widest">Communications</span>
+                </div>
+                <h1 class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-2 sm:mb-3">
+                    SMS & <span class="text-brand-600 underline decoration-brand-200 decoration-4 underline-offset-4">Notifications</span>
                 </h1>
-                <p class="text-brand-100 mt-2 text-lg">Control system alerts, broadcasts, and monitor delivery status.</p>
+                <p class="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed">
+                    Control system alerts, broadcasts, and monitor delivery status in real-time.
+                </p>
             </div>
-            <div class="bg-white/10 backdrop-blur-md px-6 py-4 rounded-2xl border border-white/20">
-                <p class="text-[10px] font-black uppercase tracking-widest opacity-70 mb-1">PhilSMS Balance</p>
-                <p class="text-2xl font-black">{{ $balance }} Credits</p>
+
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                <div class="bg-brand-50/50 backdrop-blur-md px-6 py-4 rounded-2xl border border-brand-100">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-brand-400 mb-1">PhilSMS Balance</p>
+                    <p class="text-2xl font-black text-brand-600">{{ $balance }} <span class="text-xs font-bold text-brand-400">Credits</span></p>
+                </div>
             </div>
         </div>
     </div>
 
     @if(session('success'))
-        <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-xl shadow-sm animate-fade-in-down">
-            <div class="flex items-center gap-3">
-                <i class="bi bi-check-circle-fill text-green-500 text-xl"></i>
-                <p class="text-green-800 font-medium">{{ session('success') }}</p>
+        <div class="rounded-3xl border border-green-100 bg-green-50/50 p-4 text-sm text-green-800 flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-300">
+            <div class="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 flex-shrink-0">
+                <i class="bi bi-check-lg"></i>
             </div>
+            <div class="font-semibold">{{ session('success') }}</div>
         </div>
     @endif
 

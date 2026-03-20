@@ -3,61 +3,50 @@
 @section('title', 'Manage Services')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+<div class="flex flex-col gap-6 sm:gap-8">
 
-    {{-- Header Card --}}
-    <div class="bg-gradient-to-r from-brand-600 to-brand-500 rounded-[2rem] shadow-lg p-8 text-white relative overflow-hidden">
-        <div class="absolute inset-0 bg-white/5 opacity-10" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
+    {{-- Top-Aligned Compact Header --}}
+    <div class="relative z-10 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
         
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div>
-                <h1 class="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
-                    <i class="bi bi-heart-pulse-fill"></i> Manage Services
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8">
+            <div class="max-w-xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 mb-3 sm:mb-4">
+                    <i class="bi bi-heart-pulse-fill text-xs"></i>
+                    <span class="text-[9px] font-black uppercase tracking-widest">Clinic Operations</span>
+                </div>
+                <h1 class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-2 sm:mb-3">
+                    Medical <span class="text-brand-600 underline decoration-brand-200 decoration-4 underline-offset-4">Services</span>
                 </h1>
-                <p class="text-brand-100 mt-2 text-lg">Configure the medical services available in the barangay health center.</p>
+                <p class="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed">
+                    Configure the medical services, provider assignments, and clinical categories available in your barangay.
+                </p>
             </div>
-            <div class="flex items-center gap-3">
+
+            <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
                 <a href="{{ route('admin.services.create') }}" 
-                   class="inline-flex items-center px-5 py-3 rounded-xl bg-white text-brand-600 font-bold shadow-sm hover:bg-brand-50 hover:scale-105 transition-all transform group">
-                    <div class="w-6 h-6 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center mr-2 group-hover:bg-brand-200 transition">
-                        <i class="bi bi-plus-lg text-sm"></i>
-                    </div>
+                   class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-brand-600 text-white font-black text-[10px] sm:text-xs uppercase tracking-widest shadow-xl shadow-brand-500/20 hover:bg-brand-700 hover:scale-105 transition-all transform group shrink-0">
+                    <i class="bi bi-plus-lg mr-2 group-hover:rotate-90 transition-transform"></i>
                     Add New Service
                 </a>
             </div>
         </div>
     </div>
 
-    {{-- Success Message --}}
-    @if(session('success'))
-        <div x-data="{ show: true }" x-show="show" x-transition class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-xl flex items-start justify-between shadow-sm">
-            <div class="flex items-center gap-3">
-                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center">
-                    <i class="bi bi-check-lg text-lg"></i>
-                </div>
-                <div>
-                    <h3 class="text-green-800 font-bold">Success</h3>
-                    <p class="text-green-700 text-sm">{{ session('success') }}</p>
-                </div>
-            </div>
-            <button @click="show = false" class="text-green-500 hover:text-green-700 transition rounded-lg p-1 hover:bg-green-100">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-    @endif
-
-    {{-- Services Content --}}
-    <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
-        
-        {{-- Toolbar --}}
-        <div class="p-6 border-b border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div class="flex items-center gap-2 text-gray-500 text-sm">
+    {{-- Info Bar --}}
+    <div class="bg-white rounded-[2rem] shadow-lg shadow-gray-200/50 border border-gray-100 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="flex items-center gap-3 text-gray-500">
+            <div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-brand-500">
                 <i class="bi bi-info-circle"></i>
-                <span>Showing all available services</span>
             </div>
-            
-            {{-- Search could go here if implemented in controller --}}
+            <span class="text-xs font-bold">Showing all active health center services</span>
         </div>
+        <div class="flex items-center gap-2">
+            <span class="px-3 py-1 rounded-full bg-brand-50 text-brand-600 text-[10px] font-black uppercase tracking-widest border border-brand-100">
+                {{ $services->count() }} Total
+            </span>
+        </div>
+    </div>
 
         {{-- Mobile Card View --}}
         <div class="md:hidden p-4 space-y-4">
