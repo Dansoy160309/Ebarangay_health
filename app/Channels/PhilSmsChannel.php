@@ -43,6 +43,14 @@ class PhilSmsChannel
         $recipient = $messageData['recipient'];
         $body = $messageData['body'];
 
+        // 3.1 Format recipient to international format (63 prefix)
+        $recipient = preg_replace('/[^0-9]/', '', $recipient); // Remove non-numeric
+        if (str_starts_with($recipient, '0')) {
+            $recipient = '63' . substr($recipient, 1);
+        } elseif (strlen($recipient) === 10 && str_starts_with($recipient, '9')) {
+            $recipient = '63' . $recipient;
+        }
+
         try {
             $apiUrl = config('services.philsms.api_url', 'https://dashboard.philsms.com/api/v3/sms/send');
             

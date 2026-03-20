@@ -27,7 +27,7 @@ class SmsSettingController extends Controller
             
             if ($response->successful()) {
                 $data = $response->json();
-                $balance = $data['data']['balance'] ?? 'N/A';
+                $balance = $data['data']['remaining_balance'] ?? $data['data']['balance'] ?? 'N/A';
             }
         } catch (\Exception $e) {
             Log::error('PhilSMS Balance Error: ' . $e->getMessage());
