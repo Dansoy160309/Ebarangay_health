@@ -10,7 +10,8 @@ use App\Http\Controllers\HealthWorker\{
 };
 use App\Http\Controllers\Midwife\{
     MedicineDistributionController,
-    DefaulterController
+    DefaulterController,
+    VaccineInventoryController
 };
 
 Route::prefix('midwife')

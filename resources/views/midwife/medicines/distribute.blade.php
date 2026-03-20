@@ -3,6 +3,20 @@
 @section('title', 'Dispense Medicine')
 
 @section('content')
+@php
+    $patientsData = $patients->map(function($p) {
+        return ['id' => $p->id, 'label' => $p->full_name];
+    })->values();
+    $medicinesData = $medicines->map(function($m) {
+        $label = trim($m->generic_name . ($m->brand_name ? ' (' . $m->brand_name . ')' : ''));
+        return [
+            'id' => $m->id,
+            'stock' => $m->stock,
+            'label' => $label,
+            'display' => $label . ' • Stock: ' . $m->stock,
+        ];
+    })->values();
+@endphp
 <div class="flex flex-col gap-6 sm:gap-8">
     
     {{-- Top-Aligned Compact Header --}}
@@ -188,21 +202,6 @@
     </div>
 </div>
 @endsection
-
-@php
-    $patientsData = $patients->map(function($p) {
-        return ['id' => $p->id, 'label' => $p->full_name];
-    })->values();
-    $medicinesData = $medicines->map(function($m) {
-        $label = trim($m->generic_name . ($m->brand_name ? ' (' . $m->brand_name . ')' : ''));
-        return [
-            'id' => $m->id,
-            'stock' => $m->stock,
-            'label' => $label,
-            'display' => $label . ' • Stock: ' . $m->stock,
-        ];
-    })->values();
-@endphp
 
 @section('scripts')
 @parent
