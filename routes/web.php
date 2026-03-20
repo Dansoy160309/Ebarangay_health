@@ -1,6 +1,21 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
+
+// ===============================
+// MAINTENANCE / EMERGENCY FIX
+// ===============================
+Route::get('/fix-database', function() {
+    try {
+        Artisan::call('migrate', ['--force' => true]);
+        Artisan::call('config:clear');
+        Artisan::call('cache:clear');
+        return "SUCCESS: Database tables created and cache cleared! <br><br> <a href='/dashboard'>Go to Dashboard</a>";
+    } catch (\Exception $e) {
+        return "ERROR: " . $e->getMessage();
+    }
+});
 
 // ===============================
 // AUTH CONTROLLERS
