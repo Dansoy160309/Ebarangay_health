@@ -41,7 +41,7 @@ class AnnouncementController extends Controller
         ]);
 
         if ($announcement->status === 'active') {
-            Patient::query()
+            User::where('status', true)
                 ->chunkById(100, function ($users) use ($announcement) {
                     foreach ($users as $user) {
                         $user->notify(new NewAnnouncementNotification($announcement));
@@ -75,17 +75,26 @@ class AnnouncementController extends Controller
             'expires_at' => 'nullable|date',
         ]);
 
+        $wasArchived = $announcement->status === 'archived';
+
         $announcement->update([
             'title' => $request->title,
             'message' => $request->message,
             'status' => $request->status,
             'expires_at' => $request->expires_at,
-            // Update published_at only if becoming active and wasn't before? Or just leave it.
-            // Let's simple logic: if active and no published_at, set it.
         ]);
         
         if ($request->status === 'active' && !$announcement->published_at) {
             $announcement->update(['published_at' => now()]);
+        }
+
+        if ($request->status === 'active' && $wasArchived) {
+            User::where('status', true)
+                ->chunkById(100, function ($users) use ($announcement) {
+                    foreach ($users as $user) {
+                        $user->notify(new NewAnnouncementNotification($announcement));
+                    }
+                });
         }
 
         return redirect()->route('admin.announcements.index')->with('success', 'Announcement updated successfully.');

@@ -41,7 +41,7 @@ class AnnouncementController extends Controller
         ]);
 
         if ($announcement->status === 'active') {
-            Patient::query()
+            User::where('status', true)
                 ->chunkById(100, function ($users) use ($announcement) {
                     foreach ($users as $user) {
                         $user->notify(new NewAnnouncementNotification($announcement));

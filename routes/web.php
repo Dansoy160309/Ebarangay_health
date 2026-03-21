@@ -38,13 +38,11 @@ Route::get('/', function () {
 // AUTH ROUTES
 // ===============================
 Route::prefix('auth')->group(function () {
-    Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('login', [LoginController::class, 'login'])->name('login.attempt');
+    Route::middleware(['guest'])->group(function () {
+        Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+        Route::post('login', [LoginController::class, 'login'])->name('login.attempt');
+    });
     
-    // Registration Routes (Disabled)
-    // Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-    // Route::post('register', [RegisterController::class, 'register'])->name('register.submit');
-
     Route::match(['post', 'get'], 'logout', [LoginController::class, 'logout'])->name('logout');
 });
 
