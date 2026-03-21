@@ -106,16 +106,26 @@
             $readNotifications = $user->readNotifications()->latest()->take(5 - $unreadNotifications->count())->get();
             $notifications = $unreadNotifications->merge($readNotifications);
             $unreadCount = $unreadNotifications->count();
+            
+            // Count unread announcement notifications
+            $unreadAnnouncementsCount = $unreadNotifications->filter(function($n) {
+                return str_contains($n->type, 'NewAnnouncementNotification');
+            })->count();
         } else {
             $notifications = collect();
             $unreadCount = 0;
+            $unreadAnnouncementsCount = 0;
         }
     @endphp
 
   @if (!request()->routeIs('login') && !request()->routeIs('register'))
       
       {{-- Sidebar (Fixed Left) --}}
-      @include('layouts.sidebar', ['notifications' => $notifications, 'unreadCount' => $unreadCount])
+      @include('layouts.sidebar', [
+          'notifications' => $notifications, 
+          'unreadCount' => $unreadCount,
+          'unreadAnnouncementsCount' => $unreadAnnouncementsCount
+      ])
 
       {{-- Main Wrapper (Pushed right on desktop) --}}
       <div class="md:ml-64 flex flex-col min-h-screen transition-all duration-300 ease-in-out print:ml-0">

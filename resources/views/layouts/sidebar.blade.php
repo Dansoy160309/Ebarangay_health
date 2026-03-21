@@ -14,10 +14,10 @@
 
     {{-- Navigation --}}
     <div class="flex-1 overflow-y-auto py-3 px-2 space-y-1.5 custom-scrollbar">
-        @php
-            $unreadCount = auth()->user()->unreadNotifications()->count();
-        @endphp
-        @include('layouts.sidebar-links', ['unreadCount' => $unreadCount])
+        @include('layouts.sidebar-links', [
+            'unreadCount' => $unreadCount ?? 0,
+            'unreadAnnouncementsCount' => $unreadAnnouncementsCount ?? 0
+        ])
     </div>
 </aside>
 
@@ -61,9 +61,9 @@
 
     {{-- Sidebar Links --}}
     <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-        @php
-            $unreadCount = auth()->user()->unreadNotifications()->count();
-        @endphp
-        @include('layouts.sidebar-links', ['unreadCount' => $unreadCount])
+        @include('layouts.sidebar-links', [
+            'unreadCount' => $unreadCount ?? 0,
+            'unreadAnnouncementsCount' => $unreadAnnouncementsCount ?? 0
+        ])
     </nav>
 </aside>

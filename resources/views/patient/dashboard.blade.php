@@ -52,31 +52,33 @@
 }" x-init="initClock()" class="flex flex-col gap-8" x-cloak>
 
     {{-- 1. Hero Welcome Banner --}}
-    <div class="bg-gradient-to-br from-brand-600 via-brand-500 to-indigo-600 rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 text-white shadow-xl shadow-brand-500/20 relative overflow-hidden">
-        <div class="relative z-10">
-            <h1 class="text-2xl sm:text-5xl font-black mb-3 sm:mb-4 tracking-tight leading-tight">
-                Good Day, <br class="sm:hidden"> {{ auth()->user()->first_name }}! 👋
-            </h1>
-            <p class="text-brand-50 text-xs sm:text-lg font-medium opacity-90 mb-6 sm:mb-8 max-w-2xl">
-                Your health journey starts here. Manage appointments and view your records with ease.
-            </p>
+    <div class="bg-gradient-to-br from-brand-600 via-brand-500 to-indigo-600 rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 text-white shadow-xl shadow-brand-500/20 relative overflow-hidden">
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="max-w-2xl">
+                <h1 class="text-2xl sm:text-4xl font-black mb-2 tracking-tight leading-tight">
+                    Good Day, {{ auth()->user()->first_name }}! 👋
+                </h1>
+                <p class="text-brand-50 text-xs sm:text-sm font-medium opacity-90 mb-0">
+                    Your health journey starts here. Manage appointments and view your records with ease.
+                </p>
+            </div>
             
-            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-                <div class="flex items-center gap-2 bg-white/15 backdrop-blur-md px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl border border-white/10 shadow-sm w-fit">
-                    <i class="bi bi-calendar3 text-brand-200 text-xs sm:text-base"></i>
-                    <span x-text="currentDate" class="text-[10px] sm:text-xs font-black uppercase tracking-widest">{{ now()->format('l, F j, Y') }}</span>
+            <div class="flex flex-row items-center gap-2 sm:gap-3 shrink-0">
+                <div class="flex items-center gap-2 bg-white/15 backdrop-blur-md px-3 sm:px-4 py-2 rounded-xl sm:rounded-2xl border border-white/10 shadow-sm w-fit">
+                    <i class="bi bi-calendar3 text-brand-200 text-xs"></i>
+                    <span x-text="currentDate" class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest">{{ now()->format('l, F j, Y') }}</span>
                 </div>
                 
-                <div class="flex items-center gap-2 bg-white/15 backdrop-blur-md px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl border border-white/10 shadow-sm w-fit">
-                    <i class="bi bi-clock text-brand-200 text-xs sm:text-base"></i>
-                    <span x-text="currentTime" class="text-[10px] sm:text-xs font-black uppercase tracking-widest">{{ now()->format('h:i A') }}</span>
+                <div class="flex items-center gap-2 bg-white/15 backdrop-blur-md px-3 sm:px-4 py-2 rounded-xl sm:rounded-2xl border border-white/10 shadow-sm w-fit">
+                    <i class="bi bi-clock text-brand-200 text-xs"></i>
+                    <span x-text="currentTime" class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest">{{ now()->format('h:i A') }}</span>
                 </div>
             </div>
         </div>
         
         <!-- Background Icon -->
-        <div class="absolute -right-10 -bottom-10 sm:-right-16 sm:-bottom-16 opacity-10 pointer-events-none">
-            <i class="bi bi-heart-pulse-fill text-[12rem] sm:text-[20rem]"></i>
+        <div class="absolute -right-6 -bottom-6 sm:-right-10 sm:-bottom-10 opacity-10 pointer-events-none">
+            <i class="bi bi-heart-pulse-fill text-[8rem] sm:text-[12rem]"></i>
         </div>
     </div>
 

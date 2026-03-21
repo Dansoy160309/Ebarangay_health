@@ -76,8 +76,21 @@
     <a href="{{ $routes['announcement'] }}"
        @click="sidebarOpen = false"
        class="{{ getLinkClasses(request()->routeIs('*announcements*')) }}">
-        <i class="bi bi-megaphone-fill mr-3 text-xl text-brand-600"></i> 
-        <span>Announcements</span>
+        <div class="relative">
+            <i class="bi bi-megaphone-fill mr-3 text-xl text-brand-600"></i>
+            @if(isset($unreadAnnouncementsCount) && $unreadAnnouncementsCount > 0)
+                <span class="absolute -top-1 left-3 flex h-3 w-3">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-white"></span>
+                </span>
+            @endif
+        </div>
+        <span class="flex-1">Announcements</span>
+        @if(isset($unreadAnnouncementsCount) && $unreadAnnouncementsCount > 0)
+            <span class="bg-red-100 text-red-600 py-0.5 px-2 rounded-full text-[10px] font-black">
+                {{ $unreadAnnouncementsCount }}
+            </span>
+        @endif
     </a>
 </div>
 
