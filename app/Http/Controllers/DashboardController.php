@@ -496,13 +496,16 @@ class DashboardController extends Controller
             $notifications = $user->notifications()->latest()->limit(10)->get();
             $dependents = $user->dependents()->get();
 
-            // Fetch Doctor Availabilities for Calendar
-            $doctorAvailabilities = \App\Models\DoctorAvailability::with('doctor')
-                ->where('date', '>=', now()->startOfMonth())
-                ->where('date', '<=', now()->addMonths(2)->endOfMonth())
-                ->whereIn('status', ['scheduled', 'arrived', 'delayed'])
-                ->get()
-                ->groupBy(fn($d) => $d->date->format('Y-m-d'));
+            // Fetch Doctor Availabilities for Calendar (with safety check)
+            $doctorAvailabilities = collect();
+            if (\Illuminate\Support\Facades\Schema::hasTable('doctor_availabilities')) {
+                $doctorAvailabilities = \App\Models\DoctorAvailability::with('doctor')
+                    ->where('date', '>=', now()->startOfMonth())
+                    ->where('date', '<=', now()->addMonths(2)->endOfMonth())
+                    ->whereIn('status', ['scheduled', 'arrived', 'delayed'])
+                    ->get()
+                    ->groupBy(fn($d) => $d->date->format('Y-m-d'));
+            }
             
             // Create a unified list of all possible patients (Account Holder + Dependents)
             $family = collect([$user])->merge($dependents)->map(function($p) {
