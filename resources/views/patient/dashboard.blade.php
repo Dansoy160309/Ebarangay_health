@@ -15,6 +15,11 @@
     appointments: {{ Js::from($appointments) }},
     currentTime: '',
     currentDate: '',
+    availabilities: {{ Js::from($doctorAvailabilities) }},
+    calendarMonth: new Date().getMonth(),
+    calendarYear: new Date().getFullYear(),
+    calendarDays: [],
+    showCalendarModal: false,
     initClock() {
         const update = () => {
             const now = new Date();
@@ -48,8 +53,50 @@
             appt.service.toLowerCase().includes(service.toLowerCase()) &&
             !['cancelled', 'rejected', 'completed'].includes(appt.status)
         );
+    },
+    updateCalendar() {
+        const daysInMonth = new Date(this.calendarYear, this.calendarMonth + 1, 0).getDate();
+        const firstDay = new Date(this.calendarYear, this.calendarMonth, 1).getDay();
+        const days = [];
+        
+        // Padding for previous month
+        for (let i = 0; i < firstDay; i++) {
+            days.push({ day: '', date: null });
+        }
+        
+        for (let i = 1; i <= daysInMonth; i++) {
+            const dateStr = `${this.calendarYear}-${String(this.calendarMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+            days.push({ 
+                day: i, 
+                date: dateStr,
+                hasAvailability: !!this.availabilities[dateStr]
+            });
+        }
+        this.calendarDays = days;
+    },
+    changeMonth(delta) {
+        this.calendarMonth += delta;
+        if (this.calendarMonth < 0) {
+            this.calendarMonth = 11;
+            this.calendarYear--;
+        } else if (this.calendarMonth > 11) {
+            this.calendarMonth = 0;
+            this.calendarYear++;
+        }
+        this.updateCalendar();
+    },
+    getMonthName() {
+        return new Date(this.calendarYear, this.calendarMonth).toLocaleString('default', { month: 'long' });
+    },
+    selectCalendarDate(dateStr) {
+        if (!this.availabilities[dateStr]) return;
+        this.showCalendarModal = false;
+        // In a real SPA we would filter, for now we can just highlight or show a toast
+        // but since the requirement is visual, we will just close and maybe scroll.
+        const el = document.getElementById('available-slots-section');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
     }
-}" x-init="initClock()" class="flex flex-col gap-8" x-cloak>
+}" x-init="initClock(); updateCalendar()" class="flex flex-col gap-8" x-cloak>
 
     {{-- 1. Hero Welcome Banner --}}
     <div class="bg-gradient-to-br from-brand-600 via-brand-500 to-indigo-600 rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 text-white shadow-xl shadow-brand-500/20 relative overflow-hidden">
@@ -96,6 +143,63 @@
             <div class="bg-red-50 border border-red-100 text-red-700 px-6 py-4 rounded-2xl flex items-center gap-3 shadow-sm">
                 <i class="bi bi-exclamation-circle-fill text-xl"></i>
                 <span class="font-bold text-sm">{{ session('error') }}</span>
+            </div>
+        </div>
+    @endif
+
+    {{-- Doctor Presence Tracking (For Today's Appointments) --}}
+    @php
+        $todaysDoctorAppointments = auth()->user()->appointments()
+            ->whereDate('scheduled_at', now()->toDateString())
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->whereHas('slot', fn($q) => $q->whereNotNull('doctor_id'))
+            ->with(['slot.doctor.availabilities' => fn($q) => $q->where('date', now()->toDateString())])
+            ->get();
+    @endphp
+
+    @if($todaysDoctorAppointments->isNotEmpty())
+        <div class="space-y-4">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-brand-50 flex items-center justify-center text-brand-600">
+                    <i class="bi bi-person-pulse-fill"></i>
+                </div>
+                <h2 class="text-sm font-black text-gray-900 tracking-tight uppercase">Doctor Status for Today</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                @foreach($todaysDoctorAppointments as $appointment)
+                    @php
+                        $availability = $appointment->slot->doctor->availabilities->first();
+                        $status = $availability?->status ?? 'scheduled';
+                        $statusConfig = [
+                            'scheduled' => ['label' => 'Waiting for Arrival', 'icon' => 'bi-clock', 'class' => 'bg-gray-50 text-gray-600 border-gray-100'],
+                            'arrived' => ['label' => 'Doctor is Present', 'icon' => 'bi-check-circle-fill', 'class' => 'bg-emerald-50 text-emerald-600 border-emerald-100'],
+                            'delayed' => ['label' => 'Running Late', 'icon' => 'bi-exclamation-circle-fill', 'class' => 'bg-amber-50 text-amber-600 border-amber-100'],
+                            'absent' => ['label' => 'Unavailable Today', 'icon' => 'bi-x-circle-fill', 'class' => 'bg-red-50 text-red-600 border-red-100'],
+                        ][$status];
+                    @endphp
+                    <div class="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm flex items-center justify-between group">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-lg font-black">
+                                {{ substr($appointment->slot->doctor->full_name, 0, 1) }}
+                            </div>
+                            <div>
+                                <h4 class="font-black text-gray-900 text-sm">Dr. {{ $appointment->slot->doctor->full_name }}</h4>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ $appointment->service }}</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-end gap-1">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border {{ $statusConfig['class'] }} text-[9px] font-black uppercase tracking-widest shadow-sm">
+                                <i class="bi {{ $statusConfig['icon'] }}"></i>
+                                {{ $statusConfig['label'] }}
+                            </span>
+                            @if($availability?->notes && $status === 'delayed')
+                                <span class="text-[8px] font-bold text-amber-500 uppercase tracking-tighter">
+                                    Note: {{ Str::limit($availability->notes, 30) }}
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
             </div>
         </div>
     @endif
@@ -147,7 +251,34 @@
     </div>
 
     {{-- 3. Stats & Quick Links --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {{-- Mini Calendar Card --}}
+        <div class="bg-white rounded-[2rem] p-6 border border-gray-100 shadow-sm flex flex-col hover:border-brand-100 transition-all cursor-pointer group"
+             @click="showCalendarModal = true">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-brand-50 flex items-center justify-center text-brand-600">
+                        <i class="bi bi-calendar-range-fill text-sm"></i>
+                    </div>
+                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Clinical Schedule</span>
+                </div>
+                <i class="bi bi-arrows-angle-expand text-gray-300 group-hover:text-brand-500 transition-colors text-xs"></i>
+            </div>
+            
+            <div class="flex-1 flex flex-col justify-center">
+                <h3 class="text-xl font-black text-gray-900 mb-1" x-text="getMonthName()"></h3>
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tap to view doctor availability</p>
+                
+                {{-- Tiny preview dots for current week --}}
+                <div class="flex gap-1.5 mt-4">
+                    <template x-for="i in 7">
+                        <div class="w-1.5 h-1.5 rounded-full" 
+                             :class="calendarDays.slice(0, 7)[i-1]?.hasAvailability ? 'bg-brand-500' : 'bg-gray-100'"></div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
         <a href="{{ route('patient.appointments.index') }}" class="bg-white rounded-[1.5rem] sm:rounded-[2rem] p-6 sm:p-8 border border-gray-100 shadow-sm flex items-center justify-between group hover:border-brand-100 transition-all transform hover:-translate-y-1">
             <div>
                 <p class="text-[9px] sm:text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1 sm:mb-2">Total Appointments</p>
@@ -176,7 +307,7 @@
     </div>
 
     {{-- 4. Available Slots --}}
-    <div class="space-y-6">
+    <div id="available-slots-section" class="space-y-6">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600">
@@ -457,6 +588,77 @@
                         No upcoming visits
                     </div>
                 @endforelse
+            </div>
+        </div>
+    </div>
+
+    {{-- Expanded Calendar Modal --}}
+    <div x-show="showCalendarModal" 
+          class="fixed inset-0 z-[100] overflow-y-auto" 
+          x-transition:enter="transition ease-out duration-300"
+          x-transition:enter-start="opacity-0"
+          x-transition:enter-end="opacity-100"
+          x-transition:leave="transition ease-in duration-200"
+          x-transition:leave-start="opacity-100"
+          x-transition:leave-end="opacity-0"
+          @keydown.escape.window="showCalendarModal = false">
+        <div class="flex items-center justify-center min-h-screen px-4 py-12 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity bg-gray-900/60 backdrop-blur-sm" @click="showCalendarModal = false"></div>
+
+            <div class="inline-block w-full max-w-2xl my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-[3rem] sm:align-middle relative z-10">
+                <div class="absolute top-0 right-0 p-6">
+                    <button @click="showCalendarModal = false" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <i class="bi bi-x-lg text-2xl"></i>
+                    </button>
+                </div>
+
+                <div class="p-8 sm:p-10">
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <h3 class="text-2xl font-black text-gray-900 tracking-tight" x-text="getMonthName() + ' ' + calendarYear"></h3>
+                            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Select a date with a blue dot to view available slots</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button @click="changeMonth(-1)" class="p-2 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-600 transition-all">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+                            <button @click="changeMonth(1)" class="p-2 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-600 transition-all">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-7 gap-2 mb-4">
+                        <template x-for="day in ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']">
+                            <div class="text-center text-[10px] font-black text-gray-400 uppercase tracking-widest py-2" x-text="day"></div>
+                        </template>
+                        
+                        <template x-for="dayObj in calendarDays">
+                            <div class="relative aspect-square flex flex-col items-center justify-center rounded-2xl transition-all border border-transparent"
+                                 :class="{
+                                     'hover:bg-brand-50 cursor-pointer border-gray-50': dayObj.day !== '',
+                                     'bg-brand-50 border-brand-100': dayObj.hasAvailability
+                                 }"
+                                 @click="selectCalendarDate(dayObj.date)">
+                                <span class="text-sm font-bold" :class="dayObj.hasAvailability ? 'text-brand-700' : 'text-gray-700'" x-text="dayObj.day"></span>
+                                <template x-if="dayObj.hasAvailability">
+                                    <div class="absolute bottom-2 w-1 h-1 rounded-full bg-brand-500"></div>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div class="mt-8 flex items-center gap-6 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-brand-500"></div>
+                            <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Doctor Available</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-gray-200"></div>
+                            <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest">No Schedule</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

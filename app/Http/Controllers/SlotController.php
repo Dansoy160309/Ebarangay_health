@@ -111,10 +111,26 @@ class SlotController extends Controller
         // Enforce Provider Type Logic
         $service = Service::where('name', $request->service)->first();
         
-        if ($service->provider_type === 'Doctor' && empty($request->doctor_id)) {
-            throw ValidationException::withMessages([
-                'doctor_id' => "The service '{$service->name}' requires an assigned Doctor."
-            ]);
+        if ($service->provider_type === 'Doctor') {
+            if (empty($request->doctor_id)) {
+                throw ValidationException::withMessages([
+                    'doctor_id' => "The service '{$service->name}' requires an assigned Doctor."
+                ]);
+            }
+
+            // Check Doctor Availability
+            $isAvailable = \App\Models\DoctorAvailability::where('doctor_id', $request->doctor_id)
+                ->where('date', $request->date)
+                ->where('start_time', '<=', $request->start_time)
+                ->where('end_time', '>=', ($request->end_time ?? $request->start_time))
+                ->exists();
+
+            if (!$isAvailable) {
+                $doctor = User::find($request->doctor_id);
+                throw ValidationException::withMessages([
+                    'doctor_id' => "Dr. {$doctor->full_name} has not set their availability for this date and time window."
+                ]);
+            }
         }
 
         if ($service->provider_type === 'Midwife' && !empty($request->doctor_id)) {

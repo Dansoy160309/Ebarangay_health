@@ -176,6 +176,13 @@
             <i class="bi bi-capsule-pill mr-3 text-xl"></i> 
             <span>Medicines</span>
         </a>
+
+        <a href="{{ route('midwife.doctor-presence.index') }}"
+           @click="sidebarOpen = false"
+           class="{{ getLinkClasses(request()->routeIs('midwife.doctor-presence.*')) }}">
+            <i class="bi bi-person-check-fill mr-3 text-xl"></i> 
+            <span>Doctor Presence</span>
+        </a>
     @endif
 
     @if($role === 'doctor')
@@ -184,6 +191,13 @@
            class="{{ getLinkClasses(request()->routeIs('doctor.appointments*')) }}">
             <i class="bi bi-calendar-event-fill mr-3 text-xl"></i> 
             <span>Appointments</span>
+        </a>
+
+        <a href="{{ route('doctor.availability.index') }}"
+           @click="sidebarOpen = false"
+           class="{{ getLinkClasses(request()->routeIs('doctor.availability.*')) }}">
+            <i class="bi bi-calendar-check-fill mr-3 text-xl"></i> 
+            <span>My Duty Schedule</span>
         </a>
 
         <a href="{{ $routes['health_records'] }}"

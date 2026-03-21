@@ -32,6 +32,12 @@ Route::prefix('doctor')
         // Health Records
         Route::resource('health-records', HealthRecordController::class);
 
+        // Availability (Duty Schedule)
+        Route::get('availability', [App\Http\Controllers\Doctor\AvailabilityController::class, 'index'])->name('availability.index');
+        Route::get('availability/create', [App\Http\Controllers\Doctor\AvailabilityController::class, 'create'])->name('availability.create');
+        Route::post('availability', [App\Http\Controllers\Doctor\AvailabilityController::class, 'store'])->name('availability.store');
+        Route::delete('availability/{availability}', [App\Http\Controllers\Doctor\AvailabilityController::class, 'destroy'])->name('availability.destroy');
+
         // Announcements
         Route::get('announcements', [App\Http\Controllers\Doctor\AnnouncementController::class, 'index'])->name('announcements.index');
         Route::get('announcements/{announcement}', [App\Http\Controllers\Doctor\AnnouncementController::class, 'show'])->name('announcements.show');

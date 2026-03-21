@@ -36,6 +36,14 @@ Route::prefix('midwife')
 
         Route::resource('slots', SlotController::class);
 
+        // Doctor Presence & Tracking
+        Route::prefix('doctor-presence')->name('doctor-presence.')->group(function () {
+            Route::get('/', [App\Http\Controllers\Midwife\DoctorPresenceController::class, 'index'])->name('index');
+            Route::post('{availability}/arrived', [App\Http\Controllers\Midwife\DoctorPresenceController::class, 'markArrived'])->name('arrived');
+            Route::post('{availability}/absent', [App\Http\Controllers\Midwife\DoctorPresenceController::class, 'markAbsent'])->name('absent');
+            Route::post('{availability}/delayed', [App\Http\Controllers\Midwife\DoctorPresenceController::class, 'markDelayed'])->name('delayed');
+        });
+
         // Patients (transferred from Health Worker)
         Route::prefix('patients')->name('patients.')->group(function () {
             Route::get('/', [HealthWorkerPatientController::class, 'index'])->name('index');
