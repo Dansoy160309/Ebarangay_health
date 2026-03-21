@@ -11,6 +11,12 @@ class AvailabilityController extends Controller
 {
     public function index()
     {
+        if (!\Illuminate\Support\Facades\Schema::hasTable('doctor_availabilities')) {
+            $availabilities = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
+            return view('doctor.availability.index', compact('availabilities'))
+                ->with('error', 'The system is currently undergoing a database update. Please contact the administrator to run migrations.');
+        }
+
         $availabilities = DoctorAvailability::where('doctor_id', Auth::id())
             ->orderBy('date', 'desc')
             ->orderBy('start_time', 'asc')

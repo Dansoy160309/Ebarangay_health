@@ -78,6 +78,19 @@ Route::middleware(['auth', 'force.password.change'])->group(function () {
         Route::get('read/{id}', [NotificationController::class, 'read'])->name('notifications.read');
         Route::get('mark-all', [NotificationController::class, 'markAll'])->name('notifications.markAll');
     });
+
+    // 🚨 Emergency Migration Route (Hidden)
+    Route::get('/system/run-migrations', function() {
+        if (auth()->user()->role !== 'admin') abort(403);
+        
+        try {
+            \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+            $output = \Illuminate\Support\Facades\Artisan::output();
+            return "Migration Successful!<br><pre>$output</pre><br><a href='/dashboard'>Go to Dashboard</a>";
+        } catch (\Exception $e) {
+            return "Migration Failed: " . $e->getMessage();
+        }
+    })->name('system.migrate');
 });
 
 // ===============================

@@ -14,6 +14,12 @@ class DoctorPresenceController extends Controller
 {
     public function index()
     {
+        if (!\Illuminate\Support\Facades\Schema::hasTable('doctor_availabilities')) {
+            $todayAvailabilities = collect();
+            return view('midwife.doctor_presence.index', compact('todayAvailabilities'))
+                ->with('error', 'Database tables are currently being updated. Please run migrations.');
+        }
+
         // Get doctors scheduled for today
         $todayAvailabilities = DoctorAvailability::with('doctor')
             ->where('date', now()->toDateString())
