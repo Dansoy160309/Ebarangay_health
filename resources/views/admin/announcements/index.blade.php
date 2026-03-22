@@ -3,24 +3,24 @@
 @section('title', 'Announcements')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
     {{-- Header Card --}}
-    <div class="bg-gradient-to-r from-brand-600 to-brand-500 rounded-[2rem] shadow-lg p-8 text-white relative overflow-hidden">
+    <div class="bg-gradient-to-r from-brand-600 to-brand-500 rounded-2xl shadow-lg p-5 sm:p-6 text-white relative overflow-hidden">
         <div class="absolute inset-0 bg-white/5 opacity-10" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
         
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5">
             <div>
-                <h1 class="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
-                    <i class="bi bi-megaphone-fill"></i> Announcements
+                <h1 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+                    <i class="bi bi-megaphone-fill text-lg"></i> Announcements
                 </h1>
-                <p class="text-brand-100 mt-2 text-lg">Manage news and updates for the barangay community.</p>
+                <p class="text-brand-100 mt-1.5 text-sm">Manage news and updates for the barangay community.</p>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2">
                 <a href="{{ route('admin.announcements.create') }}" 
-                   class="inline-flex items-center px-5 py-3 rounded-xl bg-white text-brand-600 font-bold shadow-sm hover:bg-brand-50 hover:scale-105 transition-all transform group">
-                    <div class="w-6 h-6 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center mr-2 group-hover:bg-brand-200 transition">
-                        <i class="bi bi-plus-lg text-sm"></i>
+                   class="inline-flex items-center px-4 py-2.5 rounded-lg bg-white text-brand-600 font-bold shadow-sm hover:bg-brand-50 hover:scale-105 transition-all transform group">
+                    <div class="w-5 h-5 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center mr-1.5 group-hover:bg-brand-200 transition text-[10px]">
+                        <i class="bi bi-plus-lg"></i>
                     </div>
                     Create Announcement
                 </a>
@@ -48,36 +48,36 @@
 
     {{-- Content Grid --}}
     @if($announcements->count())
-        <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             @foreach($announcements as $announcement)
-                <article class="flex flex-col bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:border-brand-100 transition-all duration-300 group relative hover:-translate-y-0.5">
+                <article class="flex flex-col bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg hover:border-brand-100 transition-all duration-300 group relative hover:-translate-y-0.5">
                     {{-- Status Badge --}}
-                    <div class="absolute top-4 right-4 z-10">
+                    <div class="absolute top-3 right-3 z-10">
                         @if($announcement->status === 'active')
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800 border border-green-200 shadow-sm">
-                                <span class="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5 animate-pulse"></span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[8px] font-bold bg-green-100 text-green-800 border border-green-200 shadow-sm">
+                                <span class="w-1 h-1 rounded-full bg-green-500 mr-1 animate-pulse"></span>
                                 Active
                             </span>
                         @else
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-gray-100 text-gray-800 border border-gray-200 shadow-sm">
-                                <i class="bi bi-archive-fill mr-1.5 text-gray-500"></i>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[8px] font-bold bg-gray-100 text-gray-800 border border-gray-200 shadow-sm">
+                                <i class="bi bi-archive-fill mr-1 text-gray-500 text-[7px]"></i>
                                 Archived
                             </span>
                         @endif
                     </div>
 
                     {{-- Card Body --}}
-                    <div class="p-6 flex-1 flex flex-col">
-                        <div class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-1">
-                            <i class="bi bi-calendar3 text-brand-400"></i>
+                    <div class="p-4 flex-1 flex flex-col">
+                        <div class="text-gray-400 text-[8px] font-bold uppercase tracking-tighter mb-1.5 flex items-center gap-0.5">
+                            <i class="bi bi-calendar3 text-brand-400 text-[7px]"></i>
                             {{ $announcement->created_at->format('M d, Y') }}
                         </div>
                         
-                        <h3 class="font-bold text-xl text-gray-900 mb-3 group-hover:text-brand-600 transition-colors line-clamp-2">
+                        <h3 class="font-bold text-sm text-gray-900 mb-2 group-hover:text-brand-600 transition-colors line-clamp-2">
                             {{ $announcement->title }}
                         </h3>
                         
-                        <p class="text-gray-500 text-sm leading-relaxed line-clamp-3 mb-4 flex-1">
+                        <p class="text-gray-500 text-xs leading-relaxed line-clamp-2 mb-2.5 flex-1">
                             {{ \Illuminate\Support\Str::limit($announcement->message, 120) }}
                         </p>
 

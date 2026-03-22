@@ -33,13 +33,6 @@
         </div>
     </div>
 
-    @if(session('success'))
-        <div class="rounded-3xl border border-emerald-200 bg-emerald-50 px-6 py-4 text-sm text-emerald-800 flex items-center gap-3 animate-fade-in-down">
-            <i class="bi bi-check-circle-fill text-lg"></i>
-            <div class="font-bold">{{ session('success') }}</div>
-        </div>
-    @endif
-
     {{-- Duty Blocks Table --}}
     <div class="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/40 border border-gray-100 overflow-hidden">
         <div class="overflow-x-auto">

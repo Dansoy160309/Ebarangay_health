@@ -41,14 +41,25 @@ class AvailabilityController extends Controller
             'recurring_day' => 'required_if:is_recurring,1|nullable|integer|between:0,6',
         ]);
 
+        $isRecurring = $request->boolean('is_recurring');
+        $recurringDay = null;
+
+        if ($isRecurring) {
+            if ($request->filled('recurring_day') && $request->recurring_day !== null) {
+                $recurringDay = (int)$request->recurring_day;
+            } else {
+                $recurringDay = \Carbon\Carbon::parse($request->date)->dayOfWeek;
+            }
+        }
+
         DoctorAvailability::create([
             'doctor_id' => Auth::id(),
             'date' => $request->date,
             'start_time' => $request->start_time,
             'end_time' => $request->end_time,
             'notes' => $request->notes,
-            'is_recurring' => $request->boolean('is_recurring'),
-            'recurring_day' => $request->recurring_day,
+            'is_recurring' => $isRecurring,
+            'recurring_day' => $recurringDay,
             'status' => 'scheduled',
         ]);
 

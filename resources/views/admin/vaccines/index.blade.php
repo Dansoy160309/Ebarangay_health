@@ -3,35 +3,35 @@
 @section('title', 'Vaccine Inventory Management')
 
 @section('content')
-<div class="flex flex-col gap-6 sm:gap-8" x-data="{ showBatchModal: false }">
+<div class="flex flex-col gap-4 sm:gap-5" x-data="{ showBatchModal: false }">
     
     {{-- Top-Aligned Compact Header --}}
-    <div class="relative z-10 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm overflow-hidden group">
-        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+    <div class="relative z-10 bg-white rounded-2xl sm:rounded-2xl p-5 sm:p-6 border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="absolute top-0 right-0 w-48 h-48 bg-brand-50 rounded-full blur-2xl -mr-24 -mt-24 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
         
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8">
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5">
             <div class="max-w-xl">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 mb-3 sm:mb-4">
-                    <i class="bi bi-box-seam text-xs"></i>
-                    <span class="text-[9px] font-black uppercase tracking-widest">Immunization Supply</span>
+                <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-lg bg-brand-50 text-brand-600 border border-brand-100 mb-2 sm:mb-3">
+                    <i class="bi bi-box-seam text-[8px]"></i>
+                    <span class="text-[8px] font-black uppercase tracking-tighter">Immunization Supply</span>
                 </div>
-                <h1 class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-2 sm:mb-3">
-                    Vaccine <span class="text-brand-600 underline decoration-brand-200 decoration-4 underline-offset-4">Inventory</span>
+                <h1 class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight leading-tight mb-1 sm:mb-2">
+                    Vaccine <span class="text-brand-600 underline decoration-brand-200 decoration-2 underline-offset-2">Inventory</span>
                 </h1>
                 <p class="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed">
                     Monitor vaccine stock levels, manage lot numbers, and track expiration dates for immunization programs.
                 </p>
             </div>
 
-            <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+            <div class="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto">
                 <a href="{{ route('admin.vaccines.create') }}" 
-                   class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-white text-brand-600 border border-brand-100 font-black text-[10px] sm:text-xs uppercase tracking-widest shadow-sm hover:bg-brand-50 hover:scale-105 transition-all transform group shrink-0">
-                    <i class="bi bi-plus-circle mr-2 group-hover:rotate-12 transition-transform"></i>
+                   class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-white text-brand-600 border border-brand-100 font-black text-[9px] sm:text-xs uppercase tracking-tighter shadow-sm hover:bg-brand-50 hover:scale-105 transition-all transform group shrink-0">
+                    <i class="bi bi-plus-circle mr-1.5 group-hover:rotate-12 transition-transform text-xs"></i>
                     Register New
                 </a>
                 <button @click="showBatchModal = true" 
-                   class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-brand-600 text-white font-black text-[10px] sm:text-xs uppercase tracking-widest shadow-xl shadow-brand-500/20 hover:bg-brand-700 hover:scale-105 transition-all transform group shrink-0">
-                    <i class="bi bi-box-arrow-in-down mr-2 group-hover:-translate-y-1 transition-transform"></i>
+                   class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-brand-600 text-white font-black text-[9px] sm:text-xs uppercase tracking-tighter shadow-lg shadow-brand-500/15 hover:bg-brand-700 hover:scale-105 transition-all transform group shrink-0">
+                    <i class="bi bi-box-arrow-in-down mr-1.5 group-hover:-translate-y-1 transition-transform text-xs"></i>
                     RHU Stock In
                 </button>
             </div>
@@ -39,15 +39,15 @@
     </div>
 
     {{-- Action Bar --}}
-    <div class="bg-white rounded-[2rem] shadow-lg shadow-gray-200/50 border border-gray-100 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div class="flex items-center gap-3 text-gray-500">
-            <div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-brand-500">
+    <div class="bg-white rounded-2xl shadow-md shadow-gray-200/25 border border-gray-100 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5 text-gray-500">
+            <div class="w-7 h-7 rounded-lg bg-gray-50 flex items-center justify-center text-brand-500 text-xs">
                 <i class="bi bi-info-circle"></i>
             </div>
-            <span class="text-xs font-bold">Showing all registered vaccines and antigens</span>
+            <span class="text-[9px] font-bold">Showing all registered vaccines and antigens</span>
         </div>
-        <div class="flex items-center gap-2">
-            <span class="px-3 py-1 rounded-full bg-brand-50 text-brand-600 text-[10px] font-black uppercase tracking-widest border border-brand-100">
+        <div class="flex items-center gap-1.5">
+            <span class="px-2.5 py-1 rounded-full bg-brand-50 text-brand-600 text-[8px] font-black uppercase tracking-tighter border border-brand-100">
                 {{ $vaccines->count() }} Antigens
             </span>
         </div>
@@ -55,27 +55,27 @@
 
     <!-- Alerts Section -->
     @if($nearExpiryBatches->count() > 0 || $lowStockVaccines->count() > 0)
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         @if($nearExpiryBatches->count() > 0)
-        <div class="bg-orange-50 border border-orange-100 rounded-[2rem] p-6 flex items-start gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center text-orange-600 shrink-0">
-                <i class="bi bi-calendar-x text-2xl"></i>
+        <div class="bg-orange-50 border border-orange-100 rounded-lg p-4 flex items-start gap-3">
+            <div class="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center text-orange-600 shrink-0 text-lg">
+                <i class="bi bi-calendar-x"></i>
             </div>
             <div>
-                <h4 class="text-sm font-black text-orange-900 uppercase tracking-wider">Near Expiry Alert</h4>
-                <p class="text-xs font-bold text-orange-700 mt-1">{{ $nearExpiryBatches->count() }} batches are expiring within 3 months.</p>
+                <h4 class="text-xs font-black text-orange-900 uppercase tracking-tighter">Near Expiry Alert</h4>
+                <p class="text-[8px] font-bold text-orange-700 mt-0.5">{{ $nearExpiryBatches->count() }} batches are expiring within 3 months.</p>
             </div>
         </div>
         @endif
 
         @if($lowStockVaccines->count() > 0)
-        <div class="bg-red-50 border border-red-100 rounded-[2rem] p-6 flex items-start gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-red-100 flex items-center justify-center text-red-600 shrink-0">
-                <i class="bi bi-graph-down-arrow text-2xl"></i>
+        <div class="bg-red-50 border border-red-100 rounded-lg p-4 flex items-start gap-3">
+            <div class="w-9 h-9 rounded-lg bg-red-100 flex items-center justify-center text-red-600 shrink-0 text-lg">
+                <i class="bi bi-graph-down-arrow"></i>
             </div>
             <div>
-                <h4 class="text-sm font-black text-red-900 uppercase tracking-wider">Low Stock Alert</h4>
-                <p class="text-xs font-bold text-red-700 mt-1">{{ $lowStockVaccines->count() }} vaccines are below minimum stock level.</p>
+                <h4 class="text-xs font-black text-red-900 uppercase tracking-tighter">Low Stock Alert</h4>
+                <p class="text-[8px] font-bold text-red-700 mt-0.5">{{ $lowStockVaccines->count() }} vaccines are below minimum stock level.</p>
             </div>
         </div>
         @endif

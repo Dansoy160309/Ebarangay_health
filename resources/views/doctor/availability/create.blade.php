@@ -33,7 +33,7 @@
         </div>
     </div>
 
-    <div class="max-w-3xl">
+    <div class="max-w-3xl" x-data="{ isRecurring: {{ old('is_recurring') ? 'true' : 'false' }} }">
         <div class="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/40 border border-gray-100 p-8 sm:p-12 relative overflow-hidden">
             <form action="{{ route('doctor.availability.store') }}" method="POST" class="space-y-8">
                 @csrf
@@ -47,7 +47,7 @@
                                 <i class="bi bi-calendar-event"></i>
                             </div>
                             <input type="date" name="date" id="date" required min="{{ date('Y-m-d') }}"
-                                   class="w-full pl-11 pr-4 py-3 bg-gray-50 border-transparent rounded-2xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 text-sm font-medium transition-all @error('date') border-red-500 @enderror"
+                                   class="w-full pl-11 pr-4 py-3 bg-gray-50 border-transparent rounded-2xl focus:bg-white focus:ring-4 focus:ring-brand-50/10 focus:border-brand-500 text-sm font-medium transition-all @error('date') border-red-500 @enderror"
                                    value="{{ old('date', date('Y-m-d')) }}">
                         </div>
                         @error('date') <p class="text-xs text-red-500 font-bold mt-1 ml-1">{{ $message }}</p> @enderror
@@ -56,12 +56,33 @@
                     {{-- Recurring Option --}}
                     <div class="space-y-2">
                         <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Type</label>
-                        <div class="flex items-center gap-4 mt-2">
+                        <div class="flex flex-col gap-4">
                             <label class="relative flex items-center cursor-pointer group">
-                                <input type="checkbox" name="is_recurring" value="1" class="sr-only peer" {{ old('is_recurring') ? 'checked' : '' }}>
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-600"></div>
+                                <input type="checkbox" name="is_recurring" value="1" x-model="isRecurring" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-600 shadow-inner"></div>
                                 <span class="ml-3 text-sm font-bold text-gray-700">Make Recurring</span>
                             </label>
+
+                            {{-- Recurring Day Dropdown --}}
+                            <div x-show="isRecurring" x-transition class="relative group mt-1">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
+                                    <i class="bi bi-arrow-repeat"></i>
+                                </div>
+                                <select name="recurring_day" 
+                                        class="w-full pl-11 pr-4 py-3 bg-gray-50 border-transparent rounded-2xl focus:bg-white focus:ring-4 focus:ring-brand-50/10 focus:border-brand-500 text-sm font-medium transition-all appearance-none @error('recurring_day') border-red-500 @enderror">
+                                    <option value="">-- Repeat Every --</option>
+                                    <option value="1" {{ old('recurring_day') == 1 ? 'selected' : '' }}>Monday</option>
+                                    <option value="2" {{ old('recurring_day') == 2 ? 'selected' : '' }}>Tuesday</option>
+                                    <option value="3" {{ old('recurring_day') == 3 ? 'selected' : '' }}>Wednesday</option>
+                                    <option value="4" {{ old('recurring_day') == 4 ? 'selected' : '' }}>Thursday</option>
+                                    <option value="5" {{ old('recurring_day') == 5 ? 'selected' : '' }}>Friday</option>
+                                    <option value="6" {{ old('recurring_day') == 6 ? 'selected' : '' }}>Saturday</option>
+                                    <option value="0" {{ old('recurring_day') == 0 ? 'selected' : '' }}>Sunday</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-gray-400">
+                                    <i class="bi bi-chevron-down text-[10px]"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

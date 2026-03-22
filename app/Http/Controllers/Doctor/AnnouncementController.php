@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Doctor;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Announcement;
+use Illuminate\Support\Facades\Auth;
 
 class AnnouncementController extends Controller
 {
@@ -33,6 +34,11 @@ class AnnouncementController extends Controller
         if ($announcement->status !== 'active' || ($announcement->expires_at && $announcement->expires_at->isPast())) {
             abort(404);
         }
+
+        // Mark related announcement notification(s) as read so nav badges clear
+        Auth::user()->unreadNotifications
+            ->where('data.announcement_id', $announcement->id)
+            ->each(fn($notification) => $notification->markAsRead());
 
         return view('doctor.announcements.show', compact('announcement'));
     }

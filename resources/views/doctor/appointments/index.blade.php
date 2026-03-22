@@ -3,7 +3,7 @@
 @section('title', 'My Appointments')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
     @php
         $user = auth()->user();
         $routePrefix = $user->isMidwife() ? 'midwife' : 'doctor';
@@ -11,52 +11,52 @@
     @endphp
 
     {{-- Top-Aligned Compact Header --}}
-    <div class="bg-gradient-to-br from-brand-700 via-brand-600 to-brand-500 rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 text-white shadow-xl relative overflow-hidden mb-8 group">
-        <div class="absolute inset-0 bg-white/5 opacity-10" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
+    <div class="bg-gradient-to-br from-brand-700 via-brand-600 to-brand-500 rounded-2xl sm:rounded-2xl p-5 sm:p-6 text-white shadow-lg relative overflow-hidden mb-6 group">
+        <div class="absolute inset-0 bg-white/5 opacity-5" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
         
-        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
             <div class="max-w-xl">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-inner">
-                        <i class="bi bi-heart-pulse-fill text-xl"></i>
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-inner">
+                        <i class="bi bi-heart-pulse-fill text-sm"></i>
                     </div>
-                    <span class="text-[10px] font-black uppercase tracking-[0.2em] opacity-80">Clinical Workspace</span>
+                    <span class="text-[8px] font-black uppercase tracking-[0.15em] opacity-80">Clinical Workspace</span>
                 </div>
-                <h1 class="text-2xl sm:text-4xl font-black mb-2 tracking-tight leading-tight">
+                <h1 class="text-2xl sm:text-3xl font-black mb-1 tracking-tight leading-tight">
                     My Appointments
                 </h1>
-                <p class="text-brand-50 text-xs sm:text-sm font-medium leading-relaxed opacity-90">
-                    Welcome, {{ $providerLabel }} {{ $user->last_name }}. Manage your schedule and consultations.
+                <p class="text-brand-50 text-xs sm:text-xs font-medium leading-relaxed opacity-80">
+                    Welcome, {{ $providerLabel }} {{ $user->last_name }}. Manage your schedule.
                 </p>
             </div>
 
             {{-- Compact Header Stats --}}
-            <div class="flex items-center gap-3 sm:gap-4 w-full lg:w-auto shrink-0 overflow-x-auto pb-2 sm:pb-0 no-scrollbar">
-                <div class="bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/20 flex flex-col items-center justify-center min-w-[100px] shadow-lg group-hover:bg-white/20 transition-all duration-300">
-                    <p class="text-[8px] font-black uppercase tracking-widest opacity-70 mb-1">Today</p>
-                    <p class="text-xl sm:text-2xl font-black tracking-tighter">{{ $stats['today_total'] }}</p>
+            <div class="flex items-center gap-2 sm:gap-3 w-full lg:w-auto shrink-0 overflow-x-auto pb-2 sm:pb-0 no-scrollbar">
+                <div class="bg-white/10 backdrop-blur-md px-3.5 py-2 rounded-lg border border-white/20 flex flex-col items-center justify-center min-w-[90px] shadow-lg group-hover:bg-white/20 transition-all duration-300">
+                    <p class="text-[7px] font-black uppercase tracking-tighter opacity-70 mb-0.5">Today</p>
+                    <p class="text-lg sm:text-xl font-black tracking-tighter">{{ $stats['today_total'] }}</p>
                 </div>
-                <div class="bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/20 flex flex-col items-center justify-center min-w-[100px] shadow-lg group-hover:bg-white/20 transition-all duration-300">
-                    <p class="text-[8px] font-black uppercase tracking-widest opacity-70 mb-1 text-green-200">Ready</p>
-                    <p class="text-xl sm:text-2xl font-black tracking-tighter text-green-300">{{ $stats['ready'] }}</p>
+                <div class="bg-white/10 backdrop-blur-md px-3.5 py-2 rounded-lg border border-white/20 flex flex-col items-center justify-center min-w-[90px] shadow-lg group-hover:bg-white/20 transition-all duration-300">
+                    <p class="text-[7px] font-black uppercase tracking-tighter opacity-70 mb-0.5 text-green-200">Ready</p>
+                    <p class="text-lg sm:text-xl font-black tracking-tighter text-green-300">{{ $stats['ready'] }}</p>
                 </div>
-                <div class="bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/20 flex flex-col items-center justify-center min-w-[100px] shadow-lg group-hover:bg-white/20 transition-all duration-300">
-                    <p class="text-[8px] font-black uppercase tracking-widest opacity-70 mb-1 text-orange-200">Wait</p>
-                    <p class="text-xl sm:text-2xl font-black tracking-tighter text-orange-300">{{ $stats['pending_vitals'] }}</p>
+                <div class="bg-white/10 backdrop-blur-md px-3.5 py-2 rounded-lg border border-white/20 flex flex-col items-center justify-center min-w-[90px] shadow-lg group-hover:bg-white/20 transition-all duration-300">
+                    <p class="text-[7px] font-black uppercase tracking-tighter opacity-70 mb-0.5 text-orange-200">Wait</p>
+                    <p class="text-lg sm:text-xl font-black tracking-tighter text-orange-300">{{ $stats['pending_vitals'] }}</p>
                 </div>
             </div>
         </div>
     </div>
 
     {{-- Action Bar & Filters (Made more compact) --}}
-    <div class="bg-white rounded-[2rem] shadow-lg shadow-gray-200/50 border border-gray-100 p-5 sm:p-6 mb-8">
-        <div class="flex flex-col lg:flex-row gap-6">
+    <div class="bg-white rounded-xl shadow-md shadow-gray-200/30 border border-gray-100 p-4 sm:p-5 mb-6">
+        <div class="flex flex-col lg:flex-row gap-4">
             
             <!-- Quick Navigation (Midwife Only) -->
             @if(auth()->user()->isMidwife())
-            <div class="flex items-center p-1 bg-gray-50 rounded-xl border border-gray-100 shrink-0">
+            <div class="flex items-center p-1 bg-gray-50 rounded-lg border border-gray-100 shrink-0">
                 <a href="{{ route($routePrefix . '.appointments.index') }}" 
-                   class="px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all {{ !request()->routeIs('midwife.slots.*') ? 'bg-brand-600 text-white shadow-md' : 'text-gray-400 hover:text-gray-600' }}">
+                   class="px-4 py-2 rounded-md text-[8px] font-black uppercase tracking-tighter transition-all {{ !request()->routeIs('midwife.slots.*') ? 'bg-brand-600 text-white shadow-md' : 'text-gray-400 hover:text-gray-600' }}">
                     Appointments
                 </a>
                 <a href="{{ route('midwife.slots.index') }}" 

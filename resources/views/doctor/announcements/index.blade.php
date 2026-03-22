@@ -44,44 +44,44 @@
     </div>
 
     {{-- Top-Aligned Header & Search Section --}}
-    <div class="relative z-10 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm overflow-hidden group">
+    <div class="relative z-10 bg-white rounded-2xl sm:rounded-2xl p-5 sm:p-6 border border-gray-100 shadow-sm overflow-hidden group">
         {{-- Decorative Elements --}}
-        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+        <div class="absolute top-0 right-0 w-24 h-24 bg-brand-50 rounded-full blur-2xl -mr-16 -mt-16 opacity-30 group-hover:opacity-60 transition-opacity duration-700"></div>
         
-        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
             <div class="max-w-xl">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 mb-3 sm:mb-4">
-                    <i class="bi bi-megaphone-fill text-xs animate-bounce"></i>
-                    <span class="text-[9px] font-black uppercase tracking-widest">Latest Updates</span>
+                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-brand-50 text-brand-600 border border-brand-100 mb-2 sm:mb-2.5">
+                    <i class="bi bi-megaphone-fill text-xs"></i>
+                    <span class="text-[8px] font-black uppercase tracking-widest">Latest Updates</span>
                 </div>
-                <h1 class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-2 sm:mb-3">
-                    Health <span class="text-brand-600 underline decoration-brand-200 decoration-4 underline-offset-4">Advisories</span>
+                <h1 class="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight leading-tight mb-1.5 sm:mb-2">
+                    Health <span class="text-brand-600">Advisories</span>
                 </h1>
-                <p class="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed mb-6 lg:mb-0">
-                    Stay informed with real-time community health alerts, vaccination schedules, and medical missions organized by your barangay.
+                <p class="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed mb-4 lg:mb-0">
+                    Stay informed with real-time community health alerts and vaccination schedules.
                 </p>
             </div>
 
-            <div class="flex flex-col sm:flex-row items-center gap-4 w-full lg:max-w-xl">
+            <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:max-w-xl">
                 {{-- Search Bar --}}
                 <div class="relative flex-grow w-full group/search">
-                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within/search:text-brand-500 transition-colors">
-                        <i class="bi bi-search text-sm"></i>
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within/search:text-brand-500 transition-colors">
+                        <i class="bi bi-search text-xs"></i>
                     </div>
                     <input type="text" x-model="search" 
-                        class="block w-full pl-11 pr-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-4 focus:ring-brand-500/10 focus:bg-white text-sm font-bold text-gray-900 placeholder-gray-400 transition-all shadow-inner"
-                        placeholder="Search advisories by title or keyword...">
+                        class="block w-full pl-9 pr-3 py-2 bg-gray-50 border-none rounded-lg focus:ring-4 focus:ring-brand-500/10 focus:bg-white text-xs font-bold text-gray-900 placeholder-gray-400 transition-all shadow-inner"
+                        placeholder="Search advisories...">
                 </div>
 
                 {{-- Quick Stats (Compact) --}}
-                <div class="flex items-center gap-3 w-full sm:w-auto shrink-0">
-                    <div class="px-4 py-2 rounded-xl bg-gray-50 border border-gray-100 flex flex-col items-center justify-center min-w-[80px]">
-                        <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Active</span>
-                        <span class="text-sm font-black text-gray-900">{{ $announcements->total() }}</span>
+                <div class="flex items-center gap-2 w-full sm:w-auto shrink-0">
+                    <div class="px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-100 flex flex-col items-center justify-center min-w-[70px]">
+                        <span class="text-[7px] font-black text-gray-400 uppercase tracking-tighter">Active</span>
+                        <span class="text-xs font-black text-gray-900">{{ $announcements->total() }}</span>
                     </div>
-                    <div class="px-4 py-2 rounded-xl bg-red-50 border border-red-100 flex flex-col items-center justify-center min-w-[80px]">
-                        <span class="text-[8px] font-black text-red-400 uppercase tracking-widest">New</span>
-                        <span class="text-sm font-black text-red-600">
+                    <div class="px-3 py-1.5 rounded-lg bg-red-50 border border-red-100 flex flex-col items-center justify-center min-w-[70px]">
+                        <span class="text-[7px] font-black text-red-400 uppercase tracking-tighter">New</span>
+                        <span class="text-xs font-black text-red-600">
                             {{ $announcements->filter(fn($a) => $a->created_at->diffInDays() < 3)->count() }}
                         </span>
                     </div>

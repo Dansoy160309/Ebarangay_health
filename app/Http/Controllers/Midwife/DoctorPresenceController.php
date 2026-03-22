@@ -20,21 +20,55 @@ class DoctorPresenceController extends Controller
                 ->with('error', 'Database tables are currently being updated. Please run migrations.');
         }
 
-        // Get doctors scheduled for today
-        $todayAvailabilities = DoctorAvailability::with('doctor')
-            ->where('date', now()->toDateString())
+        $today = now()->toDateString();
+        $dayOfWeek = now()->dayOfWeek;
+
+        // Get doctors scheduled for today (both one-time and recurring)
+        $availabilities = DoctorAvailability::with('doctor')
+            ->where(function($q) use ($today, $dayOfWeek) {
+                $q->where('date', $today)
+                  ->orWhere(function($sq) use ($dayOfWeek) {
+                      $sq->where('is_recurring', true)
+                         ->where('recurring_day', $dayOfWeek);
+                  });
+            })
             ->orderBy('start_time', 'asc')
             ->get();
+
+        // If a doctor has both a one-time and a recurring entry for today,
+        // we prioritize the one-time entry (the override).
+        $todayAvailabilities = $availabilities->groupBy('doctor_id')->map(function ($group) use ($today) {
+            $oneTime = $group->first(fn($a) => !$a->is_recurring && $a->date->toDateString() === $today);
+            return $oneTime ?? $group->first();
+        })->values();
 
         return view('midwife.doctor_presence.index', compact('todayAvailabilities'));
     }
 
     public function markArrived(DoctorAvailability $availability)
     {
-        $availability->update([
-            'status' => 'arrived',
-            'actual_arrival_time' => now(),
-        ]);
+        // If this is a recurring availability, create a one-time override for today
+        if ($availability->is_recurring) {
+            $availability = DoctorAvailability::updateOrCreate(
+                [
+                    'doctor_id' => $availability->doctor_id,
+                    'date' => now()->toDateString(),
+                    'is_recurring' => false
+                ],
+                [
+                    'start_time' => $availability->start_time,
+                    'end_time' => $availability->end_time,
+                    'status' => 'arrived',
+                    'actual_arrival_time' => now(),
+                    'notes' => $availability->notes
+                ]
+            );
+        } else {
+            $availability->update([
+                'status' => 'arrived',
+                'actual_arrival_time' => now(),
+            ]);
+        }
 
         // Notify patients scheduled for today with this doctor
         $this->notifyPatients($availability, new DoctorArrivalNotification($availability));
@@ -44,7 +78,24 @@ class DoctorPresenceController extends Controller
 
     public function markAbsent(DoctorAvailability $availability)
     {
-        $availability->update(['status' => 'absent']);
+        // If this is a recurring availability, create a one-time override for today
+        if ($availability->is_recurring) {
+            $availability = DoctorAvailability::updateOrCreate(
+                [
+                    'doctor_id' => $availability->doctor_id,
+                    'date' => now()->toDateString(),
+                    'is_recurring' => false
+                ],
+                [
+                    'start_time' => $availability->start_time,
+                    'end_time' => $availability->end_time,
+                    'status' => 'absent',
+                    'notes' => 'Doctor is absent today.'
+                ]
+            );
+        } else {
+            $availability->update(['status' => 'absent']);
+        }
 
         // Notify patients scheduled for today with this doctor
         $this->notifyPatients($availability, new DoctorAbsenceNotification($availability));
@@ -54,10 +105,27 @@ class DoctorPresenceController extends Controller
 
     public function markDelayed(DoctorAvailability $availability, Request $request)
     {
-        $availability->update([
-            'status' => 'delayed',
-            'notes' => $request->notes ?? 'Doctor is running late.'
-        ]);
+        // If this is a recurring availability, create a one-time override for today
+        if ($availability->is_recurring) {
+            $availability = DoctorAvailability::updateOrCreate(
+                [
+                    'doctor_id' => $availability->doctor_id,
+                    'date' => now()->toDateString(),
+                    'is_recurring' => false
+                ],
+                [
+                    'start_time' => $availability->start_time,
+                    'end_time' => $availability->end_time,
+                    'status' => 'delayed',
+                    'notes' => $request->notes ?? 'Doctor is running late.'
+                ]
+            );
+        } else {
+            $availability->update([
+                'status' => 'delayed',
+                'notes' => $request->notes ?? 'Doctor is running late.'
+            ]);
+        }
 
         return back()->with('info', "Dr. {$availability->doctor->full_name} marked as delayed.");
     }

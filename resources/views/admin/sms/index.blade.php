@@ -3,71 +3,71 @@
 @section('title', 'SMS Management')
 
 @section('content')
-<div class="flex flex-col gap-6 sm:gap-8">
+<div class="flex flex-col gap-4 sm:gap-5">
     
     {{-- Top-Aligned Compact Header --}}
-    <div class="relative z-10 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm overflow-hidden group">
-        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+    <div class="relative z-10 bg-white rounded-2xl sm:rounded-2xl p-5 sm:p-6 border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="absolute top-0 right-0 w-48 h-48 bg-brand-50 rounded-full blur-2xl -mr-24 -mt-24 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
         
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8">
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5">
             <div class="max-w-xl">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 mb-3 sm:mb-4">
-                    <i class="bi bi-chat-left-dots-fill text-xs"></i>
-                    <span class="text-[9px] font-black uppercase tracking-widest">Communications</span>
+                <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-lg bg-brand-50 text-brand-600 border border-brand-100 mb-2 sm:mb-3">
+                    <i class="bi bi-chat-left-dots-fill text-[8px]"></i>
+                    <span class="text-[8px] font-black uppercase tracking-tighter">Communications</span>
                 </div>
-                <h1 class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-2 sm:mb-3">
-                    SMS & <span class="text-brand-600 underline decoration-brand-200 decoration-4 underline-offset-4">Notifications</span>
+                <h1 class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight leading-tight mb-1 sm:mb-2">
+                    SMS & <span class="text-brand-600 underline decoration-brand-200 decoration-2 underline-offset-2">Notifications</span>
                 </h1>
                 <p class="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed">
                     Control system alerts, broadcasts, and monitor delivery status in real-time.
                 </p>
             </div>
 
-            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-                <div class="bg-brand-50/50 backdrop-blur-md px-6 py-4 rounded-2xl border border-brand-100">
-                    <p class="text-[10px] font-black uppercase tracking-widest text-brand-400 mb-1">PhilSMS Balance</p>
-                    <p class="text-2xl font-black text-brand-600">{{ $balance }} <span class="text-xs font-bold text-brand-400">Credits</span></p>
+            <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <div class="bg-brand-50/50 backdrop-blur-md px-4 py-2.5 rounded-lg border border-brand-100">
+                    <p class="text-[8px] font-black uppercase tracking-tighter text-brand-400 mb-0.5">PhilSMS Balance</p>
+                    <p class="text-lg font-black text-brand-600">{{ $balance }} <span class="text-[8px] font-bold text-brand-400">Credits</span></p>
                 </div>
             </div>
         </div>
     </div>
 
     @if(session('success'))
-        <div class="rounded-3xl border border-green-100 bg-green-50/50 p-4 text-sm text-green-800 flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-300">
-            <div class="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 flex-shrink-0">
+        <div class="rounded-xl border border-green-100 bg-green-50/50 p-3 text-[10px] text-green-800 flex items-center gap-2 animate-in fade-in slide-in-from-top-4 duration-300">
+            <div class="h-6 w-6 rounded-full bg-green-100 flex items-center justify-center text-green-600 flex-shrink-0 text-xs">
                 <i class="bi bi-check-lg"></i>
             </div>
             <div class="font-semibold">{{ session('success') }}</div>
         </div>
     @endif
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
         
         {{-- Left Column: Settings --}}
-        <div class="lg:col-span-1 space-y-8">
+        <div class="lg:col-span-1 space-y-4">
             {{-- SMS Toggles --}}
-            <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
-                <div class="px-6 py-5 border-b border-gray-50 bg-gray-50/50">
-                    <h3 class="font-bold text-gray-900 flex items-center gap-2">
-                        <i class="bi bi-sliders text-brand-500"></i> Delivery Settings
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-5 py-4 border-b border-gray-50 bg-gray-50/50">
+                    <h3 class="font-bold text-gray-900 flex items-center gap-1.5 text-sm">
+                        <i class="bi bi-sliders text-brand-500 text-xs"></i> Delivery Settings
                     </h3>
                 </div>
-                <form action="{{ route('admin.sms.update') }}" method="POST" class="p-6 space-y-6">
+                <form action="{{ route('admin.sms.update') }}" method="POST" class="p-4 space-y-4">
                     @csrf
                     
-                    <div class="flex items-center justify-between p-4 bg-brand-50/50 rounded-2xl border border-brand-100">
+                    <div class="flex items-center justify-between p-3 bg-brand-50/50 rounded-lg border border-brand-100">
                         <div>
-                            <p class="font-bold text-brand-900 text-sm">Global SMS</p>
-                            <p class="text-[10px] text-brand-600 font-medium uppercase tracking-wider">Master switch</p>
+                            <p class="font-bold text-brand-900 text-xs">Global SMS</p>
+                            <p class="text-[8px] text-brand-600 font-medium uppercase tracking-tighter">Master switch</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" name="sms_enabled" value="1" class="sr-only peer" {{ ($settings['sms_enabled'] ?? '0') == '1' ? 'checked' : '' }}>
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-600"></div>
+                            <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-3 peer-focus:ring-brand-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-600"></div>
                         </label>
                     </div>
 
-                    <div class="space-y-4 pt-2">
-                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-2">Service Specific</p>
+                    <div class="space-y-3 pt-1.5">
+                        <p class="text-[8px] font-black text-gray-400 uppercase tracking-tighter px-2">Service Specific</p>
                         
                         @php
                             $toggles = [

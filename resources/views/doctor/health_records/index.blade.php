@@ -8,33 +8,33 @@
     $prefix = $user->isMidwife() ? 'midwife' : ($user->isDoctor() ? 'doctor' : 'healthworker');
 @endphp
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 relative overflow-hidden">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8 relative overflow-hidden">
     {{-- Decorative Background Blobs --}}
-    <div class="absolute top-0 right-0 w-96 h-96 bg-brand-50/50 rounded-full blur-3xl -mr-48 -mt-48 opacity-50 pointer-events-none"></div>
-    <div class="absolute bottom-0 left-0 w-96 h-96 bg-indigo-50/50 rounded-full blur-3xl -ml-48 -mb-48 opacity-50 pointer-events-none"></div>
+    <div class="absolute top-0 right-0 w-96 h-96 bg-brand-50/50 rounded-full blur-3xl -mr-48 -mt-48 opacity-20 pointer-events-none"></div>
+    <div class="absolute bottom-0 left-0 w-96 h-96 bg-indigo-50/50 rounded-full blur-3xl -ml-48 -mb-48 opacity-20 pointer-events-none"></div>
 
     {{-- Page Header --}}
-    <div class="relative z-10 bg-white rounded-[3rem] p-10 lg:p-14 border border-gray-100 shadow-sm overflow-hidden group">
-        <div class="absolute top-0 right-0 w-96 h-96 bg-brand-50 rounded-full blur-3xl -mr-48 -mt-48 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+    <div class="relative z-10 bg-white rounded-2xl p-5 lg:p-6 border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="absolute top-0 right-0 w-24 h-24 bg-brand-50 rounded-full blur-2xl -mr-16 -mt-16 opacity-30 group-hover:opacity-60 transition-opacity duration-700"></div>
         
-        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-12">
+        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div class="max-w-2xl">
-                <div class="inline-flex items-center gap-3 px-4 py-2 rounded-2xl bg-brand-50 text-brand-600 border border-brand-100 mb-6">
-                    <i class="bi bi-file-earmark-medical-fill text-sm"></i>
-                    <span class="text-[10px] font-black uppercase tracking-[0.2em]">Medical Archives</span>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-brand-50 text-brand-600 border border-brand-100 mb-2.5">
+                    <i class="bi bi-file-earmark-medical-fill text-xs"></i>
+                    <span class="text-[8px] font-black uppercase tracking-[0.15em]">Medical Archives</span>
                 </div>
-                <h1 class="text-4xl lg:text-5xl font-black text-gray-900 tracking-tight leading-[1.1]">
-                    Health <span class="text-brand-600 underline decoration-brand-200 decoration-8 underline-offset-4">Records</span>
+                <h1 class="text-2xl lg:text-3xl font-black text-gray-900 tracking-tight leading-[1.1]">
+                    Health <span class="text-brand-600">Records</span>
                 </h1>
-                <p class="text-gray-500 font-medium mt-6 text-lg leading-relaxed">
-                    Access and manage complete patient medical histories, clinical consultations, and verified diagnostic records.
+                <p class="text-gray-500 font-medium mt-2 text-xs leading-relaxed">
+                    Access and manage complete patient medical histories and diagnostic records.
                 </p>
             </div>
             
-            <div class="flex items-center gap-6">
-                <div class="bg-gray-50 px-8 py-6 rounded-[2rem] border border-gray-100 shadow-inner">
-                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Total Records</p>
-                    <p class="text-3xl font-black text-gray-900">{{ $records->total() }}</p>
+            <div class="flex items-center gap-3">
+                <div class="bg-gray-50 px-5 py-3 rounded-lg border border-gray-100 shadow-inner">
+                    <p class="text-[8px] font-black text-gray-400 uppercase tracking-tighter mb-0.5">Total Records</p>
+                    <p class="text-2xl font-black text-gray-900">{{ $records->total() }}</p>
                 </div>
             </div>
         </div>

@@ -56,6 +56,11 @@ class User extends Authenticatable
     ];
 
     /**
+     * The accessors to append to the model's array form.
+     */
+    protected $appends = ['full_name', 'age', 'patient_code'];
+
+    /**
      * Automatically hash passwords when set, but avoid double-hashing
      */
     public function setPasswordAttribute($value)

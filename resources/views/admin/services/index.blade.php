@@ -3,30 +3,30 @@
 @section('title', 'Manage Services')
 
 @section('content')
-<div class="flex flex-col gap-6 sm:gap-8">
+<div class="flex flex-col gap-4 sm:gap-5">
 
     {{-- Top-Aligned Compact Header --}}
-    <div class="relative z-10 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm overflow-hidden group">
-        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+    <div class="relative z-10 bg-white rounded-2xl sm:rounded-2xl p-5 sm:p-6 border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="absolute top-0 right-0 w-48 h-48 bg-brand-50 rounded-full blur-2xl -mr-24 -mt-24 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
         
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8">
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5">
             <div class="max-w-xl">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 mb-3 sm:mb-4">
-                    <i class="bi bi-heart-pulse-fill text-xs"></i>
-                    <span class="text-[9px] font-black uppercase tracking-widest">Clinic Operations</span>
+                <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-lg bg-brand-50 text-brand-600 border border-brand-100 mb-2 sm:mb-3">
+                    <i class="bi bi-heart-pulse-fill text-[8px]"></i>
+                    <span class="text-[8px] font-black uppercase tracking-tighter">Clinic Operations</span>
                 </div>
-                <h1 class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-2 sm:mb-3">
-                    Medical <span class="text-brand-600 underline decoration-brand-200 decoration-4 underline-offset-4">Services</span>
+                <h1 class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight leading-tight mb-1 sm:mb-2">
+                    Medical <span class="text-brand-600 underline decoration-brand-200 decoration-2 underline-offset-2">Services</span>
                 </h1>
                 <p class="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed">
                     Configure the medical services, provider assignments, and clinical categories available in your barangay.
                 </p>
             </div>
 
-            <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+            <div class="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto">
                 <a href="{{ route('admin.services.create') }}" 
-                   class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-brand-600 text-white font-black text-[10px] sm:text-xs uppercase tracking-widest shadow-xl shadow-brand-500/20 hover:bg-brand-700 hover:scale-105 transition-all transform group shrink-0">
-                    <i class="bi bi-plus-lg mr-2 group-hover:rotate-90 transition-transform"></i>
+                   class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-brand-600 text-white font-black text-[9px] sm:text-xs uppercase tracking-tighter shadow-lg shadow-brand-500/15 hover:bg-brand-700 hover:scale-105 transition-all transform group shrink-0">
+                    <i class="bi bi-plus-lg mr-1.5 group-hover:rotate-90 transition-transform text-xs"></i>
                     Add New Service
                 </a>
             </div>
@@ -34,15 +34,15 @@
     </div>
 
     {{-- Info Bar --}}
-    <div class="bg-white rounded-[2rem] shadow-lg shadow-gray-200/50 border border-gray-100 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div class="flex items-center gap-3 text-gray-500">
-            <div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-brand-500">
+    <div class="bg-white rounded-2xl shadow-md shadow-gray-200/25 border border-gray-100 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5 text-gray-500">
+            <div class="w-7 h-7 rounded-lg bg-gray-50 flex items-center justify-center text-brand-500 text-xs">
                 <i class="bi bi-info-circle"></i>
             </div>
-            <span class="text-xs font-bold">Showing all active health center services</span>
+            <span class="text-[9px] font-bold">Showing all active health center services</span>
         </div>
-        <div class="flex items-center gap-2">
-            <span class="px-3 py-1 rounded-full bg-brand-50 text-brand-600 text-[10px] font-black uppercase tracking-widest border border-brand-100">
+        <div class="flex items-center gap-1.5">
+            <span class="px-2.5 py-1 rounded-full bg-brand-50 text-brand-600 text-[8px] font-black uppercase tracking-tighter border border-brand-100">
                 {{ $services->count() }} Total
             </span>
         </div>

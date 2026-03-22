@@ -3,7 +3,7 @@
 @section('title', auth()->user()->isMidwife() ? 'Midwife Dashboard' : 'Doctor Dashboard')
 
 @section('content')
-<div class="flex flex-col gap-6 sm:gap-8">
+<div class="flex flex-col gap-4 sm:gap-5">
 
     @php
         $user = auth()->user();
@@ -11,134 +11,134 @@
     @endphp
 
     {{-- Welcome Section --}}
-    <div class="bg-gradient-to-br from-brand-600 via-brand-500 to-indigo-600 rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 text-white shadow-xl shadow-brand-500/20 relative overflow-hidden">
+    <div class="bg-gradient-to-br from-brand-600 via-brand-500 to-indigo-600 rounded-2xl sm:rounded-2xl p-5 sm:p-6 text-white shadow-lg shadow-brand-500/15 relative overflow-hidden">
         <div class="relative z-10">
-            <h1 class="text-2xl sm:text-4xl font-black mb-2 sm:mb-3 tracking-tight leading-tight">
+            <h1 class="text-xl sm:text-2xl font-black mb-1 sm:mb-2 tracking-tight leading-tight">
                 Welcome, <br class="sm:hidden"> {{ $user->isMidwife() ? $user->full_name : 'Dr. ' . $user->last_name }}! {{ $user->isMidwife() ? '🧑‍⚕️' : '👨‍⚕️' }}
             </h1>
-            <p class="text-brand-50 text-xs sm:text-lg font-medium opacity-90 max-w-xl">
+            <p class="text-brand-50 text-xs sm:text-sm font-medium opacity-90 max-w-xl">
                 You have {{ $upcomingToday }} appointments scheduled for today.
             </p>
             
-            <div class="mt-6 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-                <div class="flex items-center gap-2 bg-white/15 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 shadow-sm w-fit">
-                    <i class="bi bi-calendar3 text-brand-200 text-xs sm:text-sm"></i>
-                    <span class="text-[10px] sm:text-xs font-black uppercase tracking-widest">{{ now()->format('l, F j, Y') }}</span>
+            <div class="mt-3 flex flex-col sm:flex-row sm:items-center gap-2">
+                <div class="flex items-center gap-2 bg-white/15 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10 shadow-sm w-fit">
+                    <i class="bi bi-calendar3 text-brand-200 text-[8px] sm:text-xs"></i>
+                    <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-tighter">{{ now()->format('l, F j, Y') }}</span>
                 </div>
-                <div class="flex items-center gap-2 bg-white/15 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 shadow-sm w-fit">
-                    <i class="bi bi-clock text-brand-200 text-xs sm:text-sm"></i>
-                    <span class="text-[10px] sm:text-xs font-black uppercase tracking-widest">{{ now()->format('h:i A') }}</span>
+                <div class="flex items-center gap-2 bg-white/15 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10 shadow-sm w-fit">
+                    <i class="bi bi-clock text-brand-200 text-[8px] sm:text-xs"></i>
+                    <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-tighter">{{ now()->format('h:i A') }}</span>
                 </div>
             </div>
         </div>
         
         <!-- Decorative Elements -->
         <div class="absolute -right-10 -bottom-10 sm:-right-16 sm:-bottom-16 opacity-10 pointer-events-none">
-            <i class="bi bi-heart-pulse text-[12rem] sm:text-[18rem]"></i>
+            <i class="bi bi-heart-pulse text-[8rem] sm:text-[12rem]"></i>
         </div>
     </div>
 
     {{-- Stats Grid --}}
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         
         {{-- Today's Appointments --}}
-        <div class="bg-white rounded-[1.5rem] sm:rounded-[2rem] shadow-sm border border-gray-100 p-6 sm:p-8 relative overflow-hidden group hover:shadow-md transition">
-            <p class="text-[9px] sm:text-xs font-black text-brand-600 uppercase tracking-widest relative z-10 mb-1">Today</p>
-            <p class="text-2xl sm:text-4xl font-black text-gray-900 relative z-10">{{ $upcomingToday }}</p>
-            <div class="absolute right-0 top-0 p-4 opacity-5 group-hover:opacity-10 transition">
-                <i class="bi bi-calendar-check-fill text-6xl text-brand-600"></i>
+        <div class="bg-white rounded-lg sm:rounded-lg shadow-sm border border-gray-100 p-4 sm:p-5 relative overflow-hidden group hover:shadow-md transition">
+            <p class="text-[8px] sm:text-[9px] font-black text-brand-600 uppercase tracking-tighter relative z-10 mb-0.5">Today</p>
+            <p class="text-xl sm:text-2xl font-black text-gray-900 relative z-10">{{ $upcomingToday }}</p>
+            <div class="absolute right-0 top-0 p-3 opacity-5 group-hover:opacity-10 transition">
+                <i class="bi bi-calendar-check-fill text-4xl text-brand-600"></i>
             </div>
         </div>
 
         {{-- Pending Consultations --}}
-        <div class="bg-white rounded-[1.5rem] sm:rounded-[2rem] shadow-sm border border-gray-100 p-6 sm:p-8 relative overflow-hidden group hover:shadow-md transition">
-            <p class="text-[9px] sm:text-xs font-black text-orange-600 uppercase tracking-widest relative z-10 mb-1">Pending</p>
-            <p class="text-2xl sm:text-4xl font-black text-gray-900 relative z-10">{{ $pendingConsultations }}</p>
-            <div class="absolute right-0 top-0 p-4 opacity-5 group-hover:opacity-10 transition">
-                <i class="bi bi-clipboard-pulse text-6xl text-orange-500"></i>
+        <div class="bg-white rounded-lg sm:rounded-lg shadow-sm border border-gray-100 p-4 sm:p-5 relative overflow-hidden group hover:shadow-md transition">
+            <p class="text-[8px] sm:text-[9px] font-black text-orange-600 uppercase tracking-tighter relative z-10 mb-0.5">Pending</p>
+            <p class="text-xl sm:text-2xl font-black text-gray-900 relative z-10">{{ $pendingConsultations }}</p>
+            <div class="absolute right-0 top-0 p-3 opacity-5 group-hover:opacity-10 transition">
+                <i class="bi bi-clipboard-pulse text-4xl text-orange-500"></i>
             </div>
         </div>
 
         {{-- Total Patients --}}
-        <div class="bg-white rounded-[1.5rem] sm:rounded-[2rem] shadow-sm border border-gray-100 p-6 sm:p-8 relative overflow-hidden group hover:shadow-md transition">
-            <p class="text-[9px] sm:text-xs font-black text-green-600 uppercase tracking-widest relative z-10 mb-1">Patients</p>
-            <p class="text-2xl sm:text-4xl font-black text-gray-900 relative z-10">{{ $totalPatients }}</p>
-            <div class="absolute right-0 top-0 p-4 opacity-5 group-hover:opacity-10 transition">
-                <i class="bi bi-people-fill text-6xl text-green-600"></i>
+        <div class="bg-white rounded-lg sm:rounded-lg shadow-sm border border-gray-100 p-4 sm:p-5 relative overflow-hidden group hover:shadow-md transition">
+            <p class="text-[8px] sm:text-[9px] font-black text-green-600 uppercase tracking-tighter relative z-10 mb-0.5">Patients</p>
+            <p class="text-xl sm:text-2xl font-black text-gray-900 relative z-10">{{ $totalPatients }}</p>
+            <div class="absolute right-0 top-0 p-3 opacity-5 group-hover:opacity-10 transition">
+                <i class="bi bi-people-fill text-4xl text-green-600"></i>
             </div>
         </div>
     </div>
 
     {{-- Midwife Specific Alerts --}}
     @if($user->isMidwife())
-    <div class="space-y-4">
-        <h2 class="text-lg font-black text-gray-900 uppercase tracking-widest flex items-center gap-3">
-            <span class="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xs shadow-inner">
+    <div class="space-y-3">
+        <h2 class="text-sm font-black text-gray-900 uppercase tracking-tighter flex items-center gap-2">
+            <span class="w-6 h-6 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-[10px] shadow-inner">
                 <i class="bi bi-shield-exclamation"></i>
             </span>
             Midwife Monitoring Alerts
         </h2>
         
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             {{-- High Risk Alerts --}}
-            <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-24 h-24 -mr-12 -mt-12 bg-red-50 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
-                <div class="flex justify-between items-start mb-6">
-                    <h4 class="text-[10px] font-black text-red-600 uppercase tracking-widest flex items-center gap-2">
-                        <i class="bi bi-exclamation-triangle-fill"></i> High-Risk Pregnancies
+            <div class="bg-white rounded-lg p-4 shadow-sm border border-gray-100 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-16 h-16 -mr-8 -mt-8 bg-red-50 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+                <div class="flex justify-between items-start mb-3">
+                    <h4 class="text-[9px] font-black text-red-600 uppercase tracking-tighter flex items-center gap-1">
+                        <i class="bi bi-exclamation-triangle-fill text-xs"></i> High-Risk Pregnancies
                     </h4>
-                    <span class="px-2 py-0.5 bg-red-50 text-red-600 rounded-full text-[9px] font-black uppercase tracking-widest border border-red-100">{{ $midwifeAlerts['high_risk']->count() }} Cases</span>
+                    <span class="px-2 py-0.5 bg-red-50 text-red-600 rounded-full text-[8px] font-black uppercase tracking-tighter border border-red-100">{{ $midwifeAlerts['high_risk']->count() }} Cases</span>
                 </div>
-                <div class="space-y-3">
+                <div class="space-y-2">
                     @forelse($midwifeAlerts['high_risk'] as $risk)
-                    <div class="flex items-center justify-between p-3 rounded-2xl bg-gray-50/50 border border-gray-50 group-hover:border-red-100 transition-all">
-                        <span class="text-xs font-bold text-gray-900">{{ $risk->user->full_name }}</span>
-                        <a href="{{ route('midwife.patients.show', $risk->user_id) }}" class="text-[9px] font-black text-red-600 uppercase tracking-widest hover:underline">View</a>
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-gray-50/50 border border-gray-50 group-hover:border-red-100 transition-all">
+                        <span class="text-[10px] font-bold text-gray-900">{{ $risk->user->full_name }}</span>
+                        <a href="{{ route('midwife.patients.show', $risk->user_id) }}" class="text-[8px] font-black text-red-600 uppercase tracking-tighter hover:underline">View</a>
                     </div>
                     @empty
-                    <p class="text-[10px] text-gray-400 italic">No high-risk alerts.</p>
+                    <p class="text-[9px] text-gray-400 italic">No high-risk alerts.</p>
                     @endforelse
                 </div>
             </div>
 
             {{-- Overdue Prenatal --}}
-            <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-24 h-24 -mr-12 -mt-12 bg-purple-50 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
-                <div class="flex justify-between items-start mb-6">
-                    <h4 class="text-[10px] font-black text-purple-600 uppercase tracking-widest flex items-center gap-2">
-                        <i class="bi bi-calendar-x-fill"></i> Overdue Prenatal
+            <div class="bg-white rounded-lg p-4 shadow-sm border border-gray-100 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-16 h-16 -mr-8 -mt-8 bg-purple-50 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+                <div class="flex justify-between items-start mb-3">
+                    <h4 class="text-[9px] font-black text-purple-600 uppercase tracking-tighter flex items-center gap-1">
+                        <i class="bi bi-calendar-x-fill text-xs"></i> Overdue Prenatal
                     </h4>
-                    <span class="px-2 py-0.5 bg-purple-50 text-purple-600 rounded-full text-[9px] font-black uppercase tracking-widest border border-purple-100">{{ $midwifeAlerts['overdue_prenatal']->count() }} Alerts</span>
+                    <span class="px-2 py-0.5 bg-purple-50 text-purple-600 rounded-full text-[8px] font-black uppercase tracking-tighter border border-purple-100">{{ $midwifeAlerts['overdue_prenatal']->count() }} Alerts</span>
                 </div>
-                <div class="space-y-3">
+                <div class="space-y-2">
                     @forelse($midwifeAlerts['overdue_prenatal'] as $overdue)
-                    <div class="flex items-center justify-between p-3 rounded-2xl bg-gray-50/50 border border-gray-50 group-hover:border-purple-100 transition-all">
-                        <span class="text-xs font-bold text-gray-900">{{ $overdue->user->full_name }}</span>
-                        <a href="{{ route('midwife.patients.show', $overdue->user_id) }}" class="text-[9px] font-black text-purple-600 uppercase tracking-widest hover:underline">View</a>
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-gray-50/50 border border-gray-50 group-hover:border-purple-100 transition-all">
+                        <span class="text-[10px] font-bold text-gray-900">{{ $overdue->user->full_name }}</span>
+                        <a href="{{ route('midwife.patients.show', $overdue->user_id) }}" class="text-[8px] font-black text-purple-600 uppercase tracking-tighter hover:underline">View</a>
                     </div>
                     @empty
-                    <p class="text-[10px] text-gray-400 italic">No overdue prenatal visits.</p>
+                    <p class="text-[9px] text-gray-400 italic">No overdue prenatal visits.</p>
                     @endforelse
                 </div>
             </div>
 
             {{-- Immunization Due --}}
-            <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-24 h-24 -mr-12 -mt-12 bg-blue-50 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
-                <div class="flex justify-between items-start mb-6">
-                    <h4 class="text-[10px] font-black text-blue-600 uppercase tracking-widest flex items-center gap-2">
-                        <i class="bi bi-shield-plus"></i> Immunization Due
+            <div class="bg-white rounded-lg p-4 shadow-sm border border-gray-100 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-16 h-16 -mr-8 -mt-8 bg-blue-50 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+                <div class="flex justify-between items-start mb-3">
+                    <h4 class="text-[9px] font-black text-blue-600 uppercase tracking-tighter flex items-center gap-1">
+                        <i class="bi bi-shield-plus text-xs"></i> Immunization Due
                     </h4>
-                    <span class="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full text-[9px] font-black uppercase tracking-widest border border-blue-100">{{ $midwifeAlerts['immunization_due']->count() }} Due</span>
+                    <span class="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full text-[8px] font-black uppercase tracking-tighter border border-blue-100">{{ $midwifeAlerts['immunization_due']->count() }} Due</span>
                 </div>
-                <div class="space-y-3">
+                <div class="space-y-2">
                     @forelse($midwifeAlerts['immunization_due'] as $due)
-                    <div class="flex items-center justify-between p-3 rounded-2xl bg-gray-50/50 border border-gray-100 group-hover:border-blue-100 transition-all">
-                        <span class="text-xs font-bold text-gray-900">{{ $due->user->full_name }}</span>
-                        <a href="{{ route('midwife.patients.show', $due->user_id) }}" class="text-[9px] font-black text-blue-600 uppercase tracking-widest hover:underline">View</a>
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-gray-50/50 border border-gray-100 group-hover:border-blue-100 transition-all">
+                        <span class="text-[10px] font-bold text-gray-900">{{ $due->user->full_name }}</span>
+                        <a href="{{ route('midwife.patients.show', $due->user_id) }}" class="text-[8px] font-black text-blue-600 uppercase tracking-tighter hover:underline">View</a>
                     </div>
                     @empty
-                    <p class="text-[10px] text-gray-400 italic">No immunization alerts.</p>
+                    <p class="text-[9px] text-gray-400 italic">No immunization alerts.</p>
                     @endforelse
                 </div>
             </div>

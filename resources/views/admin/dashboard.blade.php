@@ -3,20 +3,20 @@
 @section('title', 'Admin Dashboard')
 
 @section('content')
-<div class="max-w-7xl mx-auto p-6 space-y-6">
+<div class="max-w-7xl mx-auto p-4 space-y-4">
 
     {{-- Welcome Section --}}
-    <div class="mb-8 bg-gradient-to-r from-brand-700 to-brand-600 rounded-[2rem] p-6 sm:p-10 text-white shadow-lg shadow-brand-500/20 relative overflow-hidden">
+    <div class="mb-6 bg-gradient-to-r from-brand-700 to-brand-600 rounded-2xl p-5 sm:p-6 text-white shadow-lg shadow-brand-500/20 relative overflow-hidden">
         <div class="relative z-10 max-w-2xl">
-            <h1 class="text-3xl sm:text-4xl font-bold mb-3 tracking-tight">
+            <h1 class="text-2xl sm:text-3xl font-bold mb-2 tracking-tight">
                 Welcome back, {{ auth()->user()->first_name }}! 👋
             </h1>
-            <p class="text-brand-100 text-lg sm:text-xl font-light leading-relaxed">
+            <p class="text-brand-100 text-sm sm:text-base font-light leading-relaxed">
                 Here's what's happening in your barangay health center today.
             </p>
             
-            <div class="mt-6 flex flex-wrap items-center gap-3">
-                <div class="flex items-center gap-2 text-sm font-medium text-white bg-white/20 px-4 py-2 rounded-lg backdrop-blur-sm border border-white/10">
+            <div class="mt-4 flex flex-wrap items-center gap-2">
+                <div class="flex items-center gap-1.5 text-xs font-medium text-white bg-white/20 px-3 py-1.5 rounded-lg backdrop-blur-sm border border-white/10">
                     <i class="bi bi-calendar2-day"></i>
                     <span>{{ now()->format('l, F j, Y') }}</span>
                 </div>
@@ -26,63 +26,55 @@
         <!-- Decorative Elements -->
         <div class="absolute right-0 top-0 h-full w-full sm:w-1/2 pointer-events-none">
             <div class="absolute right-0 top-1/2 -translate-y-1/2 opacity-10 transform translate-x-1/4">
-                <i class="bi bi-activity text-[20rem]"></i>
+                <i class="bi bi-activity text-[15rem]"></i>
             </div>
         </div>
     </div>
 
-    {{-- Session Alerts --}}
-    @if(session('success'))
-        <x-alert type="success" :message="session('success')" />
-    @endif
-    @if(session('error'))
-        <x-alert type="error" :message="session('error')" />
-    @endif
-
     {{-- Stats Grid --}}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         
         {{-- Total Residents --}}
-        <a href="{{ route('admin.users.index', ['role' => 'patient']) }}" class="bg-white rounded-[2rem] p-6 shadow-sm hover:shadow-md transition block relative overflow-hidden group">
+        <a href="{{ route('admin.users.index', ['role' => 'patient']) }}" class="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition block relative overflow-hidden group">
             <div class="flex flex-col h-full justify-between relative z-10">
-                <div class="flex justify-between items-start mb-4">
-                     <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center text-2xl shadow-sm">
+                <div class="flex justify-between items-start mb-3">
+                     <div class="w-9 h-9 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center text-lg shadow-sm">
                          <i class="bi bi-people-fill"></i>
                      </div>
                 </div>
                 <div>
-                     <h3 class="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight">{{ $totalResidents }}</h3>
-                     <p class="text-sm font-bold text-gray-400 mt-1">Total Patients</p>
+                     <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">{{ $totalResidents }}</h3>
+                     <p class="text-[8px] font-bold text-gray-400 mt-0.5">Total Patients</p>
                 </div>
             </div>
-            <div class="absolute -right-6 -bottom-6 text-blue-50 opacity-50 group-hover:scale-110 transition duration-500">
-                <i class="bi bi-people-fill text-9xl"></i>
+            <div class="absolute -right-4 -bottom-4 text-blue-50 opacity-50 group-hover:scale-110 transition duration-500">
+                <i class="bi bi-people-fill text-6xl"></i>
             </div>
         </a>
 
         {{-- Scheduled Appointments --}}
-        <a href="{{ route('admin.appointments.index', ['status' => 'approved']) }}" class="bg-white rounded-[2rem] p-6 shadow-sm hover:shadow-md transition block relative overflow-hidden group">
+        <a href="{{ route('admin.appointments.index', ['status' => 'approved']) }}" class="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition block relative overflow-hidden group">
              <div class="flex flex-col h-full justify-between relative z-10">
-                <div class="flex justify-between items-start mb-4">
-                     <div class="w-12 h-12 rounded-2xl bg-green-50 text-green-500 flex items-center justify-center text-2xl shadow-sm">
+                <div class="flex justify-between items-start mb-3">
+                     <div class="w-9 h-9 rounded-lg bg-green-50 text-green-500 flex items-center justify-center text-lg shadow-sm">
                          <i class="bi bi-calendar-check-fill"></i>
                      </div>
                 </div>
                 <div>
-                     <h3 class="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight">{{ $approvedAppointments }}</h3>
-                     <p class="text-sm font-bold text-gray-400 mt-1">Upcoming</p>
+                     <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">{{ $approvedAppointments }}</h3>
+                     <p class="text-[8px] font-bold text-gray-400 mt-0.5">Upcoming</p>
                 </div>
             </div>
-            <div class="absolute -right-6 -bottom-6 text-green-50 opacity-50 group-hover:scale-110 transition duration-500">
-                <i class="bi bi-calendar-check-fill text-9xl"></i>
+            <div class="absolute -right-4 -bottom-4 text-green-50 opacity-50 group-hover:scale-110 transition duration-500">
+                <i class="bi bi-calendar-check-fill text-6xl"></i>
             </div>
         </a>
 
         {{-- Medicine Inventory --}}
-        <a href="{{ route('admin.medicines.index') }}" class="bg-white rounded-[2rem] p-6 shadow-sm hover:shadow-md transition block relative overflow-hidden group">
+        <a href="{{ route('admin.medicines.index') }}" class="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition block relative overflow-hidden group">
              <div class="flex flex-col h-full justify-between relative z-10">
-                <div class="flex justify-between items-start mb-4">
-                     <div class="w-12 h-12 rounded-2xl {{ $medicineStats['low_stock_count'] > 0 ? 'bg-red-50 text-red-500' : 'bg-purple-50 text-purple-500' }} flex items-center justify-center text-2xl shadow-sm">
+                <div class="flex justify-between items-start mb-3">
+                     <div class="w-9 h-9 rounded-lg {{ $medicineStats['low_stock_count'] > 0 ? 'bg-red-50 text-red-500' : 'bg-purple-50 text-purple-500' }} flex items-center justify-center text-lg shadow-sm">
                          <i class="bi bi-capsule"></i>
                      </div>
                 </div>

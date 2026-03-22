@@ -85,9 +85,13 @@ class SlotController extends Controller
     {
         $this->authorizeMidwife();
         $doctors = User::whereIn('role', ['doctor', 'midwife'])->get();
+        $availabilities = \App\Models\DoctorAvailability::whereIn('status', ['scheduled', 'arrived', 'delayed'])
+            ->get();
+
         return view('slots.create', [
             'services' => $this->getServices(),
-            'doctors' => $doctors
+            'doctors' => $doctors,
+            'availabilities' => $availabilities
         ]);
     }
 
@@ -101,7 +105,7 @@ class SlotController extends Controller
         $validated = $request->validate([
             'service' => 'required|string|max:255|exists:services,name',
             'doctor_id' => 'nullable|exists:users,id',
-            'date' => 'required|date|after_or_equal:today',
+            'date' => 'required|date',
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'nullable|date_format:H:i|after:start_time',
             'capacity' => 'required|integer|min:1',
@@ -118,9 +122,19 @@ class SlotController extends Controller
                 ]);
             }
 
-            // Check Doctor Availability
+            // Check Doctor Availability (including recurring)
+            $dayOfWeek = Carbon::parse($request->date)->dayOfWeek; // 0-6
+
             $isAvailable = \App\Models\DoctorAvailability::where('doctor_id', $request->doctor_id)
-                ->where('date', $request->date)
+                ->where(function($q) use ($request, $dayOfWeek) {
+                    $q->where(function($sq) use ($request) {
+                        $sq->where('is_recurring', false)
+                           ->where('date', $request->date);
+                    })->orWhere(function($sq) use ($dayOfWeek) {
+                        $sq->where('is_recurring', true)
+                           ->where('recurring_day', $dayOfWeek);
+                    });
+                })
                 ->where('start_time', '<=', $request->start_time)
                 ->where('end_time', '>=', ($request->end_time ?? $request->start_time))
                 ->exists();
@@ -133,18 +147,8 @@ class SlotController extends Controller
             }
         }
 
-        if ($service->provider_type === 'Midwife' && !empty($request->doctor_id)) {
-            // Check if the assigned user is actually a midwife (allowed) or a doctor (blocked)
-            $assignedUser = User::find($request->doctor_id);
-            if ($assignedUser && $assignedUser->role === 'doctor') {
-                throw ValidationException::withMessages([
-                    'doctor_id' => "The service '{$service->name}' can only be provided by a Midwife. You cannot assign a Doctor to this slot."
-                ]);
-            }
-        }
-
         // Default checkbox value
-        $validated['is_active'] = $request->has('is_active') ? (bool)$request->is_active : true;
+        $validated['is_active'] = $request->has('is_active') ? (bool)$request->is_active : false;
 
         Slot::create($validated);
 
@@ -158,10 +162,15 @@ class SlotController extends Controller
     {
         $this->authorizeMidwife();
         $doctors = User::whereIn('role', ['doctor', 'midwife'])->get();
+        $availabilities = \App\Models\DoctorAvailability::where('date', '>=', today())
+            ->whereIn('status', ['scheduled', 'arrived', 'delayed'])
+            ->get();
+
         return view('slots.edit', [
             'slot' => $slot,
             'services' => $this->getServices(),
-            'doctors' => $doctors
+            'doctors' => $doctors,
+            'availabilities' => $availabilities
         ]);
     }
 
@@ -184,10 +193,36 @@ class SlotController extends Controller
 
         // Enforce Provider Type Logic
         $service = Service::where('name', $request->service)->first();
-        if ($service->provider_type === 'Doctor' && empty($request->doctor_id)) {
-            throw ValidationException::withMessages([
-                'doctor_id' => "The service '{$service->name}' requires an assigned Doctor."
-            ]);
+        if ($service->provider_type === 'Doctor') {
+            if (empty($request->doctor_id)) {
+                throw ValidationException::withMessages([
+                    'doctor_id' => "The service '{$service->name}' requires an assigned Doctor."
+                ]);
+            }
+
+            // Check Doctor Availability (including recurring)
+            $dayOfWeek = Carbon::parse($request->date)->dayOfWeek;
+
+            $isAvailable = \App\Models\DoctorAvailability::where('doctor_id', $request->doctor_id)
+                ->where(function($q) use ($request, $dayOfWeek) {
+                    $q->where(function($sq) use ($request) {
+                        $sq->where('is_recurring', false)
+                           ->where('date', $request->date);
+                    })->orWhere(function($sq) use ($dayOfWeek) {
+                        $sq->where('is_recurring', true)
+                           ->where('recurring_day', $dayOfWeek);
+                    });
+                })
+                ->where('start_time', '<=', $request->start_time)
+                ->where('end_time', '>=', ($request->end_time ?? $request->start_time))
+                ->exists();
+
+            if (!$isAvailable) {
+                $doctor = User::find($request->doctor_id);
+                throw ValidationException::withMessages([
+                    'doctor_id' => "Dr. {$doctor->full_name} has not set their availability for this date and time window."
+                ]);
+            }
         }
 
         // Default checkbox value

@@ -1,6 +1,10 @@
-@props(['slotModel' => null, 'action', 'method' => 'POST', 'buttonText', 'doctors' => [], 'services' => []])
+@props(['slotModel' => null, 'action', 'method' => 'POST', 'buttonText', 'doctors' => [], 'services' => [], 'availabilities' => []])
 
-<form action="{{ $action }}" method="POST" class="p-10 lg:p-14 space-y-12" id="slot-form">
+<form action="{{ $action }}" method="POST" class="p-10 lg:p-14 space-y-12" id="slot-form" x-data="{ 
+    selectedDoctor: '{{ old('doctor_id', $slotModel->doctor_id ?? '') }}',
+    selectedDate: '{{ old('date', isset($slotModel) ? $slotModel->date->format('Y-m-d') : '') }}',
+    availabilities: {{ Js::from($availabilities) }}
+}">
     @csrf
     @if($method !== 'POST')
         @method($method)
@@ -51,7 +55,7 @@
                         <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
                             <i class="bi bi-person-badge text-xl"></i>
                         </div>
-                        <select name="doctor_id" id="doctor-select"
+                        <select name="doctor_id" id="doctor-select" x-model="selectedDoctor"
                             class="block w-full pl-16 pr-10 py-5 bg-gray-50 border-none rounded-[2rem] focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 transition-all appearance-none">
                             <option value="" data-role="none">-- No Doctor / Midwife Only --</option>
                             @foreach($doctors as $doctor)
@@ -67,6 +71,89 @@
                         </div>
                     </div>
                     <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest ml-4" id="doctor-help-text">Select a doctor if required by the service</p>
+
+                    {{-- Doctor Schedule Summary (Visible when doctor is selected) --}}
+                    <div x-show="selectedDoctor" class="mt-6 space-y-4 animate-in fade-in slide-in-from-top-2 duration-500">
+                        <div class="px-6 py-5 rounded-[2rem] bg-white border border-gray-100 shadow-sm">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-8 h-8 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center">
+                                    <i class="bi bi-calendar3 text-sm"></i>
+                                </div>
+                                <h4 class="text-[10px] font-black text-gray-900 uppercase tracking-widest">Doctor's Clinical Schedule</h4>
+                            </div>
+
+                            <div class="space-y-3">
+                                {{-- Recurring Schedule --}}
+                                <div class="flex flex-wrap gap-2">
+                                    <template x-for="day in [0,1,2,3,4,5,6]">
+                                        <div class="px-3 py-1.5 rounded-xl border text-[9px] font-black uppercase tracking-tighter transition-all"
+                                             :class="availabilities.some(a => a.doctor_id == selectedDoctor && a.is_recurring && a.recurring_day == day) 
+                                                ? 'bg-brand-500 text-white border-brand-500 shadow-md shadow-brand-200' 
+                                                : 'bg-gray-50 text-gray-300 border-gray-100 opacity-50'">
+                                            <span x-text="['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][day]"></span>
+                                        </div>
+                                    </template>
+                                </div>
+
+                                {{-- Schedule Details --}}
+                                <div class="mt-4 pt-4 border-t border-gray-50 space-y-2">
+                                    <template x-for="a in availabilities.filter(a => a.doctor_id == selectedDoctor && a.is_recurring)">
+                                        <div class="flex items-center justify-between text-[10px]">
+                                            <span class="font-black text-brand-600 uppercase" x-text="`Every ${['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][a.recurring_day]}`"></span>
+                                            <span class="font-bold text-gray-500" x-text="`${new Date('1970-01-01T' + a.start_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - ${new Date('1970-01-01T' + a.end_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`"></span>
+                                        </div>
+                                    </template>
+                                    
+                                    {{-- Upcoming One-time dates --}}
+                                    <template x-for="a in availabilities.filter(a => a.doctor_id == selectedDoctor && !a.is_recurring && new Date(a.date) >= new Date().setHours(0,0,0,0)).slice(0, 3)">
+                                        <div class="flex items-center justify-between text-[10px]">
+                                            <span class="font-black text-blue-600 uppercase" x-text="new Date(a.date).toLocaleDateString([], {month: 'short', day: 'numeric', year: 'numeric'})"></span>
+                                            <span class="font-bold text-gray-500" x-text="`${new Date('1970-01-01T' + a.start_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - ${new Date('1970-01-01T' + a.end_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`"></span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Specific Date Availability Indicator --}}
+                        <div x-show="selectedDate" class="px-6 py-4 rounded-2xl border transition-all"
+                             @php
+                                $isAvailableJS = "availabilities.some(a => a.doctor_id == selectedDoctor && (
+                                    (!a.is_recurring && a.date && a.date.substring(0, 10) === selectedDate) || 
+                                    (a.is_recurring && a.recurring_day == new Date(selectedDate).getDay())
+                                ))";
+                             @endphp
+                             :class="{{ $isAvailableJS }} ? 'border-emerald-100 bg-emerald-50/50' : 'border-amber-100 bg-amber-50/50'">
+                            <template x-if="{{ $isAvailableJS }}">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shadow-sm">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Valid for selected date</p>
+                                        <p class="text-[9px] font-bold text-emerald-800 uppercase tracking-tighter opacity-75">The doctor is on duty during this window</p>
+                                    </div>
+                                </div>
+                            </template>
+                            <template x-if="!{{ $isAvailableJS }}">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shadow-sm">
+                                        <i class="bi bi-exclamation-triangle-fill"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-black text-amber-600 uppercase tracking-widest">Conflict Detected</p>
+                                        <p class="text-[9px] font-bold text-amber-800 uppercase tracking-tighter opacity-75">Doctor has no registered duty block for this specific date</p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    {{-- Guidance Message --}}
+                    <div x-show="!selectedDoctor" class="mt-4 px-6 py-3 rounded-xl border border-blue-50 bg-blue-50/30 flex items-center gap-3 text-blue-400">
+                        <i class="bi bi-info-circle"></i>
+                        <p class="text-[9px] font-bold uppercase tracking-widest">Select a doctor to view their weekly clinical schedule</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -92,7 +179,7 @@
                         <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
                             <i class="bi bi-calendar-event text-xl"></i>
                         </div>
-                        <input type="date" name="date" id="date" value="{{ old('date', isset($slotModel) ? $slotModel->date->format('Y-m-d') : '') }}" required
+                        <input type="date" name="date" id="date" value="{{ old('date', isset($slotModel) ? $slotModel->date->format('Y-m-d') : '') }}" required x-model="selectedDate"
                             class="block w-full pl-16 pr-6 py-5 bg-gray-50 border-none rounded-[2rem] focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 shadow-inner transition-all">
                     </div>
                 </div>
@@ -221,6 +308,16 @@
 
             // Restore value if still present in filtered list
             doctorSelect.value = currentValue;
+            
+            // CRITICAL: Manually update Alpine state
+            const alpineData = document.querySelector('[x-data]').__x?.$data || null;
+            if (alpineData) {
+                alpineData.selectedDoctor = doctorSelect.value;
+            } else {
+                // For older versions of Alpine or if __x is not available
+                doctorSelect.dispatchEvent(new Event('input', { bubbles: true }));
+                doctorSelect.dispatchEvent(new Event('change', { bubbles: true }));
+            }
 
             // Update labels and requirements
             if (providerType === 'Doctor') {

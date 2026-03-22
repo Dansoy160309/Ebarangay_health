@@ -3,20 +3,20 @@
 @section('title', 'Notification Logs')
 
 @section('content')
-<div class="flex flex-col gap-6 sm:gap-8">
+<div class="flex flex-col gap-4 sm:gap-5">
     
     {{-- Top-Aligned Compact Header --}}
-    <div class="relative z-10 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm overflow-hidden group">
-        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+    <div class="relative z-10 bg-white rounded-2xl sm:rounded-2xl p-5 sm:p-6 border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="absolute top-0 right-0 w-48 h-48 bg-brand-50 rounded-full blur-2xl -mr-24 -mt-24 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
         
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8">
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5">
             <div class="max-w-xl">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 mb-3 sm:mb-4">
-                    <i class="bi bi-bell-fill text-xs"></i>
-                    <span class="text-[9px] font-black uppercase tracking-widest">System Audit</span>
+                <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-lg bg-brand-50 text-brand-600 border border-brand-100 mb-2 sm:mb-3">
+                    <i class="bi bi-bell-fill text-[8px]"></i>
+                    <span class="text-[8px] font-black uppercase tracking-tighter">System Audit</span>
                 </div>
-                <h1 class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-2 sm:mb-3">
-                    Notification <span class="text-brand-600 underline decoration-brand-200 decoration-4 underline-offset-4">Logs</span>
+                <h1 class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight leading-tight mb-1 sm:mb-2">
+                    Notification <span class="text-brand-600 underline decoration-brand-200 decoration-2 underline-offset-2">Logs</span>
                 </h1>
                 <p class="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed">
                     Monitor all in-app notifications and system alerts sent to patients and staff.
@@ -26,21 +26,21 @@
     </div>
 
     {{-- Notification List --}}
-    <div class="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/40 border border-gray-100 overflow-hidden">
-        <div class="px-8 py-6 border-b border-gray-50 bg-gray-50/30 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="h-8 w-8 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-lg shadow-gray-200/30 border border-gray-100 overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-50 bg-gray-50/30 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="h-6 w-6 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center text-[9px]">
                     <i class="bi bi-list-ul"></i>
                 </div>
-                <h2 class="font-black text-gray-900 text-sm uppercase tracking-widest">History Log</h2>
+                <h2 class="font-black text-gray-900 text-xs uppercase tracking-tighter">History Log</h2>
             </div>
-            <div class="text-[11px] font-black text-gray-400 uppercase tracking-widest">
+            <div class="text-[8px] font-black text-gray-400 uppercase tracking-tighter">
                 Showing <span class="text-gray-900">{{ $notifications->firstItem() ?? 0 }}</span> - <span class="text-gray-900">{{ $notifications->lastItem() ?? 0 }}</span> of {{ $notifications->total() }}
             </div>
         </div>
 
         {{-- Mobile View (Enhanced) --}}
-        <div class="md:hidden p-6 space-y-4">
+        <div class="md:hidden p-4 space-y-3">
             @forelse($notifications as $notification)
                 @php
                     $data = $notification->data ?? [];
@@ -68,38 +68,38 @@
                         default => 'bg-gray-50 border-gray-100'
                     };
                 @endphp
-                <div class="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 relative overflow-hidden group">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="flex items-center gap-2 px-3 py-1 rounded-full border {{ $typeBg }}">
-                            <i class="bi {{ $typeIcon }} text-[10px]"></i>
-                            <span class="text-[9px] font-black uppercase tracking-widest text-gray-700">{{ $readableType }}</span>
+                <div class="bg-white rounded-lg p-4 shadow-sm border border-gray-100 relative overflow-hidden group">
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border {{ $typeBg }}">
+                            <i class="bi {{ $typeIcon }} text-[8px]"></i>
+                            <span class="text-[8px] font-black uppercase tracking-tighter text-gray-700">{{ $readableType }}</span>
                         </div>
-                        <span class="px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border {{ $statusClass }}">
+                        <span class="px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-tighter border {{ $statusClass }}">
                             {{ $status }}
                         </span>
                     </div>
 
-                    <div class="mb-4">
+                    <div class="mb-3">
                         @if($recipient)
-                            <div class="flex items-center gap-3 mb-3">
-                                <div class="h-9 w-9 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-xs font-black shrink-0 border border-brand-100/50">
+                            <div class="flex items-center gap-2.5 mb-2.5">
+                                <div class="h-7 w-7 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center text-[8px] font-black shrink-0 border border-brand-100/50">
                                     {{ substr($recipient->first_name ?? 'U', 0, 1) }}
                                 </div>
                                 <div>
-                                    <div class="font-black text-gray-900 text-sm">{{ $recipient->full_name ?? $recipient->email ?? 'User #'.$recipient->id }}</div>
-                                    <div class="text-[10px] font-bold text-gray-400">{{ $recipient->email ?? '' }}</div>
+                                    <div class="font-black text-gray-900 text-xs">{{ $recipient->full_name ?? $recipient->email ?? 'User #'.$recipient->id }}</div>
+                                    <div class="text-[8px] font-bold text-gray-400">{{ $recipient->email ?? '' }}</div>
                                 </div>
                             </div>
                         @endif
-                        <div class="bg-gray-50/50 p-4 rounded-2xl border border-gray-100">
-                            <p class="text-sm font-medium text-gray-600 line-clamp-2 leading-relaxed">{{ $data['message'] ?? '—' }}</p>
+                        <div class="bg-gray-50/50 p-3 rounded-lg border border-gray-100">
+                            <p class="text-xs font-medium text-gray-600 line-clamp-2 leading-relaxed">{{ $data['message'] ?? '—' }}</p>
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-between pt-4 border-t border-gray-50">
+                    <div class="flex items-center justify-between pt-3 border-t border-gray-50">
                         <div class="flex flex-col">
-                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">{{ $notification->created_at->format('M d, Y') }}</span>
-                            <span class="text-[9px] font-bold text-gray-300 uppercase">{{ $notification->created_at->format('h:i A') }}</span>
+                            <span class="text-[8px] font-black text-gray-400 uppercase tracking-tighter">{{ $notification->created_at->format('M d, Y') }}</span>
+                            <span class="text-[8px] font-bold text-gray-300 uppercase">{{ $notification->created_at->format('h:i A') }}</span>
                         </div>
                         
                         @if(in_array($notification->type, [
@@ -109,16 +109,16 @@
                             <form action="{{ route('admin.notifications.resend', $notification->id) }}" method="POST">
                                 @csrf
                                 <button type="submit"
-                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-900 text-white hover:bg-black shadow-lg shadow-gray-200 transition-all text-[10px] font-black uppercase tracking-widest">
-                                    <i class="bi bi-arrow-clockwise"></i> Resend
+                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-900 text-white hover:bg-black shadow-md shadow-gray-200 transition-all text-[8px] font-black uppercase tracking-tighter">
+                                    <i class="bi bi-arrow-clockwise text-xs"></i> Resend
                                 </button>
                             </form>
                         @endif
                     </div>
                 </div>
             @empty
-                <div class="py-12 text-center">
-                    <p class="text-sm font-bold text-gray-400 uppercase tracking-widest">No notifications found.</p>
+                <div class="py-8 text-center">
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-tighter">No notifications found.</p>
                 </div>
             @endforelse
         </div>
@@ -128,12 +128,12 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-gray-50/50">
-                        <th class="px-8 py-5 text-[11px] font-black text-gray-400 uppercase tracking-widest">Recipient</th>
-                        <th class="px-8 py-5 text-[11px] font-black text-gray-400 uppercase tracking-widest">Type</th>
-                        <th class="px-8 py-5 text-[11px] font-black text-gray-400 uppercase tracking-widest">Message</th>
-                        <th class="px-8 py-5 text-[11px] font-black text-gray-400 uppercase tracking-widest">Status</th>
-                        <th class="px-8 py-5 text-[11px] font-black text-gray-400 uppercase tracking-widest">Created</th>
-                        <th class="px-8 py-5 text-[11px] font-black text-gray-400 uppercase tracking-widest text-right">Actions</th>
+                        <th class="px-5 py-3 text-[9px] font-black text-gray-400 uppercase tracking-tighter">Recipient</th>
+                        <th class="px-5 py-3 text-[9px] font-black text-gray-400 uppercase tracking-tighter">Type</th>
+                        <th class="px-5 py-3 text-[9px] font-black text-gray-400 uppercase tracking-tighter">Message</th>
+                        <th class="px-5 py-3 text-[9px] font-black text-gray-400 uppercase tracking-tighter">Status</th>
+                        <th class="px-5 py-3 text-[9px] font-black text-gray-400 uppercase tracking-tighter">Created</th>
+                        <th class="px-5 py-3 text-[9px] font-black text-gray-400 uppercase tracking-tighter text-right">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
@@ -146,30 +146,30 @@
                             $recipient = $notification->notifiable;
                         @endphp
                         <tr class="hover:bg-gray-50/50 transition-colors group">
-                            <td class="px-8 py-6 whitespace-nowrap">
+                            <td class="px-5 py-4 whitespace-nowrap">
                                 @if($recipient)
-                                    <div class="flex items-center gap-3">
-                                        <div class="h-10 w-10 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-xs font-black shrink-0 border border-brand-100/50">
+                                    <div class="flex items-center gap-2.5">
+                                        <div class="h-8 w-8 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center text-[8px] font-black shrink-0 border border-brand-100/50">
                                             {{ substr($recipient->first_name ?? 'U', 0, 1) }}
                                         </div>
                                         <div>
-                                            <div class="text-sm font-black text-gray-900 group-hover:text-brand-600 transition-colors">{{ $recipient->full_name ?? $recipient->email ?? 'User #'.$recipient->id }}</div>
-                                            <div class="text-[10px] font-bold text-gray-400 uppercase tracking-tight">{{ $recipient->email ?? '' }}</div>
+                                            <div class="text-xs font-black text-gray-900 group-hover:text-brand-600 transition-colors">{{ $recipient->full_name ?? $recipient->email ?? 'User #'.$recipient->id }}</div>
+                                            <div class="text-[8px] font-bold text-gray-400 uppercase tracking-tighter">{{ $recipient->email ?? '' }}</div>
                                         </div>
                                     </div>
                                 @else
-                                    <div class="flex items-center gap-3 text-gray-400">
-                                        <div class="h-10 w-10 rounded-2xl bg-gray-50 flex items-center justify-center">
+                                    <div class="flex items-center gap-2 text-gray-400">
+                                        <div class="h-8 w-8 rounded-lg bg-gray-50 flex items-center justify-center text-xs">
                                             <i class="bi bi-person-x"></i>
                                         </div>
-                                        <span class="text-xs font-bold uppercase tracking-widest">Unknown User</span>
+                                        <span class="text-[8px] font-bold uppercase tracking-tighter">Unknown User</span>
                                     </div>
                                 @endif
                             </td>
-                            <td class="px-8 py-6 whitespace-nowrap">
-                                <div class="flex items-center gap-2.5">
+                            <td class="px-5 py-4 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
                                     <div @class([
-                                        'h-8 w-8 rounded-xl flex items-center justify-center text-sm',
+                                        'h-7 w-7 rounded-lg flex items-center justify-center text-xs',
                                         'bg-purple-50 text-purple-600' => str_contains($readableType, 'Announcement'),
                                         'bg-blue-50 text-blue-600' => str_contains($readableType, 'Appointment'),
                                         'bg-gray-50 text-gray-600' => !str_contains($readableType, 'Announcement') && !str_contains($readableType, 'Appointment'),
@@ -182,24 +182,24 @@
                                             <i class="bi bi-bell-fill"></i>
                                         @endif
                                     </div>
-                                    <span class="text-xs font-black text-gray-700 uppercase tracking-widest">{{ $readableType }}</span>
+                                    <span class="text-[8px] font-black text-gray-700 uppercase tracking-tighter">{{ $readableType }}</span>
                                 </div>
                             </td>
-                            <td class="px-8 py-6 max-w-sm">
-                                <div class="text-sm font-medium text-gray-600 line-clamp-2 leading-relaxed" title="{{ $data['message'] ?? '' }}">
+                            <td class="px-5 py-4 max-w-sm">
+                                <div class="text-xs font-medium text-gray-600 line-clamp-2 leading-relaxed" title="{{ $data['message'] ?? '' }}">
                                     {{ $data['message'] ?? '—' }}
                                 </div>
                             </td>
-                            <td class="px-8 py-6 whitespace-nowrap">
+                            <td class="px-5 py-4 whitespace-nowrap">
                                 <span @class([
-                                    'inline-flex items-center px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border',
+                                    'inline-flex items-center px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-tighter border',
                                     'bg-red-50 text-red-600 border-red-100' => $status === 'failed',
                                     'bg-orange-50 text-orange-600 border-orange-100' => $status === 'resent',
                                     'bg-gray-50 text-gray-600 border-gray-200' => $status === 'read',
                                     'bg-emerald-50 text-emerald-600 border-emerald-100' => $status === 'sent',
                                 ])>
                                     <span @class([
-                                        'w-1 h-1 rounded-full mr-1.5',
+                                        'w-1 h-1 rounded-full mr-1',
                                         'bg-red-500 animate-pulse' => $status === 'failed',
                                         'bg-orange-500' => $status === 'resent',
                                         'bg-gray-400' => $status === 'read',
@@ -208,16 +208,16 @@
                                     {{ $status }}
                                 </span>
                             </td>
-                            <td class="px-8 py-6 whitespace-nowrap">
+                            <td class="px-5 py-4 whitespace-nowrap">
                                 <div class="flex flex-col">
-                                    <span class="text-sm font-black text-gray-900">{{ $notification->created_at->format('M d, Y') }}</span>
-                                    <div class="flex items-center gap-1.5 mt-0.5">
-                                        <span class="h-1 w-1 rounded-full bg-brand-500"></span>
-                                        <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">{{ $notification->created_at->format('h:i A') }}</span>
+                                    <span class="text-xs font-black text-gray-900">{{ $notification->created_at->format('M d, Y') }}</span>
+                                    <div class="flex items-center gap-1 mt-0.5">
+                                        <span class="h-0.5 w-0.5 rounded-full bg-brand-500"></span>
+                                        <span class="text-[8px] font-black text-gray-400 uppercase tracking-tighter">{{ $notification->created_at->format('h:i A') }}</span>
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-8 py-6 whitespace-nowrap text-right">
+                            <td class="px-5 py-4 whitespace-nowrap text-right">
                                 @if(in_array($notification->type, [
                                     \App\Notifications\UpcomingAppointmentReminder::class,
                                     \App\Notifications\NewAnnouncementNotification::class,
@@ -225,24 +225,24 @@
                                     <form action="{{ route('admin.notifications.resend', $notification->id) }}" method="POST" class="inline">
                                         @csrf
                                         <button type="submit"
-                                            class="inline-flex items-center px-4 py-2 rounded-xl bg-white border border-gray-200 text-gray-700 hover:text-brand-600 hover:border-brand-200 shadow-sm transition-all text-[10px] font-black uppercase tracking-widest group-hover:bg-brand-50 group-hover:border-brand-100">
-                                            <i class="bi bi-arrow-clockwise mr-1.5"></i> Resend
+                                            class="inline-flex items-center px-3 py-1.5 rounded-lg bg-white border border-gray-200 text-gray-700 hover:text-brand-600 hover:border-brand-200 shadow-sm transition-all text-[8px] font-black uppercase tracking-tighter group-hover:bg-brand-50 group-hover:border-brand-100">
+                                            <i class="bi bi-arrow-clockwise mr-1 text-xs"></i> Resend
                                         </button>
                                     </form>
                                 @else
-                                    <span class="text-[10px] font-black text-gray-300 uppercase tracking-widest select-none cursor-not-allowed">No Action</span>
+                                    <span class="text-[8px] font-black text-gray-300 uppercase tracking-tighter select-none cursor-not-allowed">No Action</span>
                                 @endif
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-8 py-24 text-center">
+                            <td colspan="6" class="px-5 py-16 text-center">
                                 <div class="flex flex-col items-center justify-center">
-                                    <div class="h-24 w-24 rounded-[2.5rem] bg-gray-50 flex items-center justify-center text-gray-200 text-4xl mb-6 border border-dashed border-gray-200">
+                                    <div class="h-16 w-16 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-200 text-2xl mb-4 border border-dashed border-gray-200">
                                         <i class="bi bi-bell-slash"></i>
                                     </div>
-                                    <h3 class="text-xl font-black text-gray-900 tracking-tight">No Notifications Found</h3>
-                                    <p class="text-gray-500 max-w-xs mx-auto mt-2 font-medium">There are currently no notification logs available to display.</p>
+                                    <h3 class="text-lg font-black text-gray-900 tracking-tight">No Notifications Found</h3>
+                                    <p class="text-gray-500 max-w-xs mx-auto mt-1.5 font-medium text-xs">There are currently no notification logs available to display.</p>
                                 </div>
                             </td>
                         </tr>
@@ -252,7 +252,7 @@
         </div>
 
         @if($notifications->hasPages())
-            <div class="px-8 py-6 bg-gray-50/50 border-t border-gray-100">
+            <div class="px-5 py-4 bg-gray-50/50 border-t border-gray-100">
                 {{ $notifications->links() }}
             </div>
         @endif

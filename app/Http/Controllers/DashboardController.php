@@ -499,12 +499,52 @@ class DashboardController extends Controller
             // Fetch Doctor Availabilities for Calendar (with safety check)
             $doctorAvailabilities = collect();
             if (\Illuminate\Support\Facades\Schema::hasTable('doctor_availabilities')) {
-                $doctorAvailabilities = \App\Models\DoctorAvailability::with('doctor')
-                    ->where('date', '>=', now()->startOfMonth())
-                    ->where('date', '<=', now()->addMonths(2)->endOfMonth())
-                    ->whereIn('status', ['scheduled', 'arrived', 'delayed'])
+                // Fetch both recurring and one-time schedules
+                // We ONLY want to show users whose role is explicitly 'doctor' and are active.
+                // We also filter for 'scheduled', 'arrived', 'delayed' to show available days.
+                $doctorAvailabilities = \App\Models\DoctorAvailability::whereHas('doctor', function($q) {
+                        $q->whereRaw('LOWER(role) = ?', ['doctor'])
+                          ->where('status', true); // Doctor account must be active
+                    })
+                    ->with(['doctor' => function($q) {
+                        $q->select('id', 'first_name', 'last_name', 'role');
+                    }])
+                    ->where(function($q) {
+                        $q->where('date', '>=', now()->startOfMonth())
+                          ->orWhere('is_recurring', true);
+                    })
+                    ->whereIn('status', ['scheduled', 'arrived', 'delayed', 'absent'])
                     ->get()
-                    ->groupBy(fn($d) => $d->date->format('Y-m-d'));
+                    ->map(function($a) {
+                        // Normalize data for Alpine.js
+                        $dayNames = [0 => 'Sunday', 1 => 'Monday', 2 => 'Tuesday', 3 => 'Wednesday', 4 => 'Thursday', 5 => 'Friday', 6 => 'Saturday'];
+                        
+                        // Use explicit recurring_day or fallback to the date's day of week
+                        $recurringDay = $a->recurring_day;
+                        $dateDayOfWeek = $a->date ? (int)$a->date->dayOfWeek : null;
+
+                        // For recurring entries, prefer explicit recurring_day; fallback to availability date day-of-week.
+                        if ($a->is_recurring) {
+                            if ($recurringDay === null || $dateDayOfWeek !== null && (int)$recurringDay !== $dateDayOfWeek) {
+                                $recurringDay = $dateDayOfWeek;
+                            }
+                        }
+
+                        $patternLabel = $a->is_recurring ? "(Every {$dayNames[$recurringDay]})" : "(One-time)";
+                        
+                        return [
+                            'id' => $a->id,
+                            'doctor_id' => $a->doctor_id,
+                            'doctor_name' => "Dr. " . ($a->doctor ? $a->doctor->full_name : 'Unknown Doctor'),
+                            'date' => $a->date ? $a->date->toDateString() : null,
+                            'start_time' => $a->start_time,
+                            'end_time' => $a->end_time,
+                            'is_recurring' => (bool)$a->is_recurring,
+                            'recurring_day' => $recurringDay !== null ? (int)$recurringDay : null,
+                            'status' => $a->status,
+                            'notes' => trim(($a->notes ?? '') . " " . $patternLabel)
+                        ];
+                    });
             }
             
             // Create a unified list of all possible patients (Account Holder + Dependents)
