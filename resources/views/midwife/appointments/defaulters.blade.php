@@ -3,48 +3,48 @@
 @section('title', 'Defaulter Tracking')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 relative overflow-hidden">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-6 relative overflow-hidden">
     {{-- Decorative Background Blobs --}}
     <div class="absolute top-0 right-0 w-96 h-96 bg-brand-50/50 rounded-full blur-3xl -mr-48 -mt-48 opacity-50 pointer-events-none"></div>
     <div class="absolute bottom-0 left-0 w-96 h-96 bg-indigo-50/50 rounded-full blur-3xl -ml-48 -mb-48 opacity-50 pointer-events-none"></div>
 
     <!-- Header Section -->
-    <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+    <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
         <div>
-            <div class="flex items-center gap-3 mb-3">
-                <span class="text-[10px] font-black text-red-600 uppercase tracking-[0.3em] bg-red-50 px-3 py-1.5 rounded-xl border border-red-100/50 flex items-center gap-2">
-                    <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+            <div class="flex items-center gap-2 mb-2">
+                <span class="text-[9px] font-black text-red-600 uppercase tracking-[0.25em] bg-red-50 px-2.5 py-1 rounded-lg border border-red-100/50 flex items-center gap-1.5">
+                    <span class="w-1 h-1 rounded-full bg-red-500 animate-pulse"></span>
                     Critical Follow-up Required
                 </span>
             </div>
-            <h1 class="text-4xl font-black text-gray-900 tracking-tight leading-tight">Defaulter Tracking</h1>
-            <p class="text-gray-500 font-bold mt-2 flex items-center gap-2">
-                Monitoring patients who missed their <span class="text-gray-900 underline decoration-red-200 decoration-4 underline-offset-4">scheduled health services</span>
+            <h1 class="text-3xl font-black text-gray-900 tracking-tight leading-tight">Defaulter Tracking</h1>
+            <p class="text-gray-500 font-bold mt-1 text-sm flex items-center gap-2">
+                Monitoring patients who missed their <span class="text-gray-900">scheduled health services</span>
             </p>
         </div>
 
-        <div class="flex flex-col sm:flex-row items-center gap-4">
-            <form action="{{ route('midwife.appointments.defaulters') }}" method="GET" class="w-full sm:w-auto flex flex-col sm:flex-row gap-4 items-center">
+        <div class="flex flex-col sm:flex-row items-center gap-3">
+            <form action="{{ route('midwife.appointments.defaulters') }}" method="GET" class="w-full sm:w-auto flex flex-col sm:flex-row gap-2 items-center">
                 {{-- Keep current service filter in search --}}
                 <input type="hidden" name="service" value="{{ $serviceFilter }}">
                 
-                <div class="flex gap-3 bg-white p-2 rounded-[2rem] shadow-xl shadow-brand-500/5 border border-gray-100 hover:border-brand-200 transition-all group w-full sm:w-auto">
-                    <div class="relative flex-grow min-w-[240px]">
-                        <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                            <i class="bi bi-search text-gray-400 group-hover:text-brand-500 transition-colors"></i>
+                <div class="flex gap-2 bg-white p-1.5 rounded-lg shadow-lg shadow-brand-500/5 border border-gray-100 hover:border-brand-200 transition-all group w-full sm:w-auto">
+                    <div class="relative flex-grow min-w-[200px]">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                            <i class="bi bi-search text-gray-400 group-hover:text-brand-500 transition-colors text-xs"></i>
                         </div>
                         <input type="text" name="search" value="{{ request('search') }}" autocomplete="off" 
-                               class="block w-full pl-12 pr-4 py-3.5 border-none rounded-2xl bg-transparent placeholder-gray-400 focus:ring-0 font-bold text-sm" 
+                               class="block w-full pl-10 pr-3 py-2.5 border-none rounded-lg bg-transparent placeholder-gray-400 focus:ring-0 font-bold text-xs" 
                                placeholder="Search patient name...">
                     </div>
-                    <button type="submit" class="inline-flex items-center px-6 py-3.5 border border-transparent text-xs font-black rounded-2xl shadow-xl shadow-brand-500/20 text-white bg-brand-600 hover:bg-brand-700 hover:-translate-y-0.5 transition-all duration-300 uppercase tracking-widest">
+                    <button type="submit" class="inline-flex items-center px-4 py-2.5 border border-transparent text-xs font-black rounded-lg shadow-lg shadow-brand-500/20 text-white bg-brand-600 hover:bg-brand-700 transition-all duration-300 uppercase tracking-tighter">
                         Search
                     </button>
                 </div>
 
                 @if(request('search') || $serviceFilter !== 'all')
-                <a href="{{ route('midwife.appointments.defaulters') }}" class="text-[10px] font-black text-gray-400 uppercase tracking-widest hover:text-red-500 transition-colors flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-xl border border-gray-100">
-                    <i class="bi bi-x-circle"></i>
+                <a href="{{ route('midwife.appointments.defaulters') }}" class="text-[9px] font-black text-gray-400 uppercase tracking-tighter hover:text-red-500 transition-colors flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded-lg border border-gray-100">
+                    <i class="bi bi-x-circle text-xs"></i>
                     Clear Filters
                 </a>
                 @endif
@@ -53,64 +53,64 @@
     </div>
 
     <!-- Quick Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10">
         {{-- Total Defaulters --}}
-        <div class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm relative overflow-hidden group hover:border-red-200 transition-all duration-500">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-red-50 rounded-full blur-3xl -mr-16 -mt-16 opacity-50 group-hover:opacity-100 transition-opacity"></div>
-            <div class="relative z-10 flex items-center gap-6">
-                <div class="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center text-red-600 shadow-inner group-hover:scale-110 transition-transform duration-500">
-                    <i class="bi bi-person-x-fill text-3xl"></i>
+        <div class="bg-white rounded-lg p-5 border border-gray-100 shadow-sm relative overflow-hidden group hover:border-red-200 transition-all duration-500">
+            <div class="absolute top-0 right-0 w-20 h-20 bg-red-50 rounded-full blur-2xl -mr-10 -mt-10 opacity-50 group-hover:opacity-100 transition-opacity"></div>
+            <div class="relative z-10 flex items-center gap-3.5">
+                <div class="w-12 h-12 rounded-lg bg-red-50 flex items-center justify-center text-red-600 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                    <i class="bi bi-person-x-fill text-2xl"></i>
                 </div>
                 <div>
-                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Total Defaulters</p>
-                    <h3 class="text-4xl font-black text-gray-900 group-hover:text-red-600 transition-colors">{{ $stats['total'] }}</h3>
+                    <p class="text-[8px] font-black text-gray-400 uppercase tracking-[0.15em] mb-0.5">Total Defaulters</p>
+                    <h3 class="text-3xl font-black text-gray-900 group-hover:text-red-600 transition-colors">{{ $stats['total'] }}</h3>
                 </div>
             </div>
         </div>
         
         {{-- Immunization Misses --}}
         <a href="{{ route('midwife.appointments.defaulters', ['service' => 'Immunization']) }}" 
-           class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm relative overflow-hidden group hover:border-indigo-200 transition-all duration-500">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full blur-3xl -mr-16 -mt-16 opacity-50 group-hover:opacity-100 transition-opacity"></div>
-            <div class="relative z-10 flex items-center gap-6">
-                <div class="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 shadow-inner group-hover:scale-110 transition-transform duration-500">
-                    <i class="bi bi-shield-plus text-3xl"></i>
+           class="bg-white rounded-lg p-5 border border-gray-100 shadow-sm relative overflow-hidden group hover:border-indigo-200 transition-all duration-500">
+            <div class="absolute top-0 right-0 w-20 h-20 bg-indigo-50 rounded-full blur-2xl -mr-10 -mt-10 opacity-50 group-hover:opacity-100 transition-opacity"></div>
+            <div class="relative z-10 flex items-center gap-3.5">
+                <div class="w-12 h-12 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                    <i class="bi bi-shield-plus text-2xl"></i>
                 </div>
                 <div>
-                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Immunization</p>
-                    <h3 class="text-4xl font-black text-gray-900 group-hover:text-indigo-600 transition-colors">{{ $stats['immunization'] }}</h3>
+                    <p class="text-[8px] font-black text-gray-400 uppercase tracking-[0.15em] mb-0.5">Immunization</p>
+                    <h3 class="text-3xl font-black text-gray-900 group-hover:text-indigo-600 transition-colors">{{ $stats['immunization'] }}</h3>
                 </div>
             </div>
         </a>
 
         {{-- Prenatal Misses --}}
         <a href="{{ route('midwife.appointments.defaulters', ['service' => 'Prenatal']) }}" 
-           class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm relative overflow-hidden group hover:border-brand-200 transition-all duration-500">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-brand-50 rounded-full blur-3xl -mr-16 -mt-16 opacity-50 group-hover:opacity-100 transition-opacity"></div>
-            <div class="relative z-10 flex items-center gap-6">
-                <div class="w-16 h-16 rounded-2xl bg-brand-50 flex items-center justify-center text-brand-600 shadow-inner group-hover:scale-110 transition-transform duration-500">
-                    <i class="bi bi-calendar-heart text-3xl"></i>
+           class="bg-white rounded-lg p-5 border border-gray-100 shadow-sm relative overflow-hidden group hover:border-brand-200 transition-all duration-500">
+            <div class="absolute top-0 right-0 w-20 h-20 bg-brand-50 rounded-full blur-2xl -mr-10 -mt-10 opacity-50 group-hover:opacity-100 transition-opacity"></div>
+            <div class="relative z-10 flex items-center gap-3.5">
+                <div class="w-12 h-12 rounded-lg bg-brand-50 flex items-center justify-center text-brand-600 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                    <i class="bi bi-calendar-heart text-2xl"></i>
                 </div>
                 <div>
-                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Prenatal Care</p>
-                    <h3 class="text-4xl font-black text-gray-900 group-hover:text-brand-600 transition-colors">{{ $stats['prenatal'] }}</h3>
+                    <p class="text-[8px] font-black text-gray-400 uppercase tracking-[0.15em] mb-0.5">Prenatal Care</p>
+                    <h3 class="text-3xl font-black text-gray-900 group-hover:text-brand-600 transition-colors">{{ $stats['prenatal'] }}</h3>
                 </div>
             </div>
         </a>
     </div>
 
     <!-- Filter Pills -->
-    <div class="flex flex-wrap items-center gap-3 relative z-10">
+    <div class="flex flex-wrap items-center gap-2 relative z-10">
         <a href="{{ route('midwife.appointments.defaulters', array_merge(request()->query(), ['service' => 'all'])) }}" 
-           class="px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all {{ $serviceFilter === 'all' ? 'bg-gray-900 text-white shadow-lg' : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50' }}">
+           class="px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-tighter transition-all {{ $serviceFilter === 'all' ? 'bg-gray-900 text-white shadow-lg' : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50' }}">
             All Services
         </a>
         <a href="{{ route('midwife.appointments.defaulters', array_merge(request()->query(), ['service' => 'Immunization'])) }}" 
-           class="px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all {{ $serviceFilter === 'Immunization' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50' }}">
+           class="px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-tighter transition-all {{ $serviceFilter === 'Immunization' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50' }}">
             Immunization Only
         </a>
         <a href="{{ route('midwife.appointments.defaulters', array_merge(request()->query(), ['service' => 'Prenatal'])) }}" 
-           class="px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all {{ $serviceFilter === 'Prenatal' ? 'bg-brand-600 text-white shadow-lg' : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50' }}">
+           class="px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-tighter transition-all {{ $serviceFilter === 'Prenatal' ? 'bg-brand-600 text-white shadow-lg' : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50' }}">
             Prenatal Only
         </a>
     </div>

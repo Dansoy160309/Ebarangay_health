@@ -33,18 +33,6 @@
         </div>
     </div>
 
-    @if(session('success'))
-        <div x-data="{ show: true }" x-show="show" class="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-r-xl flex items-start justify-between shadow-sm">
-            <div class="flex items-center gap-3">
-                <i class="bi bi-check-circle-fill text-green-500 text-xl"></i>
-                <p class="text-green-800 font-medium">{{ session('success') }}</p>
-            </div>
-            <button @click="show = false" class="text-green-500 hover:text-green-700 transition">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-    @endif
-
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 sm:gap-8">
         
         {{-- Left Column: Main Content --}}

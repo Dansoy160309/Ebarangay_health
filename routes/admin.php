@@ -3,13 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\HealthRecordController;
-use App\Http\Controllers\Admin\{
-    AppointmentController as AdminAppointmentController,
-    AnnouncementController as AdminAnnouncementController,
-    ProfileController as AdminProfileController,
-    ReportController as AdminReportController,
-    NotificationLogController as AdminNotificationLogController
-};
+use App\Http\Controllers\Admin\AppointmentController as AdminAppointmentController;
+use App\Http\Controllers\Admin\AnnouncementController as AdminAnnouncementController;
+use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
+use App\Http\Controllers\Admin\ReportController as AdminReportController;
+use App\Http\Controllers\Admin\NotificationLogController as AdminNotificationLogController;
 use App\Http\Controllers\Admin\MedicineController as AdminMedicineController;
 
 Route::prefix('admin')

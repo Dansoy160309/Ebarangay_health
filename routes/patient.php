@@ -2,11 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HealthRecordController;
-use App\Http\Controllers\Patient\{
-    AppointmentController as PatientAppointmentController,
-    AnnouncementController as PatientAnnouncementController,
-    ProfileController as PatientProfileController
-};
+use App\Http\Controllers\Patient\AppointmentController as PatientAppointmentController;
+use App\Http\Controllers\Patient\AnnouncementController as PatientAnnouncementController;
+use App\Http\Controllers\Patient\ProfileController as PatientProfileController;
 
 // Patient routes group
 Route::prefix('patient')

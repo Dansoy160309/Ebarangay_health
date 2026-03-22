@@ -3,29 +3,29 @@
 @section('title', 'Manage Slots')
 
 @section('content')
-<div class="flex flex-col gap-6 sm:gap-8">
+<div class="flex flex-col gap-4 sm:gap-6">
     
     {{-- Top-Aligned Compact Header --}}
-    <div class="relative z-10 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm overflow-hidden group">
-        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+    <div class="relative z-10 bg-white rounded-2xl sm:rounded-2xl p-5 sm:p-6 border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="absolute top-0 right-0 w-48 h-48 bg-brand-50 rounded-full blur-2xl -mr-24 -mt-24 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
         
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8">
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5">
             <div class="max-w-xl">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 mb-3 sm:mb-4">
-                    <i class="bi bi-calendar-event text-xs"></i>
-                    <span class="text-[9px] font-black uppercase tracking-widest">Operational Management</span>
+                <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-lg bg-brand-50 text-brand-600 border border-brand-100 mb-2 sm:mb-3">
+                    <i class="bi bi-calendar-event text-[8px]"></i>
+                    <span class="text-[8px] font-black uppercase tracking-tighter">Operational Management</span>
                 </div>
-                <h1 class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-2 sm:mb-3">
-                    Manage <span class="text-brand-600 underline decoration-brand-200 decoration-4 underline-offset-4">Appointment Slots</span>
+                <h1 class="text-xl sm:text-3xl font-black text-gray-900 tracking-tight leading-tight mb-1 sm:mb-2">
+                    Manage <span class="text-brand-600 underline decoration-brand-200 decoration-2 underline-offset-3">Appointment Slots</span>
                 </h1>
-                <p class="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed">
+                <p class="text-gray-500 font-medium text-[11px] sm:text-xs leading-relaxed">
                     Configure available <span class="text-gray-900 font-black">time windows</span> and monitor clinical availability for your health center.
                 </p>
             </div>
 
-            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+            <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
                 <a href="{{ route('midwife.slots.create') }}" 
-                   class="flex-1 sm:flex-none inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-brand-600 text-white font-black text-[10px] sm:text-xs uppercase tracking-widest shadow-xl shadow-brand-500/20 hover:bg-brand-700 hover:scale-105 transition-all transform group">
+                   class="flex-1 sm:flex-none inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-brand-600 text-white font-black text-[9px] sm:text-xs uppercase tracking-tighter shadow-lg shadow-brand-500/15 hover:bg-brand-700 hover:scale-105 transition-all transform group">
                     <i class="bi bi-plus-lg mr-2 group-hover:rotate-90 transition-transform"></i>
                     Add New Slot
                 </a>
@@ -33,69 +33,62 @@
         </div>
     </div>
 
-    @if(session('success'))
-        <div class="rounded-3xl border border-emerald-200 bg-emerald-50 px-6 py-4 text-sm text-emerald-800 flex items-center gap-3 animate-fade-in-down">
-            <i class="bi bi-check-circle-fill text-lg"></i>
-            <div class="font-bold">{{ session('success') }}</div>
-        </div>
-    @endif
-
     <!-- Quick Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10">
         {{-- Today's Slots --}}
-        <div class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm relative overflow-hidden group hover:border-brand-200 transition-all duration-500">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-brand-50 rounded-full blur-3xl -mr-16 -mt-16 opacity-50 group-hover:opacity-100 transition-opacity"></div>
-            <div class="relative z-10 flex items-center gap-6">
-                <div class="w-16 h-16 rounded-2xl bg-brand-50 flex items-center justify-center text-brand-600 shadow-inner group-hover:scale-110 transition-transform duration-500">
-                    <i class="bi bi-calendar-check-fill text-3xl"></i>
+        <div class="bg-white rounded-lg p-5 border border-gray-100 shadow-sm relative overflow-hidden group hover:border-brand-200 transition-all duration-500">
+            <div class="absolute top-0 right-0 w-20 h-20 bg-brand-50 rounded-full blur-2xl -mr-10 -mt-10 opacity-50 group-hover:opacity-100 transition-opacity"></div>
+            <div class="relative z-10 flex items-center gap-3.5">
+                <div class="w-12 h-12 rounded-lg bg-brand-50 flex items-center justify-center text-brand-600 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                    <i class="bi bi-calendar-check-fill text-2xl"></i>
                 </div>
                 <div>
-                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Scheduled Today</p>
-                    <h3 class="text-4xl font-black text-gray-900 group-hover:text-brand-600 transition-colors">{{ $stats['today_slots'] }}</h3>
+                    <p class="text-[8px] font-black text-gray-400 uppercase tracking-[0.15em] mb-0.5">Scheduled Today</p>
+                    <h3 class="text-3xl font-black text-gray-900 group-hover:text-brand-600 transition-colors">{{ $stats['today_slots'] }}</h3>
                 </div>
             </div>
         </div>
         
         {{-- Active Slots --}}
-        <div class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm relative overflow-hidden group hover:border-indigo-200 transition-all duration-500">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full blur-3xl -mr-16 -mt-16 opacity-50 group-hover:opacity-100 transition-opacity"></div>
-            <div class="relative z-10 flex items-center gap-6">
-                <div class="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 shadow-inner group-hover:scale-110 transition-transform duration-500">
-                    <i class="bi bi-lightning-charge-fill text-3xl"></i>
+        <div class="bg-white rounded-lg p-5 border border-gray-100 shadow-sm relative overflow-hidden group hover:border-indigo-200 transition-all duration-500">
+            <div class="absolute top-0 right-0 w-20 h-20 bg-indigo-50 rounded-full blur-2xl -mr-10 -mt-10 opacity-50 group-hover:opacity-100 transition-opacity"></div>
+            <div class="relative z-10 flex items-center gap-3.5">
+                <div class="w-12 h-12 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                    <i class="bi bi-lightning-charge-fill text-2xl"></i>
                 </div>
                 <div>
-                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Active Window</p>
-                    <h3 class="text-4xl font-black text-gray-900 group-hover:text-indigo-600 transition-colors">{{ $stats['active_slots'] }}</h3>
+                    <p class="text-[8px] font-black text-gray-400 uppercase tracking-[0.15em] mb-0.5">Active Window</p>
+                    <h3 class="text-3xl font-black text-gray-900 group-hover:text-indigo-600 transition-colors">{{ $stats['active_slots'] }}</h3>
                 </div>
             </div>
         </div>
 
         {{-- Total Capacity --}}
-        <div class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm relative overflow-hidden group hover:border-emerald-200 transition-all duration-500">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-full blur-3xl -mr-16 -mt-16 opacity-50 group-hover:opacity-100 transition-opacity"></div>
-            <div class="relative z-10 flex items-center gap-6">
-                <div class="w-16 h-16 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 shadow-inner group-hover:scale-110 transition-transform duration-500">
-                    <i class="bi bi-people-fill text-3xl"></i>
+        <div class="bg-white rounded-lg p-5 border border-gray-100 shadow-sm relative overflow-hidden group hover:border-emerald-200 transition-all duration-500">
+            <div class="absolute top-0 right-0 w-20 h-20 bg-emerald-50 rounded-full blur-2xl -mr-10 -mt-10 opacity-50 group-hover:opacity-100 transition-opacity"></div>
+            <div class="relative z-10 flex items-center gap-3.5">
+                <div class="w-12 h-12 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                    <i class="bi bi-people-fill text-2xl"></i>
                 </div>
                 <div>
-                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Total Capacity</p>
-                    <h3 class="text-4xl font-black text-gray-900 group-hover:text-emerald-600 transition-colors">{{ number_format($stats['total_capacity']) }}</h3>
+                    <p class="text-[8px] font-black text-gray-400 uppercase tracking-[0.15em] mb-0.5">Total Capacity</p>
+                    <h3 class="text-3xl font-black text-gray-900 group-hover:text-emerald-600 transition-colors">{{ number_format($stats['total_capacity']) }}</h3>
                 </div>
             </div>
         </div>
     </div>
 
     {{-- Filter Card --}}
-    <div class="bg-white rounded-[3rem] shadow-xl shadow-brand-500/5 border border-gray-100 p-8 relative z-10 overflow-hidden group/filter transition-all hover:border-brand-200">
-        <form method="GET" action="{{ route('midwife.slots.index') }}" class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-8 items-end">
+    <div class="bg-white rounded-2xl shadow-md shadow-brand-500/3 border border-gray-100 p-5 relative z-10 overflow-hidden group/filter transition-all hover:border-brand-200">
+        <form method="GET" action="{{ route('midwife.slots.index') }}" class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-4 items-end">
             {{-- Service Filter --}}
-            <div class="space-y-3">
-                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-4">Service Type</label>
+            <div class="space-y-2">
+                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-tighter ml-3">Service Type</label>
                 <div class="relative group/input">
-                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-gray-400 group-focus-within/input:text-brand-500 transition-colors">
-                        <i class="bi bi-bandaid"></i>
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 group-focus-within/input:text-brand-500 transition-colors">
+                        <i class="bi bi-bandaid text-xs"></i>
                     </div>
-                    <select name="service" class="block w-full pl-12 pr-4 py-4 bg-gray-50 border-none rounded-2xl text-sm font-bold text-gray-900 focus:ring-4 focus:ring-brand-500/10 focus:bg-white transition-all appearance-none cursor-pointer">
+                    <select name="service" class="block w-full pl-10 pr-3 py-2.5 bg-gray-50 border-none rounded-lg text-xs font-bold text-gray-900 focus:ring-3 focus:ring-brand-500/10 focus:bg-white transition-all appearance-none cursor-pointer">
                         <option value="">All Services</option>
                         @foreach($services as $service)
                             <option value="{{ $service->name }}" {{ request('service') === $service->name ? 'selected' : '' }}>
@@ -107,25 +100,25 @@
             </div>
 
             {{-- Date Filter --}}
-            <div class="space-y-3">
-                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-4">Scheduled Date</label>
+            <div class="space-y-2">
+                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-tighter ml-3">Scheduled Date</label>
                 <div class="relative group/input">
-                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-gray-400 group-focus-within/input:text-brand-500 transition-colors">
-                        <i class="bi bi-calendar3"></i>
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 group-focus-within/input:text-brand-500 transition-colors">
+                        <i class="bi bi-calendar3 text-xs"></i>
                     </div>
                     <input type="date" name="date" value="{{ request('date') }}"
-                           class="block w-full pl-12 pr-4 py-4 bg-gray-50 border-none rounded-2xl text-sm font-bold text-gray-900 focus:ring-4 focus:ring-brand-500/10 focus:bg-white transition-all cursor-pointer">
+                           class="block w-full pl-10 pr-3 py-2.5 bg-gray-50 border-none rounded-lg text-xs font-bold text-gray-900 focus:ring-3 focus:ring-brand-500/10 focus:bg-white transition-all cursor-pointer">
                 </div>
             </div>
 
             {{-- Status Filter --}}
-            <div class="space-y-3">
-                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-4">Current Status</label>
+            <div class="space-y-2">
+                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-tighter ml-3">Current Status</label>
                 <div class="relative group/input">
-                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-gray-400 group-focus-within/input:text-brand-500 transition-colors">
-                        <i class="bi bi-toggle-on"></i>
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 group-focus-within/input:text-brand-500 transition-colors">
+                        <i class="bi bi-toggle-on text-xs"></i>
                     </div>
-                    <select name="status" class="block w-full pl-12 pr-4 py-4 bg-gray-50 border-none rounded-2xl text-sm font-bold text-gray-900 focus:ring-4 focus:ring-brand-500/10 focus:bg-white transition-all appearance-none cursor-pointer">
+                    <select name="status" class="block w-full pl-10 pr-3 py-2.5 bg-gray-50 border-none rounded-lg text-xs font-bold text-gray-900 focus:ring-3 focus:ring-brand-500/10 focus:bg-white transition-all appearance-none cursor-pointer">
                         <option value="">All Status</option>
                         <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
                         <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
@@ -134,19 +127,19 @@
             </div>
 
             {{-- Quick Presets & Buttons --}}
-            <div class="lg:col-span-2 flex items-center gap-4">
-                <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-2xl border border-gray-100 flex-grow">
-                    <button type="button" id="btnToday" class="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest text-gray-500 hover:bg-white hover:text-brand-600 hover:shadow-sm transition-all flex-grow">Today</button>
-                    <button type="button" id="btnActive" class="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest text-gray-500 hover:bg-white hover:text-indigo-600 hover:shadow-sm transition-all flex-grow">Active</button>
+            <div class="lg:col-span-2 flex items-center gap-2.5">
+                <div class="flex items-center gap-1.5 bg-gray-50 p-1.5 rounded-lg border border-gray-100 flex-grow">
+                    <button type="button" id="btnToday" class="px-3 py-1.5 rounded-md text-[8px] font-black uppercase tracking-tighter text-gray-500 hover:bg-white hover:text-brand-600 hover:shadow-sm transition-all flex-grow">Today</button>
+                    <button type="button" id="btnActive" class="px-3 py-1.5 rounded-md text-[8px] font-black uppercase tracking-tighter text-gray-500 hover:bg-white hover:text-indigo-600 hover:shadow-sm transition-all flex-grow">Active</button>
                 </div>
                 
-                <div class="flex items-center gap-2 shrink-0">
-                    <button type="submit" class="px-8 py-4 bg-brand-600 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-brand-500/20 hover:bg-brand-700 hover:-translate-y-0.5 transition-all flex items-center gap-2">
-                        <i class="bi bi-funnel"></i>
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <button type="submit" class="px-4 py-2.5 bg-brand-600 text-white rounded-lg font-black text-[8px] uppercase tracking-tighter shadow-lg shadow-brand-500/15 hover:bg-brand-700 hover:-translate-y-0.5 transition-all flex items-center gap-1.5">
+                        <i class="bi bi-funnel text-xs"></i>
                         Filter
                     </button>
-                    <a href="{{ route('midwife.slots.index') }}" class="p-4 bg-gray-100 text-gray-500 rounded-2xl hover:bg-red-50 hover:text-red-600 transition-all border border-transparent hover:border-red-100" title="Reset Filters">
-                        <i class="bi bi-arrow-counterclockwise text-lg"></i>
+                    <a href="{{ route('midwife.slots.index') }}" class="p-2.5 bg-gray-100 text-gray-500 rounded-lg hover:bg-red-50 hover:text-red-600 transition-all border border-transparent hover:border-red-100" title="Reset Filters">
+                        <i class="bi bi-arrow-counterclockwise text-sm"></i>
                     </a>
                 </div>
             </div>

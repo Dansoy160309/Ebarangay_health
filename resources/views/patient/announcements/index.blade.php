@@ -35,37 +35,37 @@
     </div>
 
     {{-- Page Header --}}
-    <div class="bg-white rounded-[3.5rem] p-10 lg:p-14 border border-gray-100 shadow-sm relative overflow-hidden group">
+    <div class="bg-white rounded-2xl p-5 lg:p-6 border border-gray-100 shadow-sm relative overflow-hidden">
         {{-- Decorative Elements --}}
-        <div class="absolute top-0 right-0 w-96 h-96 bg-brand-50 rounded-full blur-3xl -mr-48 -mt-48 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
-        <div class="absolute bottom-0 left-0 w-64 h-64 bg-blue-50 rounded-full blur-3xl -ml-32 -mb-32 opacity-30 group-hover:opacity-50 transition-opacity duration-700"></div>
+        <div class="absolute top-0 right-0 w-32 h-32 bg-brand-50 rounded-full blur-3xl -mr-20 -mt-20 opacity-30"></div>
+        <div class="absolute bottom-0 left-0 w-24 h-24 bg-blue-50 rounded-full blur-3xl -ml-16 -mb-16 opacity-20"></div>
 
-        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-12">
-            <div class="max-w-2xl">
-                <div class="inline-flex items-center gap-3 px-4 py-2 rounded-2xl bg-brand-50 text-brand-600 border border-brand-100 mb-6">
-                    <i class="bi bi-megaphone-fill text-sm animate-bounce"></i>
-                    <span class="text-[10px] font-black uppercase tracking-[0.2em]">Latest Updates</span>
+        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div class="max-w-md">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 mb-4">
+                    <i class="bi bi-megaphone-fill text-sm"></i>
+                    <span class="text-[9px] font-black uppercase tracking-[0.2em]">Latest Updates</span>
                 </div>
-                <h1 class="text-4xl lg:text-5xl font-black text-gray-900 tracking-tight leading-[1.1]">
-                    Health <span class="text-brand-600 underline decoration-brand-200 decoration-8 underline-offset-4">Advisories</span>
+                <h1 class="text-2xl lg:text-3xl font-black text-gray-900 tracking-tight leading-tight">
+                    Health <span class="text-brand-600 underline decoration-brand-200 decoration-1 underline-offset-2">Advisories</span>
                 </h1>
-                <p class="text-gray-500 font-medium mt-6 text-lg leading-relaxed">
+                <p class="text-gray-500 font-medium mt-4 text-sm leading-relaxed">
                     Stay informed with real-time community health alerts, vaccination schedules, and medical missions organized by your barangay.
                 </p>
             </div>
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full lg:w-[400px]">
-                <div class="bg-gray-50/80 backdrop-blur-sm p-6 rounded-[2.5rem] border border-gray-100 shadow-inner flex flex-col justify-center transform hover:scale-105 transition-all duration-500">
-                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full lg:w-auto">
+                <div class="bg-gray-50/80 backdrop-blur-sm p-5 rounded-2xl border border-gray-100 shadow-inner flex flex-col justify-center">
+                    <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 flex items-center gap-2">
                         <i class="bi bi-collection"></i> Total Active
                     </span>
-                    <span class="text-3xl font-black text-gray-900 tracking-tight">{{ $announcements->total() }}</span>
+                    <span class="text-2xl font-black text-gray-900 tracking-tight">{{ $announcements->total() }}</span>
                 </div>
-                <div class="bg-red-50/80 backdrop-blur-sm p-6 rounded-[2.5rem] border border-red-100 shadow-inner flex flex-col justify-center transform hover:scale-105 transition-all duration-500">
-                    <span class="text-[10px] font-black text-red-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                <div class="bg-red-50/80 backdrop-blur-sm p-5 rounded-2xl border border-red-100 shadow-inner flex flex-col justify-center">
+                    <span class="text-[9px] font-black text-red-400 uppercase tracking-widest mb-1.5 flex items-center gap-2">
                         <i class="bi bi-lightning-charge-fill"></i> New Release
                     </span>
-                    <span class="text-3xl font-black text-red-600 tracking-tight">
+                    <span class="text-2xl font-black text-red-600 tracking-tight">
                         {{ $announcements->filter(fn($a) => $a->created_at->diffInDays() < 3)->count() }}
                     </span>
                 </div>

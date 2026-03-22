@@ -4,7 +4,7 @@
 @section('title', 'My Appointments')
 
 @section('content')
-<div class="py-10 space-y-12" x-data="{ 
+<div class="py-6 space-y-8" x-data="{ 
     openModal: false, 
     selectedSlot: null, 
     isSubmitting: false,
@@ -76,26 +76,26 @@
     </div>
 
     {{-- Page Header --}}
-    <div class="bg-white rounded-[3.5rem] p-10 lg:p-14 border border-gray-100 shadow-sm relative overflow-hidden group">
-        <div class="absolute top-0 right-0 w-96 h-96 bg-brand-50 rounded-full blur-3xl -mr-48 -mt-48 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+    <div class="bg-white rounded-2xl p-5 lg:p-6 border border-gray-100 shadow-sm relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-brand-50 rounded-full blur-3xl -mr-20 -mt-20 opacity-30"></div>
         
-        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-12">
-            <div class="max-w-2xl">
-                <div class="inline-flex items-center gap-3 px-4 py-2 rounded-2xl bg-brand-50 text-brand-600 border border-brand-100 mb-6">
+        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div class="max-w-md">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 mb-4">
                     <i class="bi bi-calendar2-heart text-sm"></i>
-                    <span class="text-[10px] font-black uppercase tracking-[0.2em]">Schedule Management</span>
+                    <span class="text-[9px] font-black uppercase tracking-[0.2em]">Schedule Management</span>
                 </div>
-                <h1 class="text-4xl lg:text-5xl font-black text-gray-900 tracking-tight leading-[1.1]">
-                    Your <span class="text-brand-600 underline decoration-brand-200 decoration-8 underline-offset-4">Appointments</span>
+                <h1 class="text-2xl lg:text-3xl font-black text-gray-900 tracking-tight leading-tight">
+                    Your <span class="text-brand-600 underline decoration-brand-200 decoration-1 underline-offset-2">Appointments</span>
                 </h1>
-                <p class="text-gray-500 font-medium mt-6 text-lg leading-relaxed">
+                <p class="text-gray-500 font-medium mt-4 text-sm leading-relaxed">
                     Manage your upcoming clinic visits, view medical consultation history, and book new slots with our medical team.
                 </p>
             </div>
             
-            <div class="flex flex-col gap-4 w-full lg:w-auto">
+            <div class="flex flex-col gap-3 w-full lg:w-auto">
                 <button @click="document.getElementById('available-slots-section').scrollIntoView({ behavior: 'smooth' })" 
-                        class="px-10 py-5 bg-brand-600 text-white rounded-[1.75rem] font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-brand-500/20 hover:bg-brand-700 hover:shadow-brand-500/40 transition-all active:scale-95 flex items-center justify-center gap-3">
+                        class="px-8 py-4 bg-brand-600 text-white rounded-xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-brand-500/20 hover:bg-brand-700 transition-all active:scale-95 flex items-center justify-center gap-2">
                     Book New Visit <i class="bi bi-plus-circle-fill"></i>
                 </button>
             </div>

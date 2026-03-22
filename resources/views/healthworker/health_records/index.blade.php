@@ -6,38 +6,38 @@
 <div class="flex flex-col gap-6 sm:gap-8">
     
     {{-- Top-Aligned Search Section --}}
-    <div class="relative z-10 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm overflow-hidden group">
-        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+    <div class="relative z-10 bg-white rounded-2xl sm:rounded-2xl p-5 sm:p-6 border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="absolute top-0 right-0 w-24 h-24 bg-brand-50 rounded-full blur-2xl -mr-16 -mt-16 opacity-30 group-hover:opacity-60 transition-opacity duration-700"></div>
         
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8">
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5">
             <div class="max-w-xl">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 mb-3 sm:mb-4">
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-brand-50 text-brand-600 border border-brand-100 mb-2 sm:mb-2.5">
                     <i class="bi bi-folder2-open text-xs"></i>
-                    <span class="text-[9px] font-black uppercase tracking-widest">Patient Archives</span>
+                    <span class="text-[8px] font-black uppercase tracking-tighter">Patient Archives</span>
                 </div>
-                <h1 class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-2 sm:mb-3">
-                    Health <span class="text-brand-600 underline decoration-brand-200 decoration-4 underline-offset-4">Records</span>
+                <h1 class="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight leading-tight mb-1 sm:mb-1.5">
+                    Health <span class="text-brand-600">Records</span>
                 </h1>
-                <p class="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed">
-                    Search for a patient to access their clinical history and manage medical consultations.
+                <p class="text-gray-500 font-medium text-xs sm:text-xs leading-relaxed">
+                    Search for a patient to access their clinical history.
                 </p>
             </div>
 
             @php($routePrefix = $routePrefix ?? 'healthworker')
-            <form method="GET" action="{{ route($routePrefix . '.health-records.index') }}" class="w-full md:max-w-md">
-                <div class="flex flex-col sm:flex-row gap-3">
+            <form method="GET" action="{{ route($routePrefix . '.health-records.index') }}" class="w-full md:max-w-sm">
+                <div class="flex flex-col sm:flex-row gap-2">
                     <div class="relative flex-grow group">
-                        <i class="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-600 transition-colors"></i>
+                        <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-600 transition-colors text-xs"></i>
                         <input type="text" name="search_patient" value="{{ request('search_patient') }}" 
-                            class="w-full pl-11 pr-4 py-3 bg-gray-50 border-none rounded-xl text-sm font-bold focus:ring-4 focus:ring-brand-500/10 transition-all placeholder:text-gray-400 shadow-inner" 
+                            class="w-full pl-9 pr-3 py-2 bg-gray-50 border-none rounded-lg text-xs font-bold focus:ring-4 focus:ring-brand-500/10 transition-all placeholder:text-gray-400 shadow-inner" 
                             placeholder="Search by name..." autocomplete="off">
                     </div>
-                    <div class="flex gap-2">
-                        <button type="submit" class="px-6 py-3 bg-brand-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-brand-700 shadow-lg shadow-brand-500/20 transition-all active:scale-95 shrink-0">
+                    <div class="flex gap-1.5">
+                        <button type="submit" class="px-4 py-2 bg-brand-600 text-white rounded-lg font-black text-[8px] uppercase tracking-tighter hover:bg-brand-700 shadow-md shadow-brand-500/20 transition-all active:scale-95 shrink-0">
                             Search
                         </button>
                         @if(request('search_patient'))
-                            <a href="{{ route($routePrefix . '.health-records.index') }}" class="px-4 py-3 bg-gray-100 text-gray-500 rounded-xl hover:bg-gray-200 transition-all active:scale-95 flex items-center justify-center shadow-sm shrink-0">
+                            <a href="{{ route($routePrefix . '.health-records.index') }}" class="px-3 py-2 bg-gray-100 text-gray-500 rounded-lg hover:bg-gray-200 transition-all active:scale-95 flex items-center justify-center shadow-sm shrink-0 text-xs">
                                 <i class="bi bi-arrow-counterclockwise text-lg"></i>
                             </a>
                         @endif

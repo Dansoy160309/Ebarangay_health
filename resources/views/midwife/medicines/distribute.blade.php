@@ -17,34 +17,34 @@
         ];
     })->values();
 @endphp
-<div class="flex flex-col gap-6 sm:gap-8">
+<div class="flex flex-col gap-4 sm:gap-5">
     
     {{-- Top-Aligned Compact Header --}}
-    <div class="relative z-10 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm overflow-hidden group">
-        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+    <div class="relative z-10 bg-white rounded-2xl sm:rounded-2xl p-5 sm:p-6 border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="absolute top-0 right-0 w-48 h-48 bg-brand-50 rounded-full blur-2xl -mr-24 -mt-24 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
         
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8">
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5">
             <div class="max-w-xl">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 mb-3 sm:mb-4">
-                    <i class="bi bi-capsule text-xs"></i>
-                    <span class="text-[9px] font-black uppercase tracking-widest">Pharmacy Management</span>
+                <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-lg bg-brand-50 text-brand-600 border border-brand-100 mb-2 sm:mb-3">
+                    <i class="bi bi-capsule text-[8px]"></i>
+                    <span class="text-[8px] font-black uppercase tracking-tighter">Pharmacy Management</span>
                 </div>
-                <h1 class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-2 sm:mb-3">
-                    Dispense <span class="text-brand-600 underline decoration-brand-200 decoration-4 underline-offset-4">Medicine</span>
+                <h1 class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight leading-tight mb-1 sm:mb-2">
+                    Dispense <span class="text-brand-600 underline decoration-brand-200 decoration-2 underline-offset-2">Medicine</span>
                 </h1>
-                <p class="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed">
+                <p class="text-gray-500 font-medium text-xs lg:text-sm leading-relaxed">
                     Record medicine distribution for patients. Use quick search to find patients and available medicine stocks.
                 </p>
             </div>
 
-            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-                <div class="bg-gray-50/80 backdrop-blur-sm px-6 py-4 rounded-2xl border border-gray-100 shadow-inner flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-brand-600 shadow-sm border border-brand-50">
-                        <i class="bi bi-shield-check text-lg"></i>
+            <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <div class="bg-gray-50/80 backdrop-blur-sm px-3.5 py-2 rounded-lg border border-gray-100 shadow-inner flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-brand-600 shadow-sm border border-brand-50">
+                        <i class="bi bi-shield-check text-sm"></i>
                     </div>
                     <div>
-                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Inventory Status</p>
-                        <p class="text-sm font-black text-gray-900 tracking-tight">Active & Verified</p>
+                        <p class="text-[8px] font-black text-gray-400 uppercase tracking-tighter">Inventory Status</p>
+                        <p class="text-xs font-black text-gray-900 tracking-tight">Active & Verified</p>
                     </div>
                 </div>
             </div>
@@ -56,7 +56,7 @@
          data-medicines="{{ json_encode($medicinesData) }}" 
          class="hidden"></div>
 
-    <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 p-8 lg:p-12 relative overflow-hidden">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6 relative overflow-hidden">
         {{-- Flash Messages --}}
         @if(session('success'))
             <div class="mb-8 rounded-3xl border border-emerald-200 bg-emerald-50 px-6 py-4 text-sm text-emerald-800 flex items-center gap-3 animate-fade-in-down">

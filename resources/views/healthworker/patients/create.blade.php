@@ -3,11 +3,11 @@
 @section('title', 'Add Patient')
 
 @section('content')
-<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
     {{-- Breadcrumbs --}}
     <nav class="flex" aria-label="Breadcrumb">
-        <ol class="inline-flex items-center space-x-1 md:space-x-3 text-[10px] font-black uppercase tracking-[0.2em]">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3 text-[9px] font-black uppercase tracking-tighter">
             <li class="inline-flex items-center">
                 <a href="{{ route('dashboard') }}" class="text-gray-400 hover:text-brand-600 transition-colors flex items-center gap-2">
                     <i class="bi bi-house-door"></i>
@@ -30,32 +30,32 @@
     </nav>
 
     {{-- Page Header --}}
-    <div class="bg-white rounded-[3.5rem] p-10 lg:p-14 border border-gray-100 shadow-sm relative overflow-hidden group">
-        <div class="absolute top-0 right-0 w-96 h-96 bg-brand-50 rounded-full blur-3xl -mr-48 -mt-48 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
-        <div class="absolute bottom-0 left-0 w-64 h-64 bg-blue-50 rounded-full blur-3xl -ml-32 -mb-32 opacity-30 group-hover:opacity-50 transition-opacity duration-700"></div>
+    <div class="bg-white rounded-2xl p-5 sm:p-6 border border-gray-100 shadow-sm relative overflow-hidden group">
+        <div class="absolute top-0 right-0 w-48 h-48 bg-brand-50 rounded-full blur-2xl -mr-24 -mt-24 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+        <div class="absolute bottom-0 left-0 w-32 h-32 bg-blue-50 rounded-full blur-2xl -ml-16 -mb-16 opacity-30 group-hover:opacity-50 transition-opacity duration-700"></div>
 
-        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-12">
+        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-5">
             <div class="max-w-2xl">
-                <div class="inline-flex items-center gap-3 px-4 py-2 rounded-2xl bg-brand-50 text-brand-600 border border-brand-100 mb-6">
-                    <i class="bi bi-person-plus-fill text-sm animate-bounce"></i>
-                    <span class="text-[10px] font-black uppercase tracking-[0.2em]">Registration Hub</span>
+                <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-lg bg-brand-50 text-brand-600 border border-brand-100 mb-2 sm:mb-3">
+                    <i class="bi bi-person-plus-fill text-[8px]"></i>
+                    <span class="text-[8px] font-black uppercase tracking-tighter">Registration Hub</span>
                 </div>
-                <h1 class="text-4xl lg:text-5xl font-black text-gray-900 tracking-tight leading-[1.1]">
-                    Add New <span class="text-brand-600 underline decoration-brand-200 decoration-8 underline-offset-4">Patient</span>
+                <h1 class="text-2xl lg:text-3xl font-black text-gray-900 tracking-tight leading-tight">
+                    Add New <span class="text-brand-600 underline decoration-brand-200 decoration-2 underline-offset-2">Patient</span>
                 </h1>
-                <p class="text-gray-500 font-medium mt-6 text-lg leading-relaxed">
+                <p class="text-gray-500 font-medium mt-2 sm:mt-3 text-xs lg:text-sm leading-relaxed">
                     Create a new digital health profile for a community member. Ensure all personal and contact details are accurate.
                 </p>
             </div>
             
-            <div class="flex flex-col gap-4 w-full lg:w-auto">
-                <div class="bg-gray-50/80 backdrop-blur-sm p-6 rounded-[2.5rem] border border-gray-100 shadow-inner flex items-center gap-4 transform hover:scale-105 transition-all duration-500">
-                    <div class="w-12 h-12 rounded-2xl bg-white flex items-center justify-center text-brand-600 shadow-sm border border-brand-50">
-                        <i class="bi bi-shield-lock text-xl"></i>
+            <div class="flex flex-col gap-2 w-full lg:w-auto">
+                <div class="bg-gray-50/80 backdrop-blur-sm p-4 rounded-lg border border-gray-100 shadow-inner flex items-center gap-3 transform hover:scale-105 transition-all duration-500">
+                    <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-brand-600 shadow-sm border border-brand-50">
+                        <i class="bi bi-shield-lock text-xs"></i>
                     </div>
                     <div>
-                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Privacy Protected</p>
-                        <p class="text-lg font-black text-gray-900 tracking-tight">HIPAA Compliant</p>
+                        <p class="text-[8px] font-black text-gray-400 uppercase tracking-tighter">Privacy Protected</p>
+                        <p class="text-xs font-black text-gray-900 tracking-tight">HIPAA Compliant</p>
                     </div>
                 </div>
             </div>
@@ -64,10 +64,10 @@
 
     {{-- Validation Errors --}}
     @if ($errors->any())
-        <div class="rounded-[2.5rem] border border-red-200 bg-red-50 px-8 py-6 text-sm text-red-800 flex items-start gap-4 animate-fade-in-down shadow-sm">
-            <i class="bi bi-exclamation-triangle-fill text-2xl mt-0.5"></i>
+        <div class="rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-xs text-red-800 flex items-start gap-3 animate-fade-in-down shadow-sm">
+            <i class="bi bi-exclamation-triangle-fill text-lg mt-0.5"></i>
             <div>
-                <p class="font-black uppercase tracking-widest text-[10px] mb-2">Correction Required</p>
+                <p class="font-black uppercase tracking-tighter text-[8px] mb-1.5">Correction Required</p>
                 <ul class="list-disc list-inside space-y-1 font-bold">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -77,27 +77,27 @@
         </div>
     @endif
 
-    <form action="{{ route('midwife.patients.store') }}" method="POST" class="space-y-10" x-data="{ hasAccount: true }">
+    <form action="{{ route('midwife.patients.store') }}" method="POST" class="space-y-6" x-data="{ hasAccount: true }">
         @csrf
 
-        <div class="bg-white rounded-[3.5rem] shadow-sm border border-gray-100 p-8 lg:p-12 space-y-12">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6 space-y-6">
             {{-- Section 1: Personal Information --}}
-            <div class="space-y-8">
-                <div class="flex items-center gap-4 mb-6">
-                    <div class="w-12 h-12 rounded-2xl bg-brand-50 flex items-center justify-center text-brand-600 shadow-inner border border-brand-100">
-                        <i class="bi bi-person-vcard text-xl"></i>
+            <div class="space-y-4">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-8 h-8 rounded-lg bg-brand-50 flex items-center justify-center text-brand-600 shadow-inner border border-brand-100">
+                        <i class="bi bi-person-vcard text-xs"></i>
                     </div>
                     <div>
-                        <h2 class="text-xl font-black text-gray-900 tracking-tight">Personal Information</h2>
-                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Legal Name & Identification</p>
+                        <h2 class="text-sm font-black text-gray-900 tracking-tight">Personal Information</h2>
+                        <p class="text-[8px] font-black text-gray-400 uppercase tracking-tighter">Legal Name & Identification</p>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="space-y-3">
-                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">First Name</label>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="space-y-2">
+                        <label class="block text-[8px] font-black text-gray-400 uppercase tracking-tighter ml-1">First Name</label>
                         <input type="text" name="first_name" value="{{ old('first_name') }}"
-                               class="block w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 shadow-inner transition-all" required>
+                               class="block w-full px-4 py-2.5 bg-gray-50 border-none rounded-lg focus:ring-3 focus:ring-brand-50 focus:bg-white text-sm font-bold text-gray-900 shadow-inner transition-all" required>
                     </div>
 
                     <div class="space-y-3">

@@ -20,6 +20,11 @@
     calendarYear: new Date().getFullYear(),
     calendarDays: [],
     showCalendarModal: false,
+    selectedDateDetails: null,
+    todayStr: (() => {
+        const d = new Date();
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    })(),
     initClock() {
         const update = () => {
             const now = new Date();
@@ -54,47 +59,129 @@
             !['cancelled', 'rejected', 'completed'].includes(appt.status)
         );
     },
+    getEffectiveAvailabilitiesForDate(dateStr, dayOfWeek) {
+        const matches = this.availabilities.filter(a => {
+            if (a.is_recurring) {
+                return Number(a.recurring_day) === Number(dayOfWeek);
+            }
+            return String(a.date) === String(dateStr);
+        });
+
+        const groups = {};
+        matches.forEach(a => {
+            if (!groups[a.doctor_id]) groups[a.doctor_id] = [];
+            groups[a.doctor_id].push(a);
+        });
+
+        return Object.values(groups).map(group => {
+            const oneTime = group.find(item => !item.is_recurring && String(item.date) === String(dateStr));
+            const recurring = group.find(item => item.is_recurring);
+            return oneTime || recurring;
+        }).filter(Boolean);
+    },
+
     updateCalendar() {
-        const daysInMonth = new Date(this.calendarYear, this.calendarMonth + 1, 0).getDate();
-        const firstDay = new Date(this.calendarYear, this.calendarMonth, 1).getDay();
+        const firstDayOfMonth = new Date(this.calendarYear, this.calendarMonth, 1);
+        const lastDayOfMonth = new Date(this.calendarYear, this.calendarMonth + 1, 0);
+        const daysInMonth = lastDayOfMonth.getDate();
+        const startDayOfWeek = firstDayOfMonth.getDay(); 
+        
         const days = [];
         
-        // Padding for previous month
-        for (let i = 0; i < firstDay; i++) {
-            days.push({ day: '', date: null });
+        for (let i = 0; i < startDayOfWeek; i++) {
+            days.push({ day: '', date: null, isSunday: false, hasAvailability: false, hasAppointment: false });
         }
         
         for (let i = 1; i <= daysInMonth; i++) {
-            const dateStr = `${this.calendarYear}-${String(this.calendarMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+            const dateObj = new Date(this.calendarYear, this.calendarMonth, i);
+            const y = dateObj.getFullYear();
+            const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const d = String(dateObj.getDate()).padStart(2, '0');
+            const dateStr = `${y}-${m}-${d}`;
+            const dayOfWeek = dateObj.getDay();
+            
+            const isTodayOrFuture = dateStr >= this.todayStr;
+            const effective = this.getEffectiveAvailabilitiesForDate(dateStr, dayOfWeek);
+            const hasAvailability = isTodayOrFuture && effective.some(a => ['scheduled', 'arrived', 'delayed'].includes(a.status));
+
+            const hasAppointment = this.appointments.some(appt => {
+                const apptDateStr = (appt.scheduled_at || (appt.slot ? appt.slot.date : '')).toString().substring(0, 10);
+                return apptDateStr === dateStr && !['cancelled', 'rejected'].includes(appt.status);
+            });
+
             days.push({ 
                 day: i, 
                 date: dateStr,
-                hasAvailability: !!this.availabilities[dateStr]
+                isSunday: dayOfWeek === 0,
+                hasAvailability: hasAvailability,
+                hasAppointment: hasAppointment
             });
         }
         this.calendarDays = days;
     },
     changeMonth(delta) {
-        this.calendarMonth += delta;
-        if (this.calendarMonth < 0) {
-            this.calendarMonth = 11;
-            this.calendarYear--;
-        } else if (this.calendarMonth > 11) {
-            this.calendarMonth = 0;
-            this.calendarYear++;
+        let newMonth = this.calendarMonth + delta;
+        let newYear = this.calendarYear;
+
+        if (newMonth < 0) {
+            newMonth = 11;
+            newYear--;
+        } else if (newMonth > 11) {
+            newMonth = 0;
+            newYear++;
         }
+
+        this.calendarMonth = newMonth;
+        this.calendarYear = newYear;
         this.updateCalendar();
     },
     getMonthName() {
         return new Date(this.calendarYear, this.calendarMonth).toLocaleString('default', { month: 'long' });
     },
+    formatTime(timeStr) {
+        if (!timeStr) return 'N/A';
+        // Handle ISO strings or just H:i
+        const timePart = timeStr.includes('T') ? timeStr.split('T')[1].substring(0, 5) : timeStr.substring(0, 5);
+        const [hours, minutes] = timePart.split(':');
+        const h = parseInt(hours);
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const h12 = h % 12 || 12;
+        return `${h12}:${minutes} ${ampm}`;
+    },
     selectCalendarDate(dateStr) {
-        if (!this.availabilities[dateStr]) return;
-        this.showCalendarModal = false;
-        // In a real SPA we would filter, for now we can just highlight or show a toast
-        // but since the requirement is visual, we will just close and maybe scroll.
-        const el = document.getElementById('available-slots-section');
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
+        if (!dateStr) return;
+
+        const [y, m, d] = dateStr.split('-').map(Number);
+        const dateObj = new Date(y, m - 1, d);
+        const dayOfWeek = dateObj.getDay();
+
+        const effectiveDoctors = this.getEffectiveAvailabilitiesForDate(dateStr, dayOfWeek);
+
+        const userAppts = this.appointments.filter(appt => {
+            const apptDateStr = (appt.scheduled_at || (appt.slot ? appt.slot.date : '')).toString().substring(0, 10);
+            return apptDateStr === dateStr && !['cancelled', 'rejected'].includes(appt.status);
+        });
+
+        const days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+        const months = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
+        const displayStr = `${days[dayOfWeek]}, ${months[m - 1]} ${d}, ${y}`;
+
+        this.selectedDateDetails = {
+            dateDisplay: displayStr,
+            dateStr: dateStr,
+            doctors: effectiveDoctors.map(a => ({
+                name: a.doctor_name,
+                time: `${this.formatTime(a.start_time)} - ${this.formatTime(a.end_time)}`,
+                status: a.status,
+                is_recurring: a.is_recurring,
+                notes: a.notes
+            })),
+            appointments: userAppts.map(a => ({
+                service: a.service,
+                status: a.status,
+                time: this.formatTime(a.scheduled_at || (a.slot ? a.slot.start_time : null))
+            }))
+        };
     }
 }" x-init="initClock(); updateCalendar()" class="flex flex-col gap-8" x-cloak>
 
@@ -128,24 +215,6 @@
             <i class="bi bi-heart-pulse-fill text-[8rem] sm:text-[12rem]"></i>
         </div>
     </div>
-
-    {{-- Session Alerts --}}
-    @if(session('success'))
-        <div class="animate-fade-in-up">
-            <div class="bg-emerald-50 border border-emerald-100 text-emerald-700 px-6 py-4 rounded-2xl flex items-center gap-3 shadow-sm">
-                <i class="bi bi-check-circle-fill text-xl"></i>
-                <span class="font-bold text-sm">{{ session('success') }}</span>
-            </div>
-        </div>
-    @endif
-    @if(session('error'))
-        <div class="animate-fade-in-up">
-            <div class="bg-red-50 border border-red-100 text-red-700 px-6 py-4 rounded-2xl flex items-center gap-3 shadow-sm">
-                <i class="bi bi-exclamation-circle-fill text-xl"></i>
-                <span class="font-bold text-sm">{{ session('error') }}</span>
-            </div>
-        </div>
-    @endif
 
     {{-- Doctor Presence Tracking (For Today's Appointments) --}}
     @php
@@ -262,18 +331,38 @@
                     </div>
                     <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Clinical Schedule</span>
                 </div>
-                <i class="bi bi-arrows-angle-expand text-gray-300 group-hover:text-brand-500 transition-colors text-xs"></i>
+                <div class="flex items-center gap-2">
+                    <span class="text-[10px] font-black text-brand-600 uppercase" x-text="getMonthName()"></span>
+                    <i class="bi bi-arrows-angle-expand text-gray-300 group-hover:text-brand-500 transition-colors text-[10px]"></i>
+                </div>
             </div>
             
-            <div class="flex-1 flex flex-col justify-center">
-                <h3 class="text-xl font-black text-gray-900 mb-1" x-text="getMonthName()"></h3>
-                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tap to view doctor availability</p>
-                
-                {{-- Tiny preview dots for current week --}}
-                <div class="flex gap-1.5 mt-4">
-                    <template x-for="i in 7">
-                        <div class="w-1.5 h-1.5 rounded-full" 
-                             :class="calendarDays.slice(0, 7)[i-1]?.hasAvailability ? 'bg-brand-500' : 'bg-gray-100'"></div>
+            {{-- Compact Mini Calendar Grid --}}
+            <div class="flex-1 flex flex-col">
+                <div class="grid grid-cols-7 gap-1 mb-1">
+                    <template x-for="(day, index) in ['S', 'M', 'T', 'W', 'T', 'F', 'S']">
+                        <div class="text-center text-[8px] font-black uppercase" 
+                             :class="index === 0 ? 'text-red-400' : 'text-gray-300'" x-text="day"></div>
+                    </template>
+                </div>
+                <div class="grid grid-cols-7 gap-1">
+                    <template x-for="dayObj in calendarDays">
+                        <div class="aspect-square flex items-center justify-center rounded-md relative"
+                             :class="{
+                                 'bg-brand-50 text-brand-600 font-black': dayObj.hasAvailability,
+                                 'bg-emerald-50 text-emerald-600 font-black': dayObj.hasAppointment && !dayObj.hasAvailability,
+                                 'bg-emerald-100/50 text-emerald-700 font-black': dayObj.hasAppointment && dayObj.hasAvailability,
+                                 'text-red-500/50': dayObj.isSunday && !dayObj.hasAvailability && !dayObj.hasAppointment,
+                                 'text-gray-400': !dayObj.isSunday && !dayObj.hasAvailability && !dayObj.hasAppointment
+                             }">
+                            <span class="text-[9px]" x-text="dayObj.day"></span>
+                            <template x-if="dayObj.hasAvailability">
+                                <div class="absolute bottom-0.5 w-0.5 h-0.5 rounded-full bg-brand-500"></div>
+                            </template>
+                            <template x-if="dayObj.hasAppointment">
+                                <div class="absolute top-0.5 right-0.5 w-1 h-1 rounded-full bg-emerald-500"></div>
+                            </template>
+                        </div>
                     </template>
                 </div>
             </div>
@@ -603,59 +692,171 @@
           x-transition:leave-end="opacity-0"
           @keydown.escape.window="showCalendarModal = false">
         <div class="flex items-center justify-center min-h-screen px-4 py-12 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 transition-opacity bg-gray-900/60 backdrop-blur-sm" @click="showCalendarModal = false"></div>
+            <div class="fixed inset-0 transition-opacity bg-gray-900/60 backdrop-blur-sm" @click="showCalendarModal = false; selectedDateDetails = null"></div>
 
-            <div class="inline-block w-full max-w-2xl my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-[3rem] sm:align-middle relative z-10">
+            <div class="inline-block w-full max-w-4xl my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-[3rem] sm:align-middle relative z-10">
                 <div class="absolute top-0 right-0 p-6">
-                    <button @click="showCalendarModal = false" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <button @click="showCalendarModal = false; selectedDateDetails = null" class="text-gray-400 hover:text-gray-600 transition-colors">
                         <i class="bi bi-x-lg text-2xl"></i>
                     </button>
                 </div>
 
-                <div class="p-8 sm:p-10">
-                    <div class="flex items-center justify-between mb-8">
-                        <div>
-                            <h3 class="text-2xl font-black text-gray-900 tracking-tight" x-text="getMonthName() + ' ' + calendarYear"></h3>
-                            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Select a date with a blue dot to view available slots</p>
-                        </div>
-                        <div class="flex gap-2">
-                            <button @click="changeMonth(-1)" class="p-2 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-600 transition-all">
-                                <i class="bi bi-chevron-left"></i>
-                            </button>
-                            <button @click="changeMonth(1)" class="p-2 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-600 transition-all">
-                                <i class="bi bi-chevron-right"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-7 gap-2 mb-4">
-                        <template x-for="day in ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']">
-                            <div class="text-center text-[10px] font-black text-gray-400 uppercase tracking-widest py-2" x-text="day"></div>
-                        </template>
-                        
-                        <template x-for="dayObj in calendarDays">
-                            <div class="relative aspect-square flex flex-col items-center justify-center rounded-2xl transition-all border border-transparent"
-                                 :class="{
-                                     'hover:bg-brand-50 cursor-pointer border-gray-50': dayObj.day !== '',
-                                     'bg-brand-50 border-brand-100': dayObj.hasAvailability
-                                 }"
-                                 @click="selectCalendarDate(dayObj.date)">
-                                <span class="text-sm font-bold" :class="dayObj.hasAvailability ? 'text-brand-700' : 'text-gray-700'" x-text="dayObj.day"></span>
-                                <template x-if="dayObj.hasAvailability">
-                                    <div class="absolute bottom-2 w-1 h-1 rounded-full bg-brand-500"></div>
-                                </template>
+                <div class="flex flex-col lg:flex-row min-h-[500px]">
+                    {{-- Left Column: Calendar --}}
+                    <div class="p-8 sm:p-10 lg:w-3/5 border-r border-gray-50">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 pr-12">
+                            <div>
+                                <div class="flex items-center gap-4 mb-1">
+                                    <h3 class="text-2xl font-black text-gray-900 tracking-tight" x-text="getMonthName() + ' ' + calendarYear"></h3>
+                                    <div class="flex gap-1 bg-gray-100/50 p-1 rounded-xl border border-gray-100">
+                                        <button @click.stop="changeMonth(-1)" class="p-2 rounded-lg hover:bg-white hover:shadow-sm text-gray-600 transition-all active:scale-90">
+                                            <i class="bi bi-chevron-left text-xs"></i>
+                                        </button>
+                                        <button @click.stop="changeMonth(1)" class="p-2 rounded-lg hover:bg-white hover:shadow-sm text-gray-600 transition-all active:scale-90">
+                                            <i class="bi bi-chevron-right text-xs"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Select a date to view clinical details</p>
                             </div>
-                        </template>
+                        </div>
+
+                        <div class="grid grid-cols-7 gap-2 mb-4">
+                            <template x-for="(day, index) in ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']">
+                                <div class="text-center text-[10px] font-black uppercase tracking-widest py-2"
+                                     :class="index === 0 ? 'text-red-500' : 'text-gray-400'" x-text="day"></div>
+                            </template>
+                            
+                            <template x-for="dayObj in calendarDays">
+                                <div class="relative aspect-square flex flex-col items-center justify-center rounded-2xl transition-all border border-transparent"
+                                     :class="{
+                                         'hover:bg-brand-50 cursor-pointer border-gray-50': dayObj.day !== '',
+                                         'bg-brand-50 border-brand-100': dayObj.hasAvailability,
+                                         'bg-emerald-50 border-emerald-100': dayObj.hasAppointment && !dayObj.hasAvailability,
+                                         'bg-emerald-100/50 border-brand-200': dayObj.hasAppointment && dayObj.hasAvailability,
+                                         'ring-4 ring-brand-500/20 border-brand-500': selectedDateDetails && selectedDateDetails.dateStr === dayObj.date,
+                                         'opacity-50': dayObj.day === ''
+                                     }"
+                                     @click="selectCalendarDate(dayObj.date)">
+                                    <span class="text-sm font-bold" 
+                                          :class="{
+                                              'text-brand-700': dayObj.hasAvailability,
+                                              'text-emerald-700': dayObj.hasAppointment && !dayObj.hasAvailability,
+                                              'text-red-500': dayObj.isSunday && !dayObj.hasAvailability && !dayObj.hasAppointment,
+                                              'text-gray-700': !dayObj.isSunday && !dayObj.hasAvailability && !dayObj.hasAppointment
+                                          }" x-text="dayObj.day"></span>
+                                    <template x-if="dayObj.hasAvailability">
+                                        <div class="absolute bottom-2 w-1 h-1 rounded-full bg-brand-500"></div>
+                                    </template>
+                                    <template x-if="dayObj.hasAppointment">
+                                        <div class="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-emerald-500 ring-2 ring-white"></div>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+
+                        <div class="mt-8 flex flex-wrap items-center gap-6 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full bg-brand-500"></div>
+                                <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Doctor Available</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                                <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest">My Bookings</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="mt-8 flex items-center gap-6 p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-brand-500"></div>
-                            <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Doctor Available</span>
+                    {{-- Right Column: Details --}}
+                    <div class="lg:w-2/5 bg-gray-50/50 p-8 sm:p-10">
+                        <div x-show="!selectedDateDetails" class="h-full flex flex-col items-center justify-center text-center">
+                            <div class="w-16 h-16 rounded-[1.5rem] bg-white border border-gray-100 flex items-center justify-center text-gray-300 mb-4 shadow-sm">
+                                <i class="bi bi-info-circle text-2xl"></i>
+                            </div>
+                            <h4 class="text-sm font-black text-gray-900 uppercase tracking-tight mb-1">Date Details</h4>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase leading-relaxed max-w-[180px]">Select a date on the calendar to view its clinical schedule</p>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-gray-200"></div>
-                            <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest">No Schedule</span>
+
+                        <div x-show="selectedDateDetails" x-transition class="space-y-8">
+                            <div>
+                                <h4 class="text-sm font-black text-gray-900 uppercase tracking-tight mb-1" x-text="selectedDateDetails?.dateDisplay"></h4>
+                                <div class="h-1 w-8 bg-brand-500 rounded-full"></div>
+                            </div>
+
+                            {{-- Doctor Availability Details --}}
+                            <div class="space-y-4">
+                                <h5 class="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                    <i class="bi bi-person-pulse-fill text-brand-500"></i>
+                                    On-Duty Doctors
+                                </h5>
+                                
+                                <template x-if="selectedDateDetails?.doctors.length === 0">
+                                    <div class="p-4 bg-white rounded-2xl border border-gray-100 text-center">
+                                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">No clinical staff scheduled</p>
+                                    </div>
+                                </template>
+
+                                <div class="space-y-3">
+                                    <template x-for="doc in selectedDateDetails?.doctors">
+                                        <div class="p-4 bg-white rounded-2xl border shadow-sm flex items-center justify-between"
+                                             :class="{
+                                                 'border-brand-100': doc.status !== 'absent',
+                                                 'border-red-100 bg-red-50/20': doc.status === 'absent'
+                                             }">
+                                            <div>
+                                                <p class="text-[11px] font-black" :class="doc.status === 'absent' ? 'text-red-900' : 'text-gray-900'" x-text="doc.name"></p>
+                                                <p class="text-[9px] font-bold uppercase" :class="doc.status === 'absent' ? 'text-red-500' : 'text-brand-600'" 
+                                                   x-text="doc.status === 'absent' ? 'Doctor is Absent Today' : doc.time"></p>
+                                                <template x-if="doc.notes && doc.status !== 'absent'">
+                                                    <p class="text-[8px] font-medium text-amber-600 mt-1 italic" x-text="'Note: ' + doc.notes"></p>
+                                                </template>
+                                            </div>
+                                            <div class="flex flex-col items-end gap-1">
+                                                <span class="px-2 py-1 rounded-lg text-[8px] font-black uppercase"
+                                                      :class="{
+                                                          'bg-brand-50 text-brand-600': doc.status === 'scheduled',
+                                                          'bg-emerald-50 text-emerald-600': doc.status === 'arrived',
+                                                          'bg-amber-50 text-amber-600': doc.status === 'delayed',
+                                                          'bg-red-50 text-red-600': doc.status === 'absent'
+                                                      }"
+                                                      x-text="doc.status"></span>
+                                                <span x-show="doc.is_recurring" class="text-[7px] font-bold text-gray-300 uppercase tracking-widest">Weekly</span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+
+                            {{-- User Appointment Details --}}
+                            <div class="space-y-4">
+                                <h5 class="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                    <i class="bi bi-bookmark-check-fill text-emerald-500"></i>
+                                    My Appointments
+                                </h5>
+
+                                <template x-if="selectedDateDetails?.appointments.length === 0">
+                                    <div class="p-4 bg-white rounded-2xl border border-gray-100 text-center border-dashed">
+                                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">No bookings for this date</p>
+                                    </div>
+                                </template>
+
+                                <div class="space-y-3">
+                                    <template x-for="appt in selectedDateDetails?.appointments">
+                                        <div class="p-4 bg-emerald-50/50 rounded-2xl border border-emerald-100 shadow-sm flex items-center justify-between">
+                                            <div>
+                                                <p class="text-[11px] font-black text-emerald-900" x-text="appt.service"></p>
+                                                <p class="text-[9px] font-bold text-emerald-600 uppercase" x-text="'at ' + appt.time"></p>
+                                            </div>
+                                            <span class="px-2 py-1 rounded-lg bg-emerald-100 text-emerald-700 text-[8px] font-black uppercase" x-text="appt.status"></span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <button @click="showCalendarModal = false; selectedDateDetails = null; $nextTick(() => { document.getElementById('available-slots-section').scrollIntoView({ behavior: 'smooth' }) })" 
+                                    class="w-full py-4 bg-brand-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-brand-500/20 hover:bg-brand-700 transition-all active:scale-95 flex items-center justify-center gap-2">
+                                Book Now <i class="bi bi-plus-circle"></i>
+                            </button>
                         </div>
                     </div>
                 </div>

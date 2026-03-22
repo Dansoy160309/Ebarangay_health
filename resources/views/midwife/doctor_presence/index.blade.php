@@ -3,64 +3,50 @@
 @section('title', 'Doctor Presence Tracking')
 
 @section('content')
-<div class="flex flex-col gap-6 sm:gap-8">
+<div class="flex flex-col gap-4 sm:gap-5">
     
     {{-- Top-Aligned Compact Header --}}
-    <div class="relative z-10 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm overflow-hidden group">
-        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+    <div class="relative z-10 bg-white rounded-2xl sm:rounded-2xl p-5 sm:p-6 border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="absolute top-0 right-0 w-48 h-48 bg-brand-50 rounded-full blur-2xl -mr-24 -mt-24 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
         
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8">
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5">
             <div class="max-w-xl">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 mb-3 sm:mb-4">
-                    <i class="bi bi-person-check-fill text-xs"></i>
-                    <span class="text-[9px] font-black uppercase tracking-widest">Operational Tracking</span>
+                <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-lg bg-brand-50 text-brand-600 border border-brand-100 mb-2 sm:mb-3">
+                    <i class="bi bi-person-check-fill text-[8px]"></i>
+                    <span class="text-[8px] font-black uppercase tracking-tighter">Operational Tracking</span>
                 </div>
-                <h1 class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-2 sm:mb-3">
-                    Doctor <span class="text-brand-600 underline decoration-brand-200 decoration-4 underline-offset-4">Presence</span>
+                <h1 class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight leading-tight mb-1 sm:mb-2">
+                    Doctor <span class="text-brand-600 underline decoration-brand-200 decoration-2 underline-offset-2">Presence</span>
                 </h1>
-                <p class="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed">
+                <p class="text-gray-500 font-medium text-xs lg:text-sm leading-relaxed">
                     Track the arrival and status of doctors for today's consultations. Marking a status will notify scheduled patients automatically.
                 </p>
             </div>
 
-            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-                <div class="bg-white border border-gray-200 px-6 py-4 rounded-2xl shadow-sm">
-                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Today's Date</p>
-                    <p class="text-sm font-black text-gray-900">{{ now()->format('M d, Y') }}</p>
+            <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <div class="bg-white border border-gray-200 px-3.5 py-2 rounded-lg shadow-sm">
+                    <p class="text-[8px] font-black text-gray-400 uppercase tracking-tighter mb-0.5">Today's Date</p>
+                    <p class="text-xs font-black text-gray-900">{{ now()->format('M d, Y') }}</p>
                 </div>
             </div>
         </div>
     </div>
 
-    @if(session('success'))
-        <div class="rounded-3xl border border-emerald-200 bg-emerald-50 px-6 py-4 text-sm text-emerald-800 flex items-center gap-3 animate-fade-in-down">
-            <i class="bi bi-check-circle-fill text-lg"></i>
-            <div class="font-bold">{{ session('success') }}</div>
-        </div>
-    @endif
-
-    @if(session('warning'))
-        <div class="rounded-3xl border border-red-200 bg-red-50 px-6 py-4 text-sm text-red-800 flex items-center gap-3 animate-fade-in-down">
-            <i class="bi bi-exclamation-triangle-fill text-lg"></i>
-            <div class="font-bold">{{ session('warning') }}</div>
-        </div>
-    @endif
-
     {{-- Doctor List for Today --}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         @forelse($todayAvailabilities as $block)
-            <div class="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/40 border border-gray-100 p-8 sm:p-10 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-brand-50 rounded-full blur-3xl -mr-16 -mt-16 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+            <div class="bg-white rounded-lg shadow-md shadow-gray-200/25 border border-gray-100 p-5 sm:p-6 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-20 h-20 bg-brand-50 rounded-full blur-2xl -mr-10 -mt-10 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
                 
                 <div class="relative z-10">
-                    <div class="flex items-center justify-between mb-8">
-                        <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-2xl font-black border border-brand-100 shadow-inner">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center text-lg font-black border border-brand-100 shadow-inner">
                                 {{ substr($block->doctor->full_name, 0, 1) }}
                             </div>
                             <div>
-                                <h3 class="text-xl font-black text-gray-900 tracking-tight">Dr. {{ $block->doctor->full_name }}</h3>
-                                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">{{ $block->doctor->role }}</p>
+                                <h3 class="text-sm font-black text-gray-900 tracking-tight">Dr. {{ $block->doctor->full_name }}</h3>
+                                <p class="text-[8px] font-black text-gray-400 uppercase tracking-tighter">{{ $block->doctor->role }}</p>
                             </div>
                         </div>
                         <div class="text-right">

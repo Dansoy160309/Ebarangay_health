@@ -3,31 +3,31 @@
 @section('title', 'Assigned Appointments')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
     
     {{-- Header Card --}}
-    <div class="bg-gradient-to-r from-brand-600 to-brand-500 rounded-[2.5rem] shadow-xl p-8 sm:p-10 text-white relative overflow-hidden mb-10">
-        <div class="absolute inset-0 bg-white/5 opacity-10" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
-        <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-white/10 rounded-full blur-3xl"></div>
+    <div class="bg-gradient-to-r from-brand-600 to-brand-500 rounded-2xl shadow-lg p-5 sm:p-6 text-white relative overflow-hidden mb-6">
+        <div class="absolute inset-0 bg-white/5 opacity-5" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
+        <div class="absolute -right-12 -bottom-12 w-48 h-48 bg-white/10 rounded-full blur-2xl"></div>
         
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
             <div>
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center">
-                        <i class="bi bi-calendar-check text-xl"></i>
+                <div class="flex items-center gap-2 mb-1.5">
+                    <div class="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-md flex items-center justify-center">
+                        <i class="bi bi-calendar-check text-sm"></i>
                     </div>
-                    <h1 class="text-3xl font-black tracking-tight text-white">Assigned Appointments</h1>
+                    <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white">Assigned Appointments</h1>
                 </div>
-                <p class="text-brand-100 text-lg font-medium">Manage clinical schedules and patient assessments.</p>
+                <p class="text-brand-100 text-xs sm:text-sm font-medium">Manage clinical schedules and assessments.</p>
             </div>
-            <div class="flex flex-wrap items-center gap-4">
-                <div class="bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/20 text-center">
-                    <p class="text-[10px] font-black uppercase tracking-widest opacity-70">Total Today</p>
-                    <p class="text-2xl font-black">{{ $counts['scheduled'] + $counts['walkin'] }}</p>
+            <div class="flex flex-wrap items-center gap-3">
+                <div class="bg-white/10 backdrop-blur-md px-4 py-2 rounded-lg border border-white/20 text-center">
+                    <p class="text-[7px] font-black uppercase tracking-tighter opacity-70">Total Today</p>
+                    <p class="text-lg sm:text-xl font-black">{{ $counts['scheduled'] + $counts['walkin'] }}</p>
                 </div>
                 <a href="{{ route('healthworker.appointments.create') }}" 
-                   class="inline-flex items-center px-8 py-4 rounded-2xl bg-white text-brand-600 font-black hover:bg-brand-50 transition-all shadow-lg transform hover:-translate-y-1 active:scale-95 whitespace-nowrap uppercase tracking-widest text-xs">
-                    <i class="bi bi-plus-lg mr-2 text-lg"></i>
+                   class="inline-flex items-center px-5 py-2 rounded-lg bg-white text-brand-600 font-black hover:bg-brand-50 transition-all shadow-md transform hover:-translate-y-0.5 active:scale-95 whitespace-nowrap uppercase tracking-tighter text-xs">
+                    <i class="bi bi-plus-lg mr-1.5 text-sm"></i>
                     New Appointment
                 </a>
             </div>
@@ -35,29 +35,29 @@
     </div>
 
     <!-- Main Navigation Tabs -->
-    <div class="mb-10 bg-white p-2 rounded-[2rem] shadow-sm border border-gray-100 flex flex-wrap gap-2 overflow-hidden">
+    <div class="mb-6 bg-white p-1.5 rounded-lg shadow-sm border border-gray-100 flex flex-wrap gap-1.5 overflow-hidden">
         <a href="{{ route('healthworker.appointments.index', ['type' => 'scheduled', 'date' => request('date')]) }}"
-           class="flex-1 min-w-[140px] text-center px-4 sm:px-8 py-4 rounded-[1.5rem] text-[10px] sm:text-sm font-black uppercase tracking-widest transition-all {{ request('type') == 'scheduled' && !request('vitals_only') ? 'bg-brand-600 text-white shadow-lg shadow-brand-200' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50' }}">
+           class="flex-1 min-w-[120px] text-center px-3 sm:px-5 py-2 rounded-md text-[8px] sm:text-xs font-black uppercase tracking-tighter transition-all {{ request('type') == 'scheduled' && !request('vitals_only') ? 'bg-brand-600 text-white shadow-md' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50' }}">
             Online <span class="hidden sm:inline">Booking</span> <span class="ml-1 opacity-50">{{ $counts['scheduled'] }}</span>
         </a>
         <a href="{{ route('healthworker.appointments.index', ['type' => 'walk-in', 'date' => request('date')]) }}"
-           class="flex-1 min-w-[140px] text-center px-4 sm:px-8 py-4 rounded-[1.5rem] text-[10px] sm:text-sm font-black uppercase tracking-widest transition-all {{ request('type') == 'walk-in' ? 'bg-brand-600 text-white shadow-lg shadow-brand-200' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50' }}">
+           class="flex-1 min-w-[120px] text-center px-3 sm:px-5 py-2 rounded-md text-[8px] sm:text-xs font-black uppercase tracking-tighter transition-all {{ request('type') == 'walk-in' ? 'bg-brand-600 text-white shadow-md' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50' }}">
             Walk-In <span class="ml-1 opacity-50">{{ $counts['walkin'] }}</span>
         </a>
         <a href="{{ route('healthworker.appointments.index', ['vitals_only' => 1, 'date' => request('date')]) }}"
-           class="flex-1 min-w-[140px] text-center px-4 sm:px-8 py-4 rounded-[1.5rem] text-[10px] sm:text-sm font-black uppercase tracking-widest transition-all {{ request('vitals_only') ? 'bg-orange-500 text-white shadow-lg shadow-orange-200' : 'text-gray-400 hover:text-orange-500 hover:bg-orange-50' }}">
+           class="flex-1 min-w-[120px] text-center px-3 sm:px-5 py-2 rounded-md text-[8px] sm:text-xs font-black uppercase tracking-tighter transition-all {{ request('vitals_only') ? 'bg-orange-500 text-white shadow-md' : 'text-gray-400 hover:text-orange-500 hover:bg-orange-50' }}">
             Vitals <span class="hidden sm:inline">Needed</span> <span class="ml-1 opacity-50">{{ $counts['needing_vitals'] }}</span>
         </a>
     </div>
 
     <!-- Filters Section -->
-    <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-100 mb-8">
-        <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div class="bg-white rounded-lg p-5 shadow-sm border border-gray-100 mb-6">
+        <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
             @if(request('type')) <input type="hidden" name="type" value="{{ request('type') }}"> @endif
             @if(request('vitals_only')) <input type="hidden" name="vitals_only" value="1"> @endif
 
-            <div class="space-y-2">
-                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Filter Date</label>
+            <div class="space-y-1.5">
+                <label class="block text-[8px] font-black text-gray-400 uppercase tracking-tighter ml-1">Filter Date</label>
                 <div class="relative group">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500">
                         <i class="bi bi-calendar3"></i>

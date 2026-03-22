@@ -35,28 +35,28 @@
     </div>
 
     {{-- Page Header --}}
-    <div class="bg-white rounded-[3.5rem] p-10 lg:p-14 border border-gray-100 shadow-sm relative overflow-hidden group">
+    <div class="bg-white rounded-2xl p-5 lg:p-6 border border-gray-100 shadow-sm relative overflow-hidden group">
         {{-- Decorative Elements --}}
-        <div class="absolute top-0 right-0 w-96 h-96 bg-brand-50 rounded-full blur-3xl -mr-48 -mt-48 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
-        <div class="absolute bottom-0 left-0 w-64 h-64 bg-blue-50 rounded-full blur-3xl -ml-32 -mb-32 opacity-30 group-hover:opacity-50 transition-opacity duration-700"></div>
+        <div class="absolute top-0 right-0 w-24 h-24 bg-brand-50 rounded-full blur-2xl -mr-16 -mt-16 opacity-30 group-hover:opacity-60 transition-opacity duration-700"></div>
+        <div class="absolute bottom-0 left-0 w-20 h-20 bg-blue-50 rounded-full blur-2xl -ml-12 -mb-12 opacity-20 group-hover:opacity-40 transition-opacity duration-700"></div>
 
-        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-12">
+        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div class="max-w-2xl">
-                <div class="inline-flex items-center gap-3 px-4 py-2 rounded-2xl bg-brand-50 text-brand-600 border border-brand-100 mb-6">
-                    <i class="bi bi-megaphone-fill text-sm animate-bounce"></i>
-                    <span class="text-[10px] font-black uppercase tracking-[0.2em]">Latest Updates</span>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-brand-50 text-brand-600 border border-brand-100 mb-2.5">
+                    <i class="bi bi-megaphone-fill text-xs"></i>
+                    <span class="text-[8px] font-black uppercase tracking-[0.15em]">Latest Updates</span>
                 </div>
-                <h1 class="text-4xl lg:text-5xl font-black text-gray-900 tracking-tight leading-[1.1]">
-                    Community <span class="text-brand-600 underline decoration-brand-200 decoration-8 underline-offset-4">Announcements</span>
+                <h1 class="text-2xl lg:text-3xl font-black text-gray-900 tracking-tight leading-[1.1]">
+                    Community <span class="text-brand-600">Announcements</span>
                 </h1>
-                <p class="text-gray-500 font-medium mt-6 text-lg leading-relaxed">
-                    Stay informed with real-time community health alerts, vaccination schedules, and medical missions organized by your barangay.
+                <p class="text-gray-500 font-medium mt-2 text-xs leading-relaxed">
+                    Stay informed with real-time community health alerts and vaccination schedules.
                 </p>
             </div>
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full lg:w-[400px]">
-                <div class="bg-gray-50/80 backdrop-blur-sm p-6 rounded-[2.5rem] border border-gray-100 shadow-inner flex flex-col justify-center transform hover:scale-105 transition-all duration-500">
-                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full lg:w-[320px]">
+                <div class="bg-gray-50/80 backdrop-blur-sm p-4 rounded-lg border border-gray-100 shadow-inner flex flex-col justify-center">
+                    <span class="text-[7px] font-black text-gray-400 uppercase tracking-tighter mb-1 flex items-center gap-1.5">
                         <i class="bi bi-collection"></i> Total Active
                     </span>
                     <span class="text-3xl font-black text-gray-900 tracking-tight">{{ $announcements->total() }}</span>
