@@ -13,10 +13,10 @@
         <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5">
             <div class="max-w-xl">
                 <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-lg bg-brand-50 text-brand-600 border border-brand-100 mb-2 sm:mb-3">
-                    <i class="bi bi-people-fill text-[8px]"></i>
-                    <span class="text-[8px] font-black uppercase tracking-tighter">Master Database</span>
+                    <i class="bi bi-people-fill text-xs"></i>
+                    <span class="text-xs font-black uppercase tracking-tighter">Master Database</span>
                 </div>
-                <h1 class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight leading-tight mb-1 sm:mb-2">
+                <h1 class="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight leading-tight mb-1 sm:mb-2">
                     Patient <span class="text-brand-600 underline decoration-brand-200 decoration-2 underline-offset-2">Management</span>
                 </h1>
                 <p class="text-gray-500 font-medium text-xs lg:text-sm leading-relaxed">
@@ -40,7 +40,7 @@
             {{-- Filter Tabs --}}
             <div class="flex items-center p-1 bg-gray-50 rounded-lg border border-gray-100 overflow-x-auto no-scrollbar">
                 <a href="{{ route('midwife.patients.index', ['type' => 'all']) }}"
-                   class="px-3.5 py-1.5 rounded-md text-[9px] font-black uppercase tracking-tighter transition-all whitespace-nowrap {{ $type === 'all' ? 'bg-brand-600 text-white shadow-md' : 'text-gray-400 hover:text-gray-600' }}">
+                   class="px-3.5 py-1.5 rounded-md text-xs font-black uppercase tracking-tighter transition-all whitespace-nowrap {{ $type === 'all' ? 'bg-brand-600 text-white shadow-md' : 'text-gray-400 hover:text-gray-600' }}">
                    All
                 </a>
                 <a href="{{ route('midwife.patients.index', ['type' => 'account_holder']) }}"
@@ -59,7 +59,7 @@
                     <i class="bi bi-search text-[10px]"></i>
                 </div>
                 <input type="text" id="searchInput" placeholder="Search by name, email, or contact..."
-                    class="w-full pl-9 pr-3 py-2.5 bg-gray-50 border-none rounded-lg focus:ring-3 focus:ring-brand-500/10 focus:bg-white transition-all text-[10px] font-bold text-gray-700 placeholder-gray-400 shadow-inner">
+                    class="w-full pl-9 pr-3 py-2.5 bg-gray-50 border-none rounded-lg focus:ring-3 focus:ring-brand-500/10 focus:bg-white transition-all text-sm font-bold text-gray-700 placeholder-gray-400 shadow-inner">
             </div>
         </div>
     </div>

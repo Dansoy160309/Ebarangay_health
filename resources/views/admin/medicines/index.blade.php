@@ -38,17 +38,17 @@
     <div class="bg-white rounded-2xl shadow-md shadow-gray-200/25 border border-gray-100 p-4 sm:p-5">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             {{-- Quick Links --}}
-            <div class="flex items-center p-1 bg-gray-50 rounded-lg border border-gray-100 overflow-x-auto no-scrollbar">
+            <div class="flex items-center p-2 bg-gray-50 rounded-xl border border-gray-100 overflow-x-auto no-scrollbar">
                 <a href="{{ route('admin.medicines.distributions') }}" 
-                   class="px-3.5 py-1.5 rounded-md text-[9px] font-black uppercase tracking-tighter text-gray-400 hover:text-brand-600 transition-all whitespace-nowrap">
+                   class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wide text-gray-500 hover:text-brand-600 hover:bg-white transition-all whitespace-nowrap">
                     Distributions
                 </a>
                 <a href="{{ route('admin.medicines.supplies') }}" 
-                   class="px-3.5 py-1.5 rounded-md text-[9px] font-black uppercase tracking-tighter text-gray-400 hover:text-brand-600 transition-all whitespace-nowrap">
+                   class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wide text-gray-500 hover:text-brand-600 hover:bg-white transition-all whitespace-nowrap">
                     Supplies
                 </a>
                 <a href="{{ route('admin.medicines.reports') }}" 
-                   class="px-3.5 py-1.5 rounded-md text-[9px] font-black uppercase tracking-tighter text-gray-400 hover:text-brand-600 transition-all whitespace-nowrap">
+                   class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wide text-gray-500 hover:text-brand-600 hover:bg-white transition-all whitespace-nowrap">
                     Reports
                 </a>
             </div>

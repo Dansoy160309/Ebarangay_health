@@ -3,7 +3,7 @@
 @section('title', 'Medicine Reports')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10" x-data="{ 
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="{ 
     tab: 'distribution',
     inventoryFilter: 'all',
     setInventoryFilter(filter) {
@@ -12,9 +12,9 @@
     }
 }">
     {{-- Header Section --}}
-    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-5 mb-6">
         <div>
-            <nav class="flex mb-4" aria-label="Breadcrumb">
+            <nav class="flex mb-3" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-3 text-sm font-medium text-gray-500">
                     <li class="inline-flex items-center">
                         <a href="{{ route('admin.dashboard') }}" class="hover:text-brand-600 transition-colors">Dashboard</a>
@@ -50,8 +50,8 @@
     </div>
 
     {{-- Filter Section --}}
-    <div class="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/40 border border-gray-100 p-8 mb-10">
-        <form method="GET" class="grid grid-cols-1 md:grid-cols-12 gap-8 items-end">
+    <div class="bg-white rounded-2xl shadow-md shadow-gray-200/30 border border-gray-100 p-6 mb-8">
+        <form method="GET" class="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
             <div class="md:col-span-3 space-y-3">
                 <label class="text-[11px] font-black text-gray-400 uppercase tracking-[0.15em] flex items-center gap-2">
                     <i class="bi bi-layers-fill text-brand-500"></i>
@@ -126,65 +126,61 @@
     </div>
 
     {{-- Stats Grid --}}
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-10">
-        <button type="button" @click="setInventoryFilter('all')" class="group text-left bg-white rounded-[2rem] shadow-xl shadow-gray-200/40 border border-gray-100 p-6 flex flex-col gap-4 hover:border-brand-500/30 transition-all active:scale-95">
-            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 text-2xl group-hover:scale-110 transition-transform">
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
+        <button type="button" @click="setInventoryFilter('all')" class="group text-left bg-white rounded-xl shadow-md shadow-gray-200/30 border border-gray-100 p-3 flex flex-col gap-2.5 hover:border-brand-500/30 transition-all active:scale-95">
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-600 text-lg group-hover:scale-105 transition-transform">
                 <i class="bi bi-capsule-pill"></i>
             </div>
             <div>
-                <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Total Medicines</div>
-                <div class="text-3xl font-black text-gray-900 tracking-tight">{{ number_format($totalMedicines) }}</div>
+                <div class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Total Medicines</div>
+                <div class="text-2xl font-black text-gray-900 tracking-tight">{{ number_format($totalMedicines) }}</div>
             </div>
         </button>
         
-        <button type="button" @click="setInventoryFilter('all')" class="group text-left bg-white rounded-[2rem] shadow-xl shadow-gray-200/40 border border-gray-100 p-6 flex flex-col gap-4 hover:border-blue-500/30 transition-all active:scale-95">
-            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 text-2xl group-hover:scale-110 transition-transform">
+        <button type="button" @click="setInventoryFilter('all')" class="group text-left bg-white rounded-xl shadow-md shadow-gray-200/30 border border-gray-100 p-3 flex flex-col gap-2.5 hover:border-blue-500/30 transition-all active:scale-95">
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 text-lg group-hover:scale-105 transition-transform">
                 <i class="bi bi-box-seam"></i>
             </div>
             <div>
-                <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Total Stock</div>
-                <div class="text-3xl font-black text-gray-900 tracking-tight">{{ number_format($totalStock) }}</div>
+                <div class="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Total Stock</div>
+                <div class="text-xl font-black text-gray-900 tracking-tight">{{ number_format($totalStock) }}</div>
             </div>
         </button>
         
-        <button type="button" @click="tab = 'distribution'" class="group text-left bg-white rounded-[2rem] shadow-xl shadow-gray-200/40 border border-gray-100 p-6 flex flex-col gap-4 hover:border-emerald-500/30 transition-all active:scale-95">
-            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 text-2xl group-hover:scale-110 transition-transform">
+        <button type="button" @click="tab = 'distribution'" class="group text-left bg-white rounded-xl shadow-md shadow-gray-200/30 border border-gray-100 p-3 flex flex-col gap-2.5 hover:border-emerald-500/30 transition-all active:scale-95">
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 text-lg group-hover:scale-105 transition-transform">
                 <i class="bi bi-arrow-down-circle"></i>
             </div>
             <div>
-                <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
-                    Distributed
-                </div>
-                <div class="text-3xl font-black text-gray-900 tracking-tight">{{ number_format($distributedInPeriod) }}</div>
-                <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mt-1">
-                    {{ $type === 'daily' ? 'For selected date' : 'For selected month' }}
-                </div>
+                <div class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Distributed</div>
+                <div class="text-xl font-black text-gray-900 tracking-tight">{{ number_format($distributedInPeriod) }}</div>
+                <div class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1">{{ $type === 'daily' ? 'For selected date' : 'For selected month' }}</div>
             </div>
         </button>
         
-        <button type="button" @click="setInventoryFilter('low_stock')" class="group text-left bg-white rounded-[2rem] shadow-xl shadow-gray-200/40 border border-gray-100 p-6 flex flex-col gap-4 hover:border-red-500/30 transition-all active:scale-95" :class="inventoryFilter === 'low_stock' && tab === 'inventory' ? 'ring-2 ring-red-500 border-transparent' : ''">
-            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-red-600 text-2xl group-hover:scale-110 transition-transform">
+        <button type="button" @click="setInventoryFilter('low_stock')" class="group text-left bg-white rounded-xl shadow-md shadow-gray-200/30 border border-gray-100 p-3 flex flex-col gap-2.5 hover:border-red-500/30 transition-all active:scale-95" :class="inventoryFilter === 'low_stock' && tab === 'inventory' ? 'ring-2 ring-red-500 border-transparent' : ''">
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-600 text-lg group-hover:scale-105 transition-transform">
                 <i class="bi bi-exclamation-circle"></i>
             </div>
             <div>
-                <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Low Stock</div>
-                <div class="text-3xl font-black text-red-600 tracking-tight">{{ number_format($lowStockCount) }}</div>
+                <div class="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Low Stock</div>
+                <div class="text-xl font-black text-red-600 tracking-tight">{{ number_format($lowStockCount) }}</div>
             </div>
         </button>
         
-        <button type="button" @click="setInventoryFilter('expiring')" class="group text-left bg-white rounded-[2rem] shadow-xl shadow-gray-200/40 border border-gray-100 p-6 flex flex-col gap-4 hover:border-orange-500/30 transition-all active:scale-95" :class="inventoryFilter === 'expiring' && tab === 'inventory' ? 'ring-2 ring-orange-500 border-transparent' : ''">
-            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-50 text-orange-600 text-2xl group-hover:scale-110 transition-transform">
+        <button type="button" @click="setInventoryFilter('expiring')" class="group text-left bg-white rounded-xl shadow-md shadow-gray-200/30 border border-gray-100 p-3 flex flex-col gap-2.5 hover:border-orange-500/30 transition-all active:scale-95" :class="inventoryFilter === 'expiring' && tab === 'inventory' ? 'ring-2 ring-orange-500 border-transparent' : ''">
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-orange-600 text-lg group-hover:scale-105 transition-transform">
                 <i class="bi bi-alarm"></i>
             </div>
             <div>
-                <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Expiring Soon</div>
-                <div class="text-3xl font-black text-orange-600 tracking-tight">{{ number_format($expiringSoonCount) }}</div>
+                <div class="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Expiring Soon</div>
+                <div class="text-xl font-black text-orange-600 tracking-tight">{{ number_format($expiringSoonCount) }}</div>
             </div>
         </button>
     </div>
 
     {{-- Main Content Tabs --}}
-    <div class="bg-white rounded-[3rem] shadow-xl shadow-gray-200/40 border border-gray-100 overflow-hidden min-h-[600px]">
+    <div class="bg-white rounded-[2rem] shadow-md shadow-gray-200/30 border border-gray-100 overflow-hidden min-h-[520px]">
         {{-- Tab Navigation --}}
         <div class="px-10 pt-8 border-b border-gray-100 bg-gray-50/30 flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6">
             <div class="flex flex-wrap gap-2">

@@ -12,13 +12,13 @@
         <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5">
             <div class="max-w-xl">
                 <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-lg bg-brand-50 text-brand-600 border border-brand-100 mb-2 sm:mb-3">
-                    <i class="bi bi-box-seam text-[8px]"></i>
-                    <span class="text-[8px] font-black uppercase tracking-tighter">Immunization Supply</span>
+                    <i class="bi bi-box-seam text-[9px]"></i>
+                    <span class="text-[9px] font-black uppercase tracking-tight">Immunization Supply</span>
                 </div>
-                <h1 class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight leading-tight mb-1 sm:mb-2">
+                <h1 class="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight leading-tight mb-1 sm:mb-2">
                     Vaccine <span class="text-brand-600 underline decoration-brand-200 decoration-2 underline-offset-2">Inventory</span>
                 </h1>
-                <p class="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed">
+                <p class="text-gray-500 font-medium text-sm sm:text-base leading-relaxed">
                     Monitor vaccine stock levels, manage lot numbers, and track expiration dates for immunization programs.
                 </p>
             </div>
@@ -41,13 +41,13 @@
     {{-- Action Bar --}}
     <div class="bg-white rounded-2xl shadow-md shadow-gray-200/25 border border-gray-100 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div class="flex items-center gap-2.5 text-gray-500">
-            <div class="w-7 h-7 rounded-lg bg-gray-50 flex items-center justify-center text-brand-500 text-xs">
+            <div class="w-7 h-7 rounded-lg bg-gray-50 flex items-center justify-center text-brand-500 text-sm">
                 <i class="bi bi-info-circle"></i>
             </div>
-            <span class="text-[9px] font-bold">Showing all registered vaccines and antigens</span>
+            <span class="text-xs sm:text-sm font-bold">Showing all registered vaccines and antigens</span>
         </div>
         <div class="flex items-center gap-1.5">
-            <span class="px-2.5 py-1 rounded-full bg-brand-50 text-brand-600 text-[8px] font-black uppercase tracking-tighter border border-brand-100">
+            <span class="px-2.5 py-1 rounded-full bg-brand-50 text-brand-600 text-[9px] sm:text-xs font-black uppercase tracking-wide border border-brand-100">
                 {{ $vaccines->count() }} Antigens
             </span>
         </div>
@@ -88,11 +88,11 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-gray-50/50">
-                        <th class="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Vaccine Details</th>
-                        <th class="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Stock Level</th>
-                        <th class="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Storage & Safety</th>
-                        <th class="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Batches</th>
-                        <th class="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Actions</th>
+                        <th class="px-8 py-6 text-sm font-black text-gray-400 uppercase tracking-[0.2em]">Vaccine Details</th>
+                        <th class="px-8 py-6 text-sm font-black text-gray-400 uppercase tracking-[0.2em]">Stock Level</th>
+                        <th class="px-8 py-6 text-sm font-black text-gray-400 uppercase tracking-[0.2em]">Storage & Safety</th>
+                        <th class="px-8 py-6 text-sm font-black text-gray-400 uppercase tracking-[0.2em]">Batches</th>
+                        <th class="px-8 py-6 text-sm font-black text-gray-400 uppercase tracking-[0.2em]">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">

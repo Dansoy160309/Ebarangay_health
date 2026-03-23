@@ -144,8 +144,8 @@
 
 <div class="flex flex-col gap-6 sm:gap-8 relative">
     {{-- Top-Aligned Compact Header --}}
-    <div class="relative z-10 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm overflow-hidden group">
-        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+    <div class="relative z-10 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-5 sm:p-8 border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="absolute top-0 right-0 w-56 h-56 bg-brand-50 rounded-full blur-3xl -mr-28 -mt-28 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
         
         <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8">
             <div class="max-w-xl">
@@ -203,10 +203,10 @@
             @endphp
 
             @foreach($stats as $stat)
-                <div class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
-                    <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-{{ $stat['color'] }}-50 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div class="bg-white rounded-[2rem] p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
+                    <div class="absolute -right-3 -bottom-3 w-20 h-20 bg-{{ $stat['color'] }}-50 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     
-                    <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center justify-between mb-4">
                         <div class="w-14 h-14 rounded-2xl bg-{{ $stat['color'] }}-50 text-{{ $stat['color'] }}-600 flex items-center justify-center text-2xl shadow-sm ring-1 ring-{{ $stat['color'] }}-100/50">
                             <i class="bi {{ $stat['icon'] }}"></i>
                         </div>

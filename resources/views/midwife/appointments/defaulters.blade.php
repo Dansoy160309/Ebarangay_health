@@ -17,7 +17,7 @@
                     Critical Follow-up Required
                 </span>
             </div>
-            <h1 class="text-3xl font-black text-gray-900 tracking-tight leading-tight">Defaulter Tracking</h1>
+            <h1 class="text-4xl font-black text-gray-900 tracking-tight leading-tight">Defaulter Tracking</h1
             <p class="text-gray-500 font-bold mt-1 text-sm flex items-center gap-2">
                 Monitoring patients who missed their <span class="text-gray-900">scheduled health services</span>
             </p>
@@ -102,7 +102,7 @@
     <!-- Filter Pills -->
     <div class="flex flex-wrap items-center gap-2 relative z-10">
         <a href="{{ route('midwife.appointments.defaulters', array_merge(request()->query(), ['service' => 'all'])) }}" 
-           class="px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-tighter transition-all {{ $serviceFilter === 'all' ? 'bg-gray-900 text-white shadow-lg' : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50' }}">
+           class="px-4 py-2 rounded-lg text-sm font-black uppercase tracking-tighter transition-all {{ $serviceFilter === 'all' ? 'bg-gray-900 text-white shadow-lg' : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50' }}">
             All Services
         </a>
         <a href="{{ route('midwife.appointments.defaulters', array_merge(request()->query(), ['service' => 'Immunization'])) }}" 
@@ -121,10 +121,10 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-gray-50/50 border-b border-gray-100">
-                        <th class="px-10 py-8 text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Patient Identity</th>
-                        <th class="px-10 py-8 text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Scheduled On</th>
-                        <th class="px-10 py-8 text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Health Service</th>
-                        <th class="px-10 py-8 text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Contact Actions</th>
+                        <th class="px-10 py-8 text-xs font-black text-gray-400 uppercase tracking-[0.3em]">Patient Identity</th>
+                        <th class="px-10 py-8 text-xs font-black text-gray-400 uppercase tracking-[0.3em]">Scheduled On</th>
+                        <th class="px-10 py-8 text-xs font-black text-gray-400 uppercase tracking-[0.3em]">Health Service</th>
+                        <th class="px-10 py-8 text-xs font-black text-gray-400 uppercase tracking-[0.3em]">Contact Actions</th>
                         <th class="px-10 py-8 text-right text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Management</th>
                     </tr>
                 </thead>
