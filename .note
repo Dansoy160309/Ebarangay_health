@@ -1,5 +1,5 @@
 ssh -p 65002 u174002700@145.79.25.197
-password:Avesdan!12
+password:Avesdan!123
 cd domains/ebarangayhealth.online/public_html
 git pull origin main
 
@@ -7,3 +7,4 @@ php artisan migrate --force
 php artisan config:clear
 php artisan cache:clear
 php artisan view:clear
+
