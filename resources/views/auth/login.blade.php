@@ -28,7 +28,7 @@
                     <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white shadow-inner border border-white/10">
                         <i class="bi bi-heart-pulse-fill text-2xl"></i>
                     </div>
-                    <span class="text-2xl font-bold tracking-wide drop-shadow-sm">E-BARANGAY</span>
+                    <span class="text-2xl font-bold tracking-wide drop-shadow-sm uppercase">E-Barangay Health</span>
                 </div>
 
                 <div class="space-y-6">

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\HealthWorker;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Patient;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Log;
@@ -20,6 +21,7 @@ class PatientController extends Controller
     public function index(Request $request)
     {
         $type = $request->query('type', 'all');
+        $search = $request->query('search');
 
         $query = Patient::with('guardian');
 
@@ -29,9 +31,19 @@ class PatientController extends Controller
             $query->whereNotNull('guardian_id');
         }
 
-        $patients = $query->latest()->paginate(10)->appends(['type' => $type]);
+        // Add search logic (Recommendation 3)
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                  ->orWhere('last_name', 'like', "%{$search}%")
+                  ->orWhere('family_no', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $patients = $query->latest()->paginate(10)->appends(['type' => $type, 'search' => $search]);
         
-        return view('healthworker.patients.index', compact('patients', 'type'));
+        return view('healthworker.patients.index', compact('patients', 'type', 'search'));
     }
 
     // 📄 View patient details
@@ -74,6 +86,7 @@ class PatientController extends Controller
                 'age' => $patient->age,
                 'gender' => $patient->gender,
                 'address' => $patient->address . ', ' . $patient->purok,
+                'family_no' => $patient->family_no,
                 'contact_no' => $patient->contact_no,
                 'dob' => $patient->dob ? $patient->dob->format('M d, Y') : 'N/A',
                 // Added Medical Background fields
@@ -113,6 +126,7 @@ class PatientController extends Controller
             'civil_status' => 'nullable|string|max:50',
             'address'      => 'required|string|max:255',
             'purok'        => 'required|string|max:255',
+            'family_no'    => 'nullable|string|max:100',
             'contact_no'   => 'required|string|max:20',
             'emergency_no' => 'nullable|string|max:20',
             'emergency_contact_name' => 'nullable|string|max:255',
@@ -140,6 +154,8 @@ class PatientController extends Controller
 
         $validated = $request->validate($rules);
 
+        $email = '';
+        $password = '';
         $generatedPassword = null;
         if ($request->boolean('no_account')) {
             $email = 'walkin_' . \Illuminate\Support\Str::slug($validated['last_name'], '_') . '_' . uniqid() . '@barangay.local';
@@ -151,6 +167,21 @@ class PatientController extends Controller
             $password = Hash::make($generatedPassword);
         }
 
+        // Logic for Family Number: Recommendation 1 & 2
+        $familyNo = $validated['family_no'] ?? null;
+        
+        // If it's a dependent, inherit from guardian (Recommendation 1)
+        if ($request->filled('guardian_id')) {
+            $guardian = User::find($request->guardian_id);
+            if ($guardian) {
+                $familyNo = $guardian->family_no;
+            }
+        } 
+        // If it's a primary account and no family_no provided, auto-generate (Recommendation 2)
+        elseif (!$familyNo) {
+            $familyNo = User::generateFamilyNumber();
+        }
+
         $patient = Patient::create([
             'first_name'           => $validated['first_name'],
             'middle_name'          => $validated['middle_name'] ?? null,
@@ -159,12 +190,15 @@ class PatientController extends Controller
             'gender'               => $validated['gender'],
             'address'              => $validated['address'],
             'purok'                => $validated['purok'],
+            'family_no'            => $familyNo,
             'contact_no'           => $validated['contact_no'],
             'emergency_no'         => $validated['emergency_no'] ?? null,
             'email'                => $email,
             'password'             => $password,
             'status'               => true,
             'must_change_password' => !$request->boolean('no_account'),
+            'guardian_id'          => $request->guardian_id ?? null,
+            'relationship'         => $request->relationship ?? null,
         ]);
 
         $profile = $patient->patientProfile()->create([
@@ -195,6 +229,7 @@ class PatientController extends Controller
                     'email' => $patient->email,
                     'dob' => $patient->dob->format('Y-m-d'),
                     'gender' => $patient->gender,
+                    'family_no' => $patient->family_no,
                     'contact_no' => $patient->contact_no,
                     'allergies' => $profile->allergies,
                 ]
@@ -253,6 +288,7 @@ class PatientController extends Controller
             'civil_status' => 'nullable|string|max:50',
             'address'      => 'required|string|max:255',
             'purok'        => 'required|string|max:255',
+            'family_no'    => 'nullable|string|max:100',
             'contact_no'   => 'required|string|max:20',
             'emergency_no' => 'nullable|string|max:20',
             'emergency_contact_name' => 'nullable|string|max:255',
@@ -280,10 +316,17 @@ class PatientController extends Controller
             'gender' => $validated['gender'],
             'address' => $validated['address'],
             'purok' => $validated['purok'],
+            'family_no' => $validated['family_no'] ?? null,
             'contact_no' => $validated['contact_no'],
             'emergency_no' => $validated['emergency_no'] ?? null,
             'email' => $validated['email'],
         ]);
+
+        // If family_no changed, update all dependents (Recommendation 3)
+        if ($patient->isDirty('family_no')) {
+            User::where('guardian_id', $patient->id)->update(['family_no' => $patient->family_no]);
+        }
+
         $patient->status = $request->boolean('status', true);
 
         if ($request->filled('password')) {

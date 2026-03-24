@@ -183,6 +183,13 @@
             <i class="bi bi-person-check-fill mr-3 text-xl"></i> 
             <span>Doctor Presence</span>
         </a>
+
+        <a href="{{ route('midwife.referral-slips.index') }}"
+           @click="sidebarOpen = false"
+           class="{{ getLinkClasses(request()->routeIs('midwife.referral-slips.*')) }}">
+            <i class="bi bi-file-earmark-medical-fill mr-3 text-xl"></i> 
+            <span>Referral Slips</span>
+        </a>
     @endif
 
     @if($role === 'doctor')

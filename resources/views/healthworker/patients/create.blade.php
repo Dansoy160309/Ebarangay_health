@@ -169,6 +169,12 @@
                     </div>
 
                     <div class="space-y-3">
+                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Family Number <span class="text-gray-300">(Optional)</span></label>
+                        <input type="text" name="family_no" value="{{ old('family_no') }}"
+                               class="block w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 shadow-inner transition-all">
+                    </div>
+
+                    <div class="space-y-3">
                         <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Primary Contact Number</label>
                         <input type="text" name="contact_no" value="{{ old('contact_no') }}"
                                class="block w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 shadow-inner transition-all" required>

@@ -44,6 +44,7 @@
                     civil_status: '',
                     address: '',
                     purok: '',
+                    family_no: '',
                     contact_no: '',
                     allergies: '',
                     medical_history: '',
@@ -96,7 +97,21 @@
                             this.selectPatient(patient);
                             this.showModal = false;
                             // Reset form
-                            this.newPatient = { first_name: '', last_name: '', dob: '', gender: '', address: '', purok: '', contact_no: '', allergies: '', medical_history: '' };
+                            this.newPatient = { 
+                                first_name: '', 
+                                middle_name: '',
+                                last_name: '', 
+                                dob: '', 
+                                gender: '', 
+                                civil_status: '',
+                                address: '', 
+                                purok: '', 
+                                family_no: '',
+                                contact_no: '', 
+                                allergies: '', 
+                                medical_history: '',
+                                current_medications: '' 
+                            };
                         }
             } catch (error) {
                 alert(error.response?.data?.message || 'Error creating patient. Please check all fields.');
@@ -471,6 +486,11 @@
                             <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Purok</label>
                             <input type="text" x-model="newPatient.purok" required
                                    class="block w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-4 focus:ring-brand-50 focus:bg-white text-sm font-bold text-gray-900 shadow-inner transition-all">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Family Number <span class="text-gray-400 font-normal normal-case">(Optional)</span></label>
+                            <input type="text" x-model="newPatient.family_no"
+                                   class="block w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-4 focus:ring-brand-50 focus:bg-white text-sm font-bold text-gray-900 shadow-inner transition-all" placeholder="E.g. FAM-2026-0001">
                         </div>
                         <div class="space-y-2">
                             <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Contact Number</label>

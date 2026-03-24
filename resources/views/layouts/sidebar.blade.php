@@ -8,7 +8,7 @@
             <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm">
                 <i class="bi bi-heart-pulse-fill"></i>
             </span>
-            <span class="tracking-wide">E-Barangay</span>
+            <span class="tracking-wide">E-Barangay Health</span>
         </a>
     </div>
 
@@ -52,7 +52,7 @@
             <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm">
                 <i class="bi bi-heart-pulse-fill"></i>
             </span>
-            <span class="tracking-wide">E-Barangay</span>
+            <span class="tracking-wide">E-Barangay Health</span>
         </a>
         <button @click="sidebarOpen = false" class="p-2 text-white hover:bg-white/10 rounded-lg transition focus:outline-none">
             <i class="bi bi-x-lg text-xl"></i>

@@ -28,6 +28,7 @@ class User extends Authenticatable
         'gender',
         'address',
         'purok',
+        'family_no',
         'contact_no',
         'emergency_no',
         'email',
@@ -98,6 +99,26 @@ class User extends Authenticatable
     public function getPatientCodeAttribute()
     {
         return 'P-' . str_pad($this->id, 5, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Auto-generate a unique Family Number
+     */
+    public static function generateFamilyNumber()
+    {
+        $prefix = 'FAM-' . date('Y') . '-';
+        $lastFamily = self::where('family_no', 'like', $prefix . '%')
+            ->orderBy('family_no', 'desc')
+            ->first();
+
+        if ($lastFamily) {
+            $lastNumber = intval(substr($lastFamily->family_no, -4));
+            $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+        } else {
+            $newNumber = '0001';
+        }
+
+        return $prefix . $newNumber;
     }
 
     /**

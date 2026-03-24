@@ -256,6 +256,15 @@
                                        class="block w-full px-5 py-3.5 border-2 border-gray-50 rounded-2xl bg-gray-50/50 focus:outline-none focus:bg-white focus:ring-4 focus:ring-indigo-50 focus:border-indigo-500 transition-all duration-300 font-bold text-sm">
                             </div>
 
+                            {{-- Family Number --}}
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                                    <i class="bi bi-hash text-indigo-400"></i> Family Number <span class="text-gray-400 font-normal">(Optional)</span>
+                                </label>
+                                <input type="text" name="family_no" value="{{ old('family_no', $patient->family_no) }}"
+                                       class="block w-full px-5 py-3.5 border-2 border-gray-50 rounded-2xl bg-gray-50/50 placeholder-gray-300 focus:outline-none focus:bg-white focus:ring-4 focus:ring-indigo-50 focus:border-indigo-500 transition-all duration-300 font-bold text-sm">
+                            </div>
+
                             {{-- Contact Number --}}
                             <div class="space-y-2">
                                 <label class="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">

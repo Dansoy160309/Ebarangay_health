@@ -11,13 +11,24 @@ use App\Http\Controllers\HealthWorker\{
 use App\Http\Controllers\Midwife\{
     MedicineDistributionController,
     DefaulterController,
-    VaccineInventoryController
+    VaccineInventoryController,
+    ReferralSlipController
 };
 
 Route::prefix('midwife')
     ->name('midwife.')
     ->middleware(['auth', 'role:midwife'])
     ->group(function () {
+
+        // Referral Slips
+        Route::prefix('referral-slips')->name('referral-slips.')->group(function () {
+            Route::get('/', [ReferralSlipController::class, 'index'])->name('index');
+            Route::get('create', [ReferralSlipController::class, 'create'])->name('create');
+            Route::post('/', [ReferralSlipController::class, 'store'])->name('store');
+            Route::get('{referralSlip}', [ReferralSlipController::class, 'show'])->name('show');
+            Route::get('{referralSlip}/print', [ReferralSlipController::class, 'print'])->name('print');
+            Route::delete('{referralSlip}', [ReferralSlipController::class, 'destroy'])->name('destroy');
+        });
 
         // Profile (reuses health worker profile layout)
         Route::get('profile', function () {

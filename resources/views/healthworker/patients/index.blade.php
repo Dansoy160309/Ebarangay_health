@@ -54,13 +54,14 @@
             </div>
 
             {{-- Search Input --}}
-            <div class="relative w-full lg:max-w-md group">
+            <form action="{{ route('midwife.patients.index') }}" method="GET" class="relative w-full lg:max-w-md group">
+                <input type="hidden" name="type" value="{{ $type }}">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
                     <i class="bi bi-search text-[10px]"></i>
                 </div>
-                <input type="text" id="searchInput" placeholder="Search by name, email, or contact..."
+                <input type="text" name="search" value="{{ $search }}" placeholder="Search by name, email, or family no..."
                     class="w-full pl-9 pr-3 py-2.5 bg-gray-50 border-none rounded-lg focus:ring-3 focus:ring-brand-500/10 focus:bg-white transition-all text-sm font-bold text-gray-700 placeholder-gray-400 shadow-inner">
-            </div>
+            </form>
         </div>
     </div>
 
@@ -79,6 +80,7 @@
                         <div class="flex items-center gap-2 text-xs text-gray-500 font-bold uppercase tracking-wider mt-1">
                              <span class="bg-gray-100 px-2 py-0.5 rounded-lg">{{ $patient->age }} yrs</span>
                              <span class="bg-gray-100 px-2 py-0.5 rounded-lg">{{ $patient->gender }}</span>
+                             <span class="bg-brand-50 text-brand-600 px-2 py-0.5 rounded-lg">{{ $patient->family_no ?? 'No Family No.' }}</span>
                         </div>
                     </div>
                     <div class="shrink-0">
@@ -186,6 +188,12 @@
                                         </div>
                                         <div class="text-xs text-gray-500 mt-1 font-medium">
                                             {{ $patient->gender }} • {{ $patient->age }} yrs
+                                            @if($patient->family_no)
+                                                <span class="text-gray-300 mx-1">|</span>
+                                                <span class="text-brand-600 font-bold uppercase tracking-widest text-[10px]">
+                                                    <i class="bi bi-hash"></i> {{ $patient->family_no }}
+                                                </span>
+                                            @endif
                                             @if($patient->isDependent() && $patient->guardian)
                                                 <span class="text-gray-300 mx-1">|</span>
                                                 <span class="text-brand-600 font-bold">
@@ -275,26 +283,7 @@
     </div>
 </div>
 
-{{-- Live Search Script --}}
-<script>
-document.getElementById('searchInput').addEventListener('keyup', function () {
-    const filter = this.value.toLowerCase();
-    
-    // Search in Desktop Table
-    const tableRows = document.querySelectorAll('#patientsTable tr');
-    tableRows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        row.style.display = text.includes(filter) ? '' : 'none';
-    });
-
-    // Search in Mobile Cards
-    const mobileCards = document.querySelectorAll('.lg\\:hidden > div[class*="bg-white"]');
-    mobileCards.forEach(card => {
-        const text = card.textContent.toLowerCase();
-        card.style.display = text.includes(filter) ? '' : 'none';
-    });
-});
-</script>
+{{-- No live search needed, using server-side search --}}
 @endsection
 
 @push('modals')
