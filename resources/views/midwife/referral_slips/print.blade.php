@@ -177,9 +177,9 @@
 
     <div class="container">
         <div class="header">
-            {{-- Placeholder for Barangay Logo --}}
+            {{-- Barangay Logo --}}
             <div class="logo">
-                <img src="/logo.png" alt="" style="width: 100%; height: auto; display: block;">
+                <img src="{{ asset('assets/images/LOGO (2).png') }}" alt="Logo" style="width: 100%; height: auto; display: block;">
             </div>
             <h1>E-Barangay Health</h1>
             <h2>Carajay, Lapu-Lapu City / Tel. No. 341-3681</h2>

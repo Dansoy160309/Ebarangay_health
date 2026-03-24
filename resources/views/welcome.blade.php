@@ -169,7 +169,7 @@
                     
                     {{-- Main Image Container --}}
                     <div class="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-4 border-white transform rotate-2 hover:rotate-0 transition-all duration-500">
-                        <img src="{{ asset('assets/images/hero-doctor.jpg') }}" alt="Doctor" class="w-full h-auto object-cover">
+                        <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=2070&auto=format&fit=crop" alt="Doctor" class="w-full h-auto object-cover">
                     </div>
 
                     {{-- Floating Card 1: Active Patients --}}
