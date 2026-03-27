@@ -28,7 +28,7 @@ class AnnouncementController extends Controller
             'title' => 'required|string|max:255',
             'message' => 'required|string',
             'status' => 'required|in:active,archived',
-            'expires_at' => 'nullable|date',
+            'expires_at' => 'nullable|date|after_or_equal:today',
         ]);
 
         $announcement = Announcement::create([
@@ -42,6 +42,7 @@ class AnnouncementController extends Controller
 
         if ($announcement->status === 'active') {
             User::where('status', true)
+                ->where('id', '!=', auth()->id())
                 ->chunkById(100, function ($users) use ($announcement) {
                     foreach ($users as $user) {
                         $user->notify(new NewAnnouncementNotification($announcement));

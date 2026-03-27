@@ -28,23 +28,7 @@
         </div>
     </div>
 
-    {{-- Session Alerts --}}
-    @if(session('success'))
-        <div x-data="{ show: true }" x-show="show" x-transition class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-xl flex items-start justify-between shadow-sm">
-            <div class="flex items-center gap-3">
-                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center">
-                    <i class="bi bi-check-lg text-lg"></i>
-                </div>
-                <div>
-                    <h3 class="text-green-800 font-bold">Success</h3>
-                    <p class="text-green-700 text-sm">{{ session('success') }}</p>
-                </div>
-            </div>
-            <button @click="show = false" class="text-green-500 hover:text-green-700 transition rounded-lg p-1 hover:bg-green-100">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-    @endif
+    {{-- Session alerts are handled globally in the app layout --}}
 
     {{-- Content Grid --}}
     @if($announcements->count())
@@ -102,6 +86,15 @@
                                 title="Edit Announcement">
                                 <i class="bi bi-pencil-fill text-sm"></i>
                              </a>
+                             <form action="{{ route('admin.announcements.destroy', $announcement->id) }}" method="POST" onsubmit="return confirm('Delete this announcement? This action cannot be undone.')" class="inline">
+                                 @csrf
+                                 @method('DELETE')
+                                 <button type="submit" 
+                                         class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-white hover:shadow-sm border border-transparent hover:border-red-200 transition-all"
+                                         title="Delete Announcement">
+                                     <i class="bi bi-trash-fill text-sm"></i>
+                                 </button>
+                             </form>
                         </div>
                     </div>
                 </article>

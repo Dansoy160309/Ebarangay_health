@@ -34,6 +34,15 @@
             </div>
         @endif
 
+        @if(session('debug_reset_link'))
+            <div class="mb-8 bg-blue-50 border-l-4 border-blue-500 text-blue-700 px-6 py-4 rounded-r-lg shadow-sm">
+                <p class="font-black text-xs uppercase tracking-widest mb-2">Reset Link (Debug)</p>
+                <a href="{{ session('debug_reset_link') }}" class="break-all font-bold text-sm text-blue-700 hover:text-blue-900 underline">
+                    {{ session('debug_reset_link') }}
+                </a>
+            </div>
+        @endif
+
         <form method="POST" action="{{ route('password.forgot.submit') }}" class="space-y-8">
             @csrf
 

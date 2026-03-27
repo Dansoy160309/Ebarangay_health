@@ -1,9 +1,97 @@
 @props(['slotModel' => null, 'action', 'method' => 'POST', 'buttonText', 'doctors' => [], 'services' => [], 'availabilities' => []])
 
-<form action="{{ $action }}" method="POST" class="p-10 lg:p-14 space-y-12" id="slot-form" x-data="{ 
+<form action="{{ $action }}" method="POST" class="p-6 sm:p-8 lg:p-10 space-y-10" id="slot-form" x-data="{ 
     selectedDoctor: '{{ old('doctor_id', $slotModel->doctor_id ?? '') }}',
     selectedDate: '{{ old('date', isset($slotModel) ? $slotModel->date->format('Y-m-d') : '') }}',
-    availabilities: {{ Js::from($availabilities) }}
+    availabilities: {{ Js::from($availabilities) }},
+    calendarMonth: new Date().getMonth(),
+    calendarYear: new Date().getFullYear(),
+    calendarDays: [],
+    init() {
+        this.buildCalendar();
+        this.$watch('calendarMonth', () => this.buildCalendar());
+        this.$watch('calendarYear', () => this.buildCalendar());
+        this.$watch('selectedDoctor', () => this.buildCalendar());
+    },
+    monthLabel() {
+        return new Date(this.calendarYear, this.calendarMonth, 1).toLocaleString('en-US', { month: 'long' });
+    },
+    prevMonth() {
+        if (this.calendarMonth === 0) {
+            this.calendarMonth = 11;
+            this.calendarYear--;
+            return;
+        }
+        this.calendarMonth--;
+    },
+    nextMonth() {
+        if (this.calendarMonth === 11) {
+            this.calendarMonth = 0;
+            this.calendarYear++;
+            return;
+        }
+        this.calendarMonth++;
+    },
+    goToday() {
+        const d = new Date();
+        this.calendarMonth = d.getMonth();
+        this.calendarYear = d.getFullYear();
+    },
+    buildCalendar() {
+        const first = new Date(this.calendarYear, this.calendarMonth, 1);
+        const firstDow = first.getDay();
+        const daysInMonth = new Date(this.calendarYear, this.calendarMonth + 1, 0).getDate();
+        const out = [];
+        for (let i = 0; i < firstDow; i++) out.push({ day: '', dateStr: '' });
+        for (let day = 1; day <= daysInMonth; day++) {
+            const mm = String(this.calendarMonth + 1).padStart(2, '0');
+            const dd = String(day).padStart(2, '0');
+            const dateStr = `${this.calendarYear}-${mm}-${dd}`;
+            out.push({ day, dateStr });
+        }
+        this.calendarDays = out;
+    },
+    isAvailableDate(dateStr) {
+        if (!dateStr || !this.selectedDoctor) return false;
+        const d = new Date(dateStr);
+        const weekday = d.getDay();
+        return (this.availabilities || []).some(a => {
+            if (String(a.doctor_id) !== String(this.selectedDoctor)) return false;
+            if (a.is_recurring) return Number(a.recurring_day) === weekday;
+            if (!a.date) return false;
+            return String(a.date).substring(0, 10) === dateStr;
+        });
+    },
+    windowsForDate(dateStr) {
+        if (!dateStr || !this.selectedDoctor) return [];
+        const d = new Date(dateStr);
+        const weekday = d.getDay();
+        const list = (this.availabilities || []).filter(a => String(a.doctor_id) === String(this.selectedDoctor));
+        const match = list.filter(a => {
+            if (a.is_recurring) return Number(a.recurring_day) === weekday;
+            if (!a.date) return false;
+            return String(a.date).substring(0, 10) === dateStr;
+        });
+        return match.map((a, idx) => ({
+            key: `${dateStr}-${idx}`,
+            start: a.start_time,
+            end: a.end_time
+        }));
+    },
+    formatTime(t) {
+        if (!t) return '';
+        const time = String(t).length === 5 ? `${t}:00` : String(t);
+        return new Date(`1970-01-01T${time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    },
+    providerRole() {
+        const sel = document.getElementById('doctor-select');
+        const opt = sel && sel.selectedOptions ? sel.selectedOptions[0] : null;
+        return opt ? (opt.getAttribute('data-role') || '') : '';
+    },
+    selectCalendarDate(dateStr) {
+        if (!dateStr) return;
+        this.selectedDate = dateStr;
+    }
 }">
     @csrf
     @if($method !== 'POST')
@@ -73,7 +161,7 @@
                     <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest ml-4" id="doctor-help-text">Select a doctor if required by the service</p>
 
                     {{-- Doctor Schedule Summary (Visible when doctor is selected) --}}
-                    <div x-show="selectedDoctor" class="mt-6 space-y-4 animate-in fade-in slide-in-from-top-2 duration-500">
+                    <div x-show="selectedDoctor && providerRole() === 'doctor'" class="mt-6 space-y-4 animate-in fade-in slide-in-from-top-2 duration-500">
                         <div class="px-6 py-5 rounded-[2rem] bg-white border border-gray-100 shadow-sm">
                             <div class="flex items-center gap-3 mb-4">
                                 <div class="w-8 h-8 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center">
@@ -83,33 +171,72 @@
                             </div>
 
                             <div class="space-y-3">
-                                {{-- Recurring Schedule --}}
-                                <div class="flex flex-wrap gap-2">
-                                    <template x-for="day in [0,1,2,3,4,5,6]">
-                                        <div class="px-3 py-1.5 rounded-xl border text-[9px] font-black uppercase tracking-tighter transition-all"
-                                             :class="availabilities.some(a => a.doctor_id == selectedDoctor && a.is_recurring && a.recurring_day == day) 
-                                                ? 'bg-brand-500 text-white border-brand-500 shadow-md shadow-brand-200' 
-                                                : 'bg-gray-50 text-gray-300 border-gray-100 opacity-50'">
-                                            <span x-text="['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][day]"></span>
-                                        </div>
-                                    </template>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[10px] font-black text-gray-900 uppercase tracking-widest" x-text="`${monthLabel()} ${calendarYear}`"></span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <button type="button" @click="prevMonth()" class="w-8 h-8 rounded-xl bg-gray-50 text-gray-500 hover:bg-gray-100 transition flex items-center justify-center">
+                                            <i class="bi bi-chevron-left text-[10px]"></i>
+                                        </button>
+                                        <button type="button" @click="goToday()" class="px-3 h-8 rounded-xl bg-gray-50 text-gray-600 hover:bg-gray-100 transition text-[9px] font-black uppercase tracking-widest">
+                                            Today
+                                        </button>
+                                        <button type="button" @click="nextMonth()" class="w-8 h-8 rounded-xl bg-gray-50 text-gray-500 hover:bg-gray-100 transition flex items-center justify-center">
+                                            <i class="bi bi-chevron-right text-[10px]"></i>
+                                        </button>
+                                    </div>
                                 </div>
 
-                                {{-- Schedule Details --}}
+                                <div class="mt-3">
+                                    <div class="grid grid-cols-7 gap-1 mb-1">
+                                        <template x-for="(d, i) in ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']" :key="i">
+                                            <div class="text-center text-[8px] font-black uppercase tracking-widest"
+                                                 :class="i === 0 ? 'text-red-400' : 'text-gray-300'" x-text="d"></div>
+                                        </template>
+                                    </div>
+                                    <div class="grid grid-cols-7 gap-1">
+                                        <template x-for="(dayObj, idx) in calendarDays" :key="idx">
+                                            <button type="button"
+                                                class="aspect-square rounded-xl flex items-center justify-center relative transition border border-transparent"
+                                                :disabled="!dayObj.dateStr"
+                                                @click="selectCalendarDate(dayObj.dateStr)"
+                                                :class="{
+                                                    'opacity-0 pointer-events-none': !dayObj.dateStr,
+                                                    'bg-brand-50 border-brand-100': dayObj.dateStr && isAvailableDate(dayObj.dateStr),
+                                                    'bg-white hover:bg-gray-50 border-gray-50': dayObj.dateStr && !isAvailableDate(dayObj.dateStr),
+                                                    'ring-4 ring-brand-500/20 border-brand-500': dayObj.dateStr && selectedDate && dayObj.dateStr === selectedDate
+                                                }">
+                                                <span class="text-[10px] font-black"
+                                                      :class="{
+                                                          'text-brand-700': dayObj.dateStr && isAvailableDate(dayObj.dateStr),
+                                                          'text-red-500': dayObj.dateStr && new Date(dayObj.dateStr).getDay() === 0 && !isAvailableDate(dayObj.dateStr),
+                                                          'text-gray-700': dayObj.dateStr && new Date(dayObj.dateStr).getDay() !== 0 && !isAvailableDate(dayObj.dateStr)
+                                                      }"
+                                                      x-text="dayObj.day"></span>
+                                                <template x-if="dayObj.dateStr && isAvailableDate(dayObj.dateStr)">
+                                                    <div class="absolute bottom-1 w-1 h-1 rounded-full bg-brand-500"></div>
+                                                </template>
+                                            </button>
+                                        </template>
+                                    </div>
+                                </div>
+
                                 <div class="mt-4 pt-4 border-t border-gray-50 space-y-2">
-                                    <template x-for="a in availabilities.filter(a => a.doctor_id == selectedDoctor && a.is_recurring)">
+                                    <div class="flex items-center justify-between text-[10px]">
+                                        <span class="font-black text-gray-700 uppercase" x-text="selectedDate ? new Date(selectedDate).toLocaleDateString([], {month: 'short', day: 'numeric', year: 'numeric'}) : 'Select a date'"></span>
+                                        <span class="font-bold" :class="selectedDate && isAvailableDate(selectedDate) ? 'text-emerald-600' : 'text-gray-400'" x-text="selectedDate ? (isAvailableDate(selectedDate) ? 'Available' : 'No duty') : ''"></span>
+                                    </div>
+
+                                    <template x-for="w in windowsForDate(selectedDate)" :key="w.key">
                                         <div class="flex items-center justify-between text-[10px]">
-                                            <span class="font-black text-brand-600 uppercase" x-text="`Every ${['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][a.recurring_day]}`"></span>
-                                            <span class="font-bold text-gray-500" x-text="`${new Date('1970-01-01T' + a.start_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - ${new Date('1970-01-01T' + a.end_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`"></span>
+                                            <span class="font-black text-brand-600 uppercase tracking-tighter">On Duty</span>
+                                            <span class="font-bold text-gray-500" x-text="`${formatTime(w.start)} - ${formatTime(w.end)}`"></span>
                                         </div>
                                     </template>
-                                    
-                                    {{-- Upcoming One-time dates --}}
-                                    <template x-for="a in availabilities.filter(a => a.doctor_id == selectedDoctor && !a.is_recurring && new Date(a.date) >= new Date().setHours(0,0,0,0)).slice(0, 3)">
-                                        <div class="flex items-center justify-between text-[10px]">
-                                            <span class="font-black text-blue-600 uppercase" x-text="new Date(a.date).toLocaleDateString([], {month: 'short', day: 'numeric', year: 'numeric'})"></span>
-                                            <span class="font-bold text-gray-500" x-text="`${new Date('1970-01-01T' + a.start_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - ${new Date('1970-01-01T' + a.end_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`"></span>
-                                        </div>
+
+                                    <template x-if="selectedDate && windowsForDate(selectedDate).length === 0">
+                                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">No schedule for this date</p>
                                     </template>
                                 </div>
                             </div>
@@ -148,9 +275,8 @@
                             </template>
                         </div>
                     </div>
-
                     {{-- Guidance Message --}}
-                    <div x-show="!selectedDoctor" class="mt-4 px-6 py-3 rounded-xl border border-blue-50 bg-blue-50/30 flex items-center gap-3 text-blue-400">
+                    <div x-show="providerRole() === 'doctor' && !selectedDoctor" class="mt-4 px-6 py-3 rounded-xl border border-blue-50 bg-blue-50/30 flex items-center gap-3 text-blue-400">
                         <i class="bi bi-info-circle"></i>
                         <p class="text-[9px] font-bold uppercase tracking-widest">Select a doctor to view their weekly clinical schedule</p>
                     </div>
@@ -179,7 +305,7 @@
                         <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
                             <i class="bi bi-calendar-event text-xl"></i>
                         </div>
-                        <input type="date" name="date" id="date" value="{{ old('date', isset($slotModel) ? $slotModel->date->format('Y-m-d') : '') }}" required x-model="selectedDate"
+                        <input type="date" name="date" id="date" min="{{ now()->toDateString() }}" value="{{ old('date', isset($slotModel) ? $slotModel->date->format('Y-m-d') : '') }}" required x-model="selectedDate"
                             class="block w-full pl-16 pr-6 py-5 bg-gray-50 border-none rounded-[2rem] focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 shadow-inner transition-all">
                     </div>
                 </div>

@@ -52,7 +52,7 @@
 
         {{-- Pending Consultations --}}
         <div class="bg-white rounded-lg sm:rounded-lg shadow-sm border border-gray-100 p-4 sm:p-5 relative overflow-hidden group hover:shadow-md transition">
-            <p class="text-[8px] sm:text-[9px] font-black text-orange-600 uppercase tracking-tighter relative z-10 mb-0.5">Pending</p>
+            <p class="text-xs sm:text-sm font-black text-orange-600 uppercase tracking-tighter relative z-10 mb-0.5">Pending</p>
             <p class="text-xl sm:text-2xl font-black text-gray-900 relative z-10">{{ $pendingConsultations }}</p>
             <div class="absolute right-0 top-0 p-3 opacity-5 group-hover:opacity-10 transition">
                 <i class="bi bi-clipboard-pulse text-4xl text-orange-500"></i>
@@ -61,7 +61,7 @@
 
         {{-- Total Patients --}}
         <div class="bg-white rounded-lg sm:rounded-lg shadow-sm border border-gray-100 p-4 sm:p-5 relative overflow-hidden group hover:shadow-md transition">
-            <p class="text-[8px] sm:text-[9px] font-black text-green-600 uppercase tracking-tighter relative z-10 mb-0.5">Patients</p>
+            <p class="text-xs sm:text-sm font-black text-green-600 uppercase tracking-tighter relative z-10 mb-0.5">Patients</p>
             <p class="text-xl sm:text-2xl font-black text-gray-900 relative z-10">{{ $totalPatients }}</p>
             <div class="absolute right-0 top-0 p-3 opacity-5 group-hover:opacity-10 transition">
                 <i class="bi bi-people-fill text-4xl text-green-600"></i>

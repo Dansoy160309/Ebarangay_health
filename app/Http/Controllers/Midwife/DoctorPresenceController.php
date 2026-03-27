@@ -70,10 +70,11 @@ class DoctorPresenceController extends Controller
             ]);
         }
 
-        // Notify patients scheduled for today with this doctor
-        $this->notifyPatients($availability, new DoctorArrivalNotification($availability));
+        $availability->loadMissing('doctor');
+        $notifiedCount = $this->notifyPatients($availability, new DoctorArrivalNotification($availability));
+        $doctorName = $availability->doctor?->full_name ?? 'Doctor';
 
-        return back()->with('success', "Dr. {$availability->doctor->full_name} marked as arrived. Notifications sent to scheduled patients.");
+        return back()->with('success', "Dr. {$doctorName} marked as arrived. {$notifiedCount} patient(s) notified.");
     }
 
     public function markAbsent(DoctorAvailability $availability)
@@ -97,10 +98,11 @@ class DoctorPresenceController extends Controller
             $availability->update(['status' => 'absent']);
         }
 
-        // Notify patients scheduled for today with this doctor
-        $this->notifyPatients($availability, new DoctorAbsenceNotification($availability));
+        $availability->loadMissing('doctor');
+        $notifiedCount = $this->notifyPatients($availability, new DoctorAbsenceNotification($availability));
+        $doctorName = $availability->doctor?->full_name ?? 'Doctor';
 
-        return back()->with('warning', "Dr. {$availability->doctor->full_name} marked as absent. Absence notifications sent to scheduled patients.");
+        return back()->with('warning', "Dr. {$doctorName} marked as absent. {$notifiedCount} patient(s) notified.");
     }
 
     public function markDelayed(DoctorAvailability $availability, Request $request)
@@ -130,22 +132,34 @@ class DoctorPresenceController extends Controller
         return back()->with('info', "Dr. {$availability->doctor->full_name} marked as delayed.");
     }
 
-    protected function notifyPatients(DoctorAvailability $availability, $notification)
+    protected function notifyPatients(DoctorAvailability $availability, $notification): int
     {
-        // Find all patients with appointments today in slots linked to this doctor
-        // We need to check appointments where the slot has this doctor_id and date
-        $patients = \App\Models\User::whereHas('appointments', function($q) use ($availability) {
-            $q->whereHas('slot', function($sq) use ($availability) {
-                $sq->where('doctor_id', $availability->doctor_id)
-                   ->where('date', $availability->date->toDateString());
-            });
-        })->get();
+        $date = $availability->date->toDateString();
 
-        if ($patients->isNotEmpty()) {
-            Notification::send($patients, $notification);
-            
-            // Logic for SMS sending would go here if PhilSMS is integrated
-            // foreach($patients as $patient) { ... }
+        $appointments = Appointment::query()
+            ->whereHas('slot', function ($q) use ($availability, $date) {
+                $q->where('doctor_id', $availability->doctor_id)
+                    ->whereDate('date', $date);
+            })
+            ->whereNotIn('status', ['cancelled', 'rejected', 'archived', 'completed', 'no_show'])
+            ->get(['user_id', 'booked_by']);
+
+        $recipientIds = $appointments
+            ->pluck('user_id')
+            ->merge($appointments->pluck('booked_by')->filter())
+            ->unique()
+            ->values();
+
+        if ($recipientIds->isEmpty()) {
+            return 0;
         }
+
+        $recipients = \App\Models\User::whereIn('id', $recipientIds)->get();
+        if ($recipients->isEmpty()) {
+            return 0;
+        }
+
+        Notification::send($recipients, $notification);
+        return $recipients->count();
     }
 }

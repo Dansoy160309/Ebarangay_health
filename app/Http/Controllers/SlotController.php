@@ -10,6 +10,8 @@ use Carbon\Carbon;
 use Illuminate\Validation\ValidationException;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\ImmunizationSlotAvailable;
 
 class SlotController extends Controller
 {
@@ -85,8 +87,26 @@ class SlotController extends Controller
     {
         $this->authorizeMidwife();
         $doctors = User::whereIn('role', ['doctor', 'midwife'])->get();
-        $availabilities = \App\Models\DoctorAvailability::whereIn('status', ['scheduled', 'arrived', 'delayed'])
-            ->get();
+        $availabilities = \App\Models\DoctorAvailability::query()
+            ->whereIn('status', ['scheduled', 'arrived', 'delayed'])
+            ->where(function ($q) {
+                $q->where('is_recurring', true)
+                    ->orWhereDate('date', '>=', today());
+            })
+            ->get()
+            ->map(function ($a) {
+                return [
+                    'id' => $a->id,
+                    'doctor_id' => $a->doctor_id,
+                    'date' => $a->date ? $a->date->format('Y-m-d') : null,
+                    'start_time' => $a->start_time ? Carbon::parse($a->start_time)->format('H:i') : null,
+                    'end_time' => $a->end_time ? Carbon::parse($a->end_time)->format('H:i') : null,
+                    'is_recurring' => (bool) $a->is_recurring,
+                    'recurring_day' => $a->recurring_day,
+                    'status' => $a->status,
+                ];
+            })
+            ->values();
 
         return view('slots.create', [
             'services' => $this->getServices(),
@@ -105,12 +125,18 @@ class SlotController extends Controller
         $validated = $request->validate([
             'service' => 'required|string|max:255|exists:services,name',
             'doctor_id' => 'nullable|exists:users,id',
-            'date' => 'required|date',
+            'date' => 'required|date|after_or_equal:today',
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'nullable|date_format:H:i|after:start_time',
             'capacity' => 'required|integer|min:1',
             'is_active' => 'sometimes|boolean',
         ]);
+
+        if (Slot::whereDate('date', $validated['date'])->exists()) {
+            throw ValidationException::withMessages([
+                'date' => 'A slot already exists for this date. Only one service per day is allowed.',
+            ]);
+        }
 
         // Enforce Provider Type Logic
         $service = Service::where('name', $request->service)->first();
@@ -150,7 +176,17 @@ class SlotController extends Controller
         // Default checkbox value
         $validated['is_active'] = $request->has('is_active') ? (bool)$request->is_active : false;
 
-        Slot::create($validated);
+        $slot = Slot::create($validated);
+
+        if (strtolower($slot->service) === 'immunization'
+            && $slot->is_active
+            && ($slot->date->isToday() || $slot->date->isFuture())) {
+            User::where('role', 'patient')
+                ->where('status', true)
+                ->chunkById(500, function ($users) use ($slot) {
+                    Notification::send($users, new ImmunizationSlotAvailable($slot));
+                });
+        }
 
         return redirect()->route('midwife.slots.index')->with('success', 'Slot created successfully.');
     }
@@ -162,9 +198,26 @@ class SlotController extends Controller
     {
         $this->authorizeMidwife();
         $doctors = User::whereIn('role', ['doctor', 'midwife'])->get();
-        $availabilities = \App\Models\DoctorAvailability::where('date', '>=', today())
+        $availabilities = \App\Models\DoctorAvailability::query()
             ->whereIn('status', ['scheduled', 'arrived', 'delayed'])
-            ->get();
+            ->where(function ($q) {
+                $q->where('is_recurring', true)
+                    ->orWhereDate('date', '>=', today());
+            })
+            ->get()
+            ->map(function ($a) {
+                return [
+                    'id' => $a->id,
+                    'doctor_id' => $a->doctor_id,
+                    'date' => $a->date ? $a->date->format('Y-m-d') : null,
+                    'start_time' => $a->start_time ? Carbon::parse($a->start_time)->format('H:i') : null,
+                    'end_time' => $a->end_time ? Carbon::parse($a->end_time)->format('H:i') : null,
+                    'is_recurring' => (bool) $a->is_recurring,
+                    'recurring_day' => $a->recurring_day,
+                    'status' => $a->status,
+                ];
+            })
+            ->values();
 
         return view('slots.edit', [
             'slot' => $slot,
@@ -190,6 +243,23 @@ class SlotController extends Controller
             'capacity' => 'required|integer|min:1',
             'is_active' => 'sometimes|boolean',
         ]);
+
+        $requestedDate = Carbon::parse($validated['date'])->toDateString();
+        $today = today()->toDateString();
+
+        if ($requestedDate < $today && $slot->date && $slot->date->toDateString() !== $requestedDate) {
+            throw ValidationException::withMessages([
+                'date' => 'You cannot set a slot date in the past.',
+            ]);
+        }
+
+        if ($slot->date && $slot->date->toDateString() !== $requestedDate) {
+            if (Slot::whereDate('date', $requestedDate)->where('id', '!=', $slot->id)->exists()) {
+                throw ValidationException::withMessages([
+                    'date' => 'A slot already exists for this date. Only one service per day is allowed.',
+                ]);
+            }
+        }
 
         // Enforce Provider Type Logic
         $service = Service::where('name', $request->service)->first();

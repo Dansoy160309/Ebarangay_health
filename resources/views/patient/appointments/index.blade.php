@@ -426,9 +426,119 @@
             </div>
         </div>
 
-        @if($availableSlots->count())
+        {{-- Today's Slots --}}
+        @if(isset($todaySlots) && $todaySlots->count())
+            <div class="px-4 mb-4">
+                <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Today</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-10">
+                @foreach($todaySlots as $slot)
+                    @php $slotAvailable = $slot->isBookable(); @endphp
+                    <div 
+                         x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="opacity-0 scale-95"
+                         x-transition:enter-end="opacity-100 scale-100"
+                         class="bg-white shadow-sm rounded-[3.5rem] p-10 border border-gray-100 hover:border-brand-200 hover:shadow-2xl transition-all duration-500 flex flex-col h-full group transform hover:-translate-y-3">
+                        <div class="flex justify-between items-start mb-8">
+                            <div class="bg-brand-50 text-brand-700 rounded-2xl px-5 py-2.5 text-[10px] font-black uppercase tracking-[0.2em] border border-brand-100">
+                                {{ $slot->service }}
+                            </div>
+                            <div class="flex items-center gap-2.5 px-4 py-1.5 rounded-full {{ $slotAvailable ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-red-50 text-red-500 border border-red-100' }}">
+                                <span class="relative flex h-2 w-2">
+                                    <span class="{{ $slotAvailable ? 'bg-emerald-500' : 'bg-red-500' }} absolute inline-flex h-full w-full rounded-full opacity-75 {{ $slotAvailable ? 'animate-ping' : '' }}"></span>
+                                    <span class="relative inline-flex rounded-full h-2 w-2 {{ $slotAvailable ? 'bg-emerald-600' : 'bg-red-600' }}"></span>
+                                </span>
+                                <span class="text-[9px] font-black uppercase tracking-widest">{{ $slotAvailable ? 'Open' : 'Full' }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-6 mb-10 flex-1">
+                            <div class="flex items-center gap-5 text-gray-700">
+                                <div class="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all border border-gray-100/50 shadow-inner">
+                                    <i class="bi bi-calendar-event text-lg"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Schedule Date</p>
+                                    <p class="font-black text-gray-900 text-base tracking-tight">{{ $slot->date?->format('F d, Y') ?? 'N/A' }}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center gap-5 text-gray-700">
+                                <div class="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all border border-gray-100/50 shadow-inner">
+                                    <i class="bi bi-person-badge text-lg"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Medical Provider</p>
+                                    <p class="font-black text-gray-900 text-base tracking-tight">
+                                        @if($slot->doctor)
+                                            @if($slot->doctor->isDoctor())
+                                                Dr. {{ $slot->doctor->last_name }}
+                                            @elseif($slot->doctor->isMidwife())
+                                                Midwife {{ $slot->doctor->first_name }}
+                                            @else
+                                                {{ $slot->doctor->full_name }}
+                                            @endif
+                                        @else
+                                            Medical Team
+                                        @endif
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-5 text-gray-700">
+                                <div class="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all border border-gray-100/50 shadow-inner">
+                                    <i class="bi bi-clock text-lg"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Time Slot</p>
+                                    <p class="font-black text-gray-900 text-base tracking-tight">
+                                        @if($slot->start_time)
+                                            {{ \Carbon\Carbon::parse($slot->start_time)->format('g:i A') }} - {{ $slot->end_time ? \Carbon\Carbon::parse($slot->end_time)->format('g:i A') : '' }}
+                                        @else
+                                            N/A
+                                        @endif
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-8 border-t border-gray-50 mb-8 flex items-center justify-between">
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Available Spots</span>
+                            <span class="text-sm font-black text-gray-900 bg-gray-50 px-4 py-1.5 rounded-xl border border-gray-100">{{ $slot->available_spots ?? 0 }} Left</span>
+                        </div>
+
+                        <button
+                            @click="openModal = true; selectedSlot = {
+                                id: {{ $slot->id }},
+                                service: '{{ $slot->service }}',
+                                date: '{{ $slot->date?->format('M d, Y') }}',
+                                time: '{{ ($slot->start_time ? \Carbon\Carbon::parse($slot->start_time)->format('g:i A') : 'N/A') . ' - ' . ($slot->end_time ? \Carbon\Carbon::parse($slot->end_time)->format('g:i A') : '') }}',
+                                provider: '{{ $slot->doctor ? ($slot->doctor->isDoctor() ? 'Dr. ' . $slot->doctor->last_name : 'Midwife ' . $slot->doctor->first_name) : 'Medical Team' }}'
+                            }"
+                            class="w-full py-5 rounded-[1.75rem] text-xs font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-lg group/btn"
+                            :class="{
+                                'bg-brand-600 hover:bg-brand-700 text-white shadow-brand-500/20 hover:shadow-brand-500/40 transform active:scale-95': {{ $slotAvailable ? 'true' : 'false' }},
+                                'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60': {{ $slotAvailable ? 'false' : 'true' }}
+                            }"
+                            {{ $slotAvailable ? '' : 'disabled' }}>
+                            @if($slotAvailable)
+                                Book Visit <i class="bi bi-arrow-right group-hover/btn:translate-x-1 transition-transform"></i>
+                            @else
+                                Currently Full
+                            @endif
+                        </button>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+
+        {{-- Upcoming Slots (filtered) --}}
+        @if(isset($futureSlots) && $futureSlots->count())
+            <div class="px-4 mb-4">
+                <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Upcoming</h3>
+            </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                @foreach($availableSlots as $slot)
+                @foreach($futureSlots as $slot)
                     @php $slotAvailable = $slot->isBookable(); @endphp
                     <div x-show="isSlotVisible('{{ $slot->service }}')" 
                          x-transition:enter="transition ease-out duration-300"
@@ -447,7 +557,7 @@
                                 <span class="text-[9px] font-black uppercase tracking-widest">{{ $slotAvailable ? 'Open' : 'Full' }}</span>
                             </div>
                         </div>
-                        
+
                         <div class="space-y-6 mb-10 flex-1">
                             <div class="flex items-center gap-5 text-gray-700">
                                 <div class="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all border border-gray-100/50 shadow-inner">

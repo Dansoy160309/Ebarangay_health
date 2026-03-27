@@ -53,6 +53,7 @@ class ResetPasswordController extends Controller
         }
 
         $user->password = Hash::make($request->password);
+        $user->must_change_password = false;
         $user->save();
 
         // Delete token

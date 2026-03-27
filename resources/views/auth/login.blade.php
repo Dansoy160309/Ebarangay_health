@@ -107,8 +107,8 @@
                     <div>
                         <div class="flex items-center justify-between mb-2">
                             <label for="password" class="block text-sm font-black text-gray-700 uppercase tracking-widest ml-1">Password</label>
-                            <a href="{{ route('password.forgot') }}" class="text-xs font-black text-brand-600 hover:text-brand-700 uppercase tracking-widest transition-all">
-                                Forgot?
+                            <a href="{{ route('password.forgot') }}" class="text-xs font-black text-brand-600 hover:text-brand-700 transition-all">
+                                Forgot password?
                             </a>
                         </div>
                         <div class="relative group">

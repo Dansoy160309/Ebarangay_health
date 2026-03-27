@@ -57,41 +57,58 @@ class AppointmentController extends Controller
             ->latest()
             ->paginate(10);
 
-        // Available slots (only active, future, and not already booked by this user)
+        // Available slots split: today (no 'already booked' filter) and future (with filters)
         $services = Service::all()->keyBy('name');
 
-        $availableSlots = Slot::with('doctor')
+        $baseQuery = Slot::with('doctor')
             ->active()
-            ->whereDate('date', '>=', now())
-            ->where('service', '!=', 'General Checkup') // Exclude General Checkup
+            ->where('service', '!=', 'General Checkup')
             ->withCount(['appointments' => function ($query) {
                 $query->whereNotIn('status', ['cancelled', 'rejected']);
             }])
-            ->whereDoesntHave('appointments', function($q) use ($user) {
-                $q->where('user_id', $user->id)
-                  ->whereNotIn('status', ['cancelled', 'rejected']);
-            })
-            ->orderBy('date', 'asc')
+            ->orderBy('date', 'asc');
+
+        $todayDate = now()->toDateString();
+
+        // Today's slots: show even if the user already has a booking (badge will indicate it)
+        $todaySlots = (clone $baseQuery)
+            ->whereDate('date', $todayDate)
             ->get()
             ->filter(function ($slot) use ($services) {
-                // Check if full (Capacity - Total Booked) OR explicitly 0 spots OR expired
                 if (($slot->capacity - $slot->appointments_count) <= 0 || $slot->available_spots <= 0 || $slot->isExpired()) {
                     return false;
                 }
-                
-                // Check provider requirement
                 $service = $services[$slot->service] ?? null;
                 if ($service && $service->provider_type === 'Doctor' && !$slot->doctor_id) {
                     return false;
                 }
+                return true;
+            })
+            ->values();
 
+        // Future slots: apply "already booked" filter to reduce noise
+        $futureSlots = (clone $baseQuery)
+            ->whereDate('date', '>', $todayDate)
+            ->whereDoesntHave('appointments', function($q) use ($user) {
+                $q->where('user_id', $user->id)
+                  ->whereNotIn('status', ['cancelled', 'rejected']);
+            })
+            ->get()
+            ->filter(function ($slot) use ($services) {
+                if (($slot->capacity - $slot->appointments_count) <= 0 || $slot->available_spots <= 0 || $slot->isExpired()) {
+                    return false;
+                }
+                $service = $services[$slot->service] ?? null;
+                if ($service && $service->provider_type === 'Doctor' && !$slot->doctor_id) {
+                    return false;
+                }
                 return true;
             })
             ->values();
 
         $dependents = $user->dependents()->get();
 
-        return view('patient.appointments.index', compact('appointments', 'availableSlots', 'dependents'));
+        return view('patient.appointments.index', compact('appointments', 'todaySlots', 'futureSlots', 'dependents'));
     }
 
     /**

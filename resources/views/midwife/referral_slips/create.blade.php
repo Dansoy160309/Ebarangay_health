@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="p-4 sm:p-8 max-w-5xl mx-auto" x-data="referralForm()">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4" x-data="referralForm()">
     {{-- Breadcrumbs/Header --}}
-    <div class="mb-8">
-        <a href="{{ route('midwife.referral-slips.index') }}" class="inline-flex items-center gap-2 text-gray-400 hover:text-brand-600 font-bold text-xs uppercase tracking-widest transition-colors mb-4">
+    <div class="mb-5">
+        <a href="{{ route('midwife.referral-slips.index') }}" class="inline-flex items-center gap-2 text-gray-400 hover:text-brand-600 font-bold text-xs uppercase tracking-widest transition-colors mb-3">
             <i class="bi bi-arrow-left"></i> Back to list
         </a>
         <h1 class="text-3xl font-black text-gray-900 tracking-tight">Create Referral Slip</h1>
@@ -12,7 +12,7 @@
     </div>
 
     @if($errors->any())
-        <div class="mb-8 bg-red-50 border-2 border-red-100 rounded-[2rem] p-6 animate-shake shadow-sm shadow-red-50">
+        <div class="mb-5 bg-red-50 border-2 border-red-100 rounded-[2rem] p-5 animate-shake shadow-sm shadow-red-50">
             <div class="flex items-start gap-4">
                 <div class="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center text-red-600 text-xl flex-shrink-0">
                     <i class="bi bi-exclamation-triangle-fill"></i>
@@ -29,19 +29,19 @@
         </div>
     @endif
 
-    <form action="{{ route('midwife.referral-slips.store') }}" method="POST" class="space-y-8">
+    <form action="{{ route('midwife.referral-slips.store') }}" method="POST" class="space-y-6">
         @csrf
 
         {{-- 1. Patient Selection & Basic Info --}}
-        <div class="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-500/5 p-8 sm:p-10 relative overflow-hidden">
+        <div class="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-500/5 p-6 sm:p-8 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-2 h-full bg-brand-500"></div>
             
-            <h2 class="text-xl font-black text-gray-900 mb-8 flex items-center gap-3">
+            <h2 class="text-xl font-black text-gray-900 mb-6 flex items-center gap-3">
                 <span class="w-8 h-8 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center text-xs">01</span>
                 Patient & Basic Information
             </h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {{-- Patient Select --}}
                 <div class="space-y-2">
                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Select Patient</label>
@@ -92,15 +92,15 @@
         </div>
 
         {{-- 2. Referral Routing --}}
-        <div class="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-500/5 p-8 sm:p-10 relative overflow-hidden">
+        <div class="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-500/5 p-6 sm:p-8 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-2 h-full bg-brand-500"></div>
             
-            <h2 class="text-xl font-black text-gray-900 mb-8 flex items-center gap-3">
+            <h2 class="text-xl font-black text-gray-900 mb-6 flex items-center gap-3">
                 <span class="w-8 h-8 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center text-xs">02</span>
                 Referral Routing
             </h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {{-- Referred From --}}
                 <div class="space-y-6">
                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1 mb-4 border-b border-gray-50 pb-2">Referred From</label>
@@ -159,15 +159,15 @@
         </div>
 
         {{-- 3. Clinical Findings --}}
-        <div class="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-500/5 p-8 sm:p-10 relative overflow-hidden">
+        <div class="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-500/5 p-6 sm:p-8 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-2 h-full bg-brand-500"></div>
             
-            <h2 class="text-xl font-black text-gray-900 mb-8 flex items-center gap-3">
+            <h2 class="text-xl font-black text-gray-900 mb-6 flex items-center gap-3">
                 <span class="w-8 h-8 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center text-xs">03</span>
                 Clinical Findings & Reason
             </h2>
 
-            <div class="space-y-8">
+            <div class="space-y-6">
                 <div class="space-y-2">
                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Pertinent Findings</label>
                     <textarea name="pertinent_findings" rows="3" placeholder="Symptoms, vitals (BP, Weight), physical findings..."
@@ -183,22 +183,22 @@
         </div>
 
         {{-- 4. Instructions & Actions --}}
-        <div class="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-500/5 p-8 sm:p-10 relative overflow-hidden">
+        <div class="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-500/5 p-6 sm:p-8 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-2 h-full bg-brand-500"></div>
             
-            <h2 class="text-xl font-black text-gray-900 mb-8 flex items-center gap-3">
+            <h2 class="text-xl font-black text-gray-900 mb-6 flex items-center gap-3">
                 <span class="w-8 h-8 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center text-xs">04</span>
                 Instructions & Feedback
             </h2>
 
-            <div class="space-y-8">
+            <div class="space-y-6">
                 <div class="space-y-2">
                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1 italic text-brand-600">Instruction to Referring Level</label>
                     <textarea name="instruction_to_referring_level" rows="2" placeholder="Initial management instructions..."
                               class="w-full px-6 py-4 bg-brand-50/30 border border-brand-100 rounded-[2rem] font-bold text-gray-900 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none resize-none">{{ old('instruction_to_referring_level') }}</textarea>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4 border-t border-gray-50">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-3 border-t border-gray-50">
                     <div class="space-y-2">
                         <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Actions Taken by Referred Level</label>
                         <textarea name="actions_taken_by_referred_level" rows="3" placeholder="Leave blank if unknown yet..."
@@ -214,11 +214,11 @@
         </div>
 
         {{-- Submit --}}
-        <div class="flex items-center justify-end gap-4 pb-12">
-            <button type="reset" class="px-8 py-4 text-gray-400 font-black text-xs uppercase tracking-widest hover:text-gray-600 transition-colors">
+        <div class="flex items-center justify-end gap-4 pb-8">
+            <button type="reset" class="px-6 py-3.5 text-gray-400 font-black text-xs uppercase tracking-widest hover:text-gray-600 transition-colors">
                 Clear Form
             </button>
-            <button type="submit" class="px-10 py-4 bg-brand-600 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-brand-500/20 hover:bg-brand-700 transition-all active:scale-95 flex items-center gap-2">
+            <button type="submit" class="px-8 py-3.5 bg-brand-600 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-brand-500/20 hover:bg-brand-700 transition-all active:scale-95 flex items-center gap-2">
                 Generate Referral Slip <i class="bi bi-file-earmark-pdf"></i>
             </button>
         </div>

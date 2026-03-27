@@ -13,6 +13,7 @@ use App\Models\MedicineDistribution;
 use App\Models\Announcement;
 use App\Models\PatientProfile;
 use App\Models\HealthRecord;
+use App\Models\Service;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -466,22 +467,50 @@ class DashboardController extends Controller
                 ->orderBy('scheduled_at')
                 ->get();
 
-            $availableSlots = Slot::with('doctor')
-                ->where('is_active', true)
-                ->whereDate('date', '>=', now())
-                ->where('service', '!=', 'General Checkup') // Exclude General Checkup
-                ->withCount(['appointments' => function ($query) {
-                    $query->whereNotIn('status', ['cancelled', 'rejected']);
+            $servicesMap = Service::all()->keyBy('name');
+            $baseSlots = Slot::with('doctor')
+                ->active()
+                ->where('service', '!=', 'General Checkup')
+                ->withCount(['appointments' => function ($q) {
+                    $q->whereNotIn('status', ['cancelled', 'rejected']);
                 }])
-                ->orderBy('date', 'asc')
+                ->orderBy('date', 'asc');
+
+            $todayStr = now()->toDateString();
+
+            $todaySlots = (clone $baseSlots)
+                ->whereDate('date', $todayStr)
                 ->get()
-            ->filter(function ($slot) {
-                // Must have capacity AND explicit available spots > 0 AND not expired
-                return ($slot->capacity - $slot->appointments_count) > 0 
-                    && $slot->available_spots > 0 
-                    && !$slot->isExpired();
-            })
-            ->values()
+                ->filter(function ($slot) use ($servicesMap) {
+                    if (($slot->capacity - $slot->appointments_count) <= 0 || $slot->available_spots <= 0 || $slot->isExpired()) {
+                        return false;
+                    }
+                    $service = $servicesMap[$slot->service] ?? null;
+                    if ($service && $service->provider_type === 'Doctor' && !$slot->doctor_id) {
+                        return false;
+                    }
+                    return true;
+                })
+                ->values();
+
+            $futureSlots = (clone $baseSlots)
+                ->whereDate('date', '>', $todayStr)
+                ->whereDoesntHave('appointments', function($q) use ($user) {
+                    $q->where('user_id', $user->id)
+                      ->whereNotIn('status', ['cancelled', 'rejected']);
+                })
+                ->get()
+                ->filter(function ($slot) use ($servicesMap) {
+                    if (($slot->capacity - $slot->appointments_count) <= 0 || $slot->available_spots <= 0 || $slot->isExpired()) {
+                        return false;
+                    }
+                    $service = $servicesMap[$slot->service] ?? null;
+                    if ($service && $service->provider_type === 'Doctor' && !$slot->doctor_id) {
+                        return false;
+                    }
+                    return true;
+                })
+                ->values()
                 ->take(10);
 
             $activeAnnouncements = \App\Models\Announcement::where('status', 'active')
@@ -566,7 +595,8 @@ class DashboardController extends Controller
                 'rejectedAppointments',
                 'upcomingAppointments',
                 'appointments',
-                'availableSlots',
+                'todaySlots',
+                'futureSlots',
                 'activeAnnouncements',
                 'notifications',
                 'dependents',

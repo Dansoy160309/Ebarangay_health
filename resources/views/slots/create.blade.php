@@ -3,7 +3,7 @@
 @section('title', 'Add Appointment Slot')
 
 @section('content')
-<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-4">
 
     {{-- Breadcrumbs --}}
     <nav class="flex" aria-label="Breadcrumb">
@@ -30,7 +30,7 @@
     </nav>
 
     {{-- Page Header --}}
-    <div class="bg-white rounded-2xl p-5 sm:p-6 border border-gray-100 shadow-sm relative overflow-hidden group">
+    <div class="bg-white rounded-2xl p-4 sm:p-5 border border-gray-100 shadow-sm relative overflow-hidden group">
         <div class="absolute top-0 right-0 w-48 h-48 bg-brand-50 rounded-full blur-2xl -mr-24 -mt-24 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
         <div class="absolute bottom-0 left-0 w-40 h-40 bg-blue-50 rounded-full blur-2xl -ml-20 -mb-20 opacity-30 group-hover:opacity-50 transition-opacity duration-700"></div>
 

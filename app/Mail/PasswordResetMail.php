@@ -1,27 +1,29 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Password Reset</title>
-</head>
-<body>
-    <p>Hello,</p>
+<?php
 
-    <p>You requested to reset your password for E-Barangay Health.</p>
+namespace App\Mail;
 
-    <p>
-        Click the link below to reset your password. 
-        This link will expire in 60 minutes.
-    </p>
+use App\Models\User;
+use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
+use Illuminate\Queue\SerializesModels;
 
-    <p>
-        <a href="{{ url('password/reset/' . $token . '?email=' . urlencode($email)) }}">
-            Reset Password
-        </a>
-    </p>
+class PasswordResetMail extends Mailable
+{
+    use Queueable, SerializesModels;
 
-    <p>If you did not request this password reset, you can safely ignore this email.</p>
+    public function __construct(
+        public User $user,
+        public string $resetLink
+    ) {
+    }
 
-    <p>Regards,<br>E-Barangay Health Team</p>
-</body>
-</html>
+    public function build()
+    {
+        return $this->subject('Password Reset Request')
+            ->view('emails.password-reset')
+            ->with([
+                'user' => $this->user,
+                'resetLink' => $this->resetLink,
+            ]);
+    }
+}
