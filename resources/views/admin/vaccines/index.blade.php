@@ -82,6 +82,48 @@
     </div>
     @endif
 
+    @if(isset($recentAdministrations) && $recentAdministrations->count() > 0)
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="px-5 sm:px-6 py-4 border-b border-gray-50 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                    <i class="bi bi-check2-square"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-black text-gray-900 uppercase tracking-tighter">Recent Vaccine Administrations</h3>
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Stock out when vaccine is given</p>
+                </div>
+            </div>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-50/50">
+                        <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Date</th>
+                        <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Vaccine</th>
+                        <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Batch</th>
+                        <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Patient</th>
+                        <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Qty</th>
+                        <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Administered By</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                    @foreach($recentAdministrations as $a)
+                        <tr class="hover:bg-gray-50/40 transition-colors">
+                            <td class="px-6 py-4 text-sm font-bold text-gray-700">{{ $a->administered_at?->format('M d, Y h:i A') }}</td>
+                            <td class="px-6 py-4 text-sm font-black text-gray-900">{{ $a->vaccine?->name ?? 'Unknown' }}</td>
+                            <td class="px-6 py-4 text-sm font-bold text-gray-700">{{ $a->batch?->batch_number ?? '—' }}</td>
+                            <td class="px-6 py-4 text-sm font-bold text-gray-700">{{ $a->patient?->full_name ?? '—' }}</td>
+                            <td class="px-6 py-4 text-sm font-black text-gray-900">{{ $a->quantity }}</td>
+                            <td class="px-6 py-4 text-sm font-bold text-gray-700">{{ $a->administeredBy?->full_name ?? '—' }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @endif
+
     <!-- Inventory Table -->
     <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
         <div class="overflow-x-auto">

@@ -3,10 +3,10 @@
 @section('title', 'Assigned Appointments')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+<div class="space-y-4">
     
     {{-- Header Card --}}
-    <div class="bg-gradient-to-r from-brand-600 to-brand-500 rounded-2xl shadow-lg p-5 sm:p-6 text-white relative overflow-hidden mb-6">
+    <div class="bg-gradient-to-r from-brand-600 to-brand-500 rounded-2xl shadow-lg p-4 sm:p-5 text-white relative overflow-hidden">
         <div class="absolute inset-0 bg-white/5 opacity-5" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
         <div class="absolute -right-12 -bottom-12 w-48 h-48 bg-white/10 rounded-full blur-2xl"></div>
         
@@ -35,7 +35,7 @@
     </div>
 
     <!-- Main Navigation Tabs -->
-    <div class="mb-6 bg-white p-1.5 rounded-lg shadow-sm border border-gray-100 flex flex-wrap gap-1.5 overflow-hidden">
+    <div class="bg-white p-1 rounded-lg shadow-sm border border-gray-100 flex flex-wrap gap-1 overflow-hidden">
         <a href="{{ route('healthworker.appointments.index', ['type' => 'scheduled', 'date' => request('date')]) }}"
            class="flex-1 min-w-[120px] text-center px-3 sm:px-5 py-2 rounded-md text-[8px] sm:text-xs font-black uppercase tracking-tighter transition-all {{ request('type') == 'scheduled' && !request('vitals_only') ? 'bg-brand-600 text-white shadow-md' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50' }}">
             Online <span class="hidden sm:inline">Booking</span> <span class="ml-1 opacity-50">{{ $counts['scheduled'] }}</span>
@@ -51,7 +51,7 @@
     </div>
 
     <!-- Filters Section -->
-    <div class="bg-white rounded-lg p-5 shadow-sm border border-gray-100 mb-6">
+    <div class="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
         <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
             @if(request('type')) <input type="hidden" name="type" value="{{ request('type') }}"> @endif
             @if(request('vitals_only')) <input type="hidden" name="vitals_only" value="1"> @endif
@@ -135,19 +135,12 @@
                 </div>
             </div>
         </div>
-    @elseif(session('success'))
-        <div class="mb-8 p-6 bg-green-50 border border-green-100 rounded-[2rem] flex items-center gap-4 text-green-800 shadow-sm animate-in fade-in slide-in-from-top duration-500">
-            <div class="w-12 h-12 rounded-2xl bg-green-100 flex items-center justify-center text-green-600 shrink-0 shadow-inner">
-                <i class="bi bi-check-circle-fill text-2xl"></i>
-            </div>
-            <p class="font-bold text-lg tracking-tight">{{ session('success') }}</p>
-        </div>
     @endif
 
     @include('components.status-legend')
 
     <!-- Appointments Table -->
-    <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden mt-8">
+    <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-50">
                 <thead>

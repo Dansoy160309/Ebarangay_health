@@ -266,11 +266,36 @@ class AppointmentController extends Controller
             $healthRecord->save();
 
             // 3. Decrement Vaccine Stock
-            if ($request->has('metadata.vaccine_batch_id')) {
-                $batch = \App\Models\VaccineBatch::find($request->input('metadata.vaccine_batch_id'));
-                if ($batch) {
-                    $batch->decrement('quantity_remaining');
-                    $batch->increment('quantity_administered');
+            if ($isImmunization && $request->has('metadata.vaccine_batch_id')) {
+                $batchId = $request->input('metadata.vaccine_batch_id');
+                $qty = (int) ($request->input('metadata.dose_quantity') ?? 1);
+                $qty = $qty > 0 ? $qty : 1;
+
+                $batch = \App\Models\VaccineBatch::whereKey($batchId)->lockForUpdate()->first();
+                if ($batch && !$batch->expiry_date->isPast() && $batch->is_active) {
+                    $alreadyLogged = \App\Models\VaccineAdministration::where('appointment_id', $appointment->id)
+                        ->where('vaccine_batch_id', $batch->id)
+                        ->exists();
+
+                    if (!$alreadyLogged && $batch->quantity_remaining >= $qty) {
+                        $batch->quantity_remaining -= $qty;
+                        $batch->quantity_administered += $qty;
+                        if ($batch->quantity_remaining <= 0) {
+                            $batch->is_active = false;
+                        }
+                        $batch->save();
+
+                        \App\Models\VaccineAdministration::create([
+                            'vaccine_id' => $batch->vaccine_id,
+                            'vaccine_batch_id' => $batch->id,
+                            'patient_id' => $appointment->user_id,
+                            'administered_by' => auth()->id(),
+                            'appointment_id' => $appointment->id,
+                            'quantity' => $qty,
+                            'administered_at' => now(),
+                            'notes' => $request->input('metadata.notes'),
+                        ]);
+                    }
                 }
             }
 

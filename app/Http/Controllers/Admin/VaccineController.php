@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Vaccine;
 use App\Models\VaccineBatch;
+use App\Models\VaccineAdministration;
 
 class VaccineController extends Controller
 {
@@ -29,7 +30,12 @@ class VaccineController extends Controller
             ->where('quantity_remaining', '>', 0)
             ->get();
 
-        return view('admin.vaccines.index', compact('vaccines', 'lowStockVaccines', 'nearExpiryBatches'));
+        $recentAdministrations = VaccineAdministration::with(['vaccine', 'batch', 'patient', 'administeredBy'])
+            ->latest('administered_at')
+            ->limit(10)
+            ->get();
+
+        return view('admin.vaccines.index', compact('vaccines', 'lowStockVaccines', 'nearExpiryBatches', 'recentAdministrations'));
     }
 
     public function create()
