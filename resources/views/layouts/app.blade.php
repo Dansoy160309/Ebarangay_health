@@ -118,8 +118,11 @@
         }
     @endphp
 
-  @if (!request()->routeIs('login') && !request()->routeIs('register'))
-      
+  @php
+      $showSidebar = auth()->check() && !request()->routeIs('login', 'register', 'password.*');
+  @endphp
+
+  @if ($showSidebar)
       {{-- Sidebar (Fixed Left) --}}
       @include('layouts.sidebar', [
           'notifications' => $notifications, 
@@ -136,6 +139,14 @@
           {{-- Main Content --}}
           <main class="flex-1 overflow-x-hidden">
               <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  @else
+      {{-- Main Wrapper (Full width for guests) --}}
+      <div class="flex flex-col min-h-screen transition-all duration-300 ease-in-out">
+          
+          {{-- Main Content --}}
+          <main class="flex-1 overflow-x-hidden">
+              <div class="w-full">
+  @endif
                   {{-- Flash Messages --}}
                   <div class="mb-6 space-y-4">
                       @if(session('success'))
@@ -201,11 +212,6 @@
               &copy; {{ date('Y') }} E-Barangay Health System. All rights reserved.
           </footer>
       </div>
-
-  @else
-      {{-- Login/Register Layout (Full Screen) --}}
-      @yield('content')
-  @endif
 
   {{-- FullCalendar JS Local --}}
   <script src="{{ asset('js/fullcalendar.js') }}"></script>

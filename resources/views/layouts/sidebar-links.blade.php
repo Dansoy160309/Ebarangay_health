@@ -4,51 +4,55 @@
     use Illuminate\Support\Facades\Route;
 
     $user = auth()->user();
-    $role = $user->role;
+    $role = $user ? $user->role : null;
 
-    // Role-based routes
+    // Default routes for guests or fallback
     $routes = [
-        'dashboard' => route('dashboard'),
+        'dashboard' => auth()->check() ? route('dashboard') : route('login'),
         'announcement' => match($role) {
             'admin' => route('admin.announcements.index'),
             'health_worker' => route('healthworker.announcements.index'),
             'doctor' => route('doctor.announcements.index'),
             'midwife' => route('midwife.announcements.index'),
-            default => route('patient.announcements.index'),
+            'patient' => route('patient.announcements.index'),
+            default => '#',
         },
         'appointment' => match($role) {
             'admin' => route('admin.appointments.index'),
             'health_worker' => route('healthworker.appointments.index'),
             'doctor' => route('doctor.appointments.index'),
             'midwife' => route('midwife.appointments.index'),
-            default => route('patient.appointments.index'),
+            'patient' => route('patient.appointments.index'),
+            default => '#',
         },
         'profile' => match($role) {
             'admin' => route('admin.profile.index'),
             'health_worker' => route('healthworker.profile.index'),
             'doctor' => route('doctor.profile.index'),
             'midwife' => route('midwife.profile.index'),
-            default => route('patient.profile.index'),
+            'patient' => route('patient.profile.index'),
+            default => '#',
         },
         'reports' => $role === 'admin'
             ? route('admin.reports.index')
-            : '',
+            : '#',
         'health_records' => match($role) {
             'admin' => route('admin.health-records.index'),
             'health_worker' => route('healthworker.health-records.index'),
             'doctor' => route('doctor.health-records.index'),
             'midwife' => route('midwife.health-records.index'),
-            default => route('patient.health-records.index'),
+            'patient' => route('patient.health-records.index'),
+            default => '#',
         },
         'vaccine_inventory' => match($role) {
             'admin' => route('admin.vaccines.index'),
-            default => '',
+            default => '#',
         },
         'defaulters' => match($role) {
             'midwife' => route('midwife.appointments.defaulters'),
-            default => '',
+            default => '#',
         },
-        'notifications' => route('notifications.index'),
+        'notifications' => auth()->check() ? route('notifications.index') : '#',
     ];
     
     // Helper for active class
