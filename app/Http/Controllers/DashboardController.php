@@ -478,47 +478,59 @@ class DashboardController extends Controller
 
             $todayStr = now()->toDateString();
 
-            $todaySlots = (clone $baseSlots)
-                ->whereDate('date', $todayStr)
+            $todaySlots = Slot::with('doctor')
+                ->where('date', $todayStr)
+                ->active()
+                ->where('service', '!=', 'General Checkup')
+                ->withCount(['appointments' => function ($q) {
+                    $q->whereNotIn('status', ['cancelled', 'rejected']);
+                }])
                 ->get()
-                ->filter(function ($slot) use ($servicesMap) {
-                    // Check capacity and expiration
-                    if (($slot->capacity - $slot->appointments_count) <= 0 || $slot->available_spots === 0 || $slot->isExpired()) {
-                        return false;
-                    }
+                ->filter(function ($slot) {
+                    // Show if there is capacity left
+                    $hasCapacity = ($slot->capacity - $slot->appointments_count) > 0;
                     
-                    $service = $servicesMap[$slot->service] ?? null;
-                    if ($service && $service->provider_type === 'Doctor' && !$slot->doctor_id) {
+                    // Show even if it has just started, only hide if it's completely over
+                    // or if it's explicitly marked as full via available_spots
+                    if (!$hasCapacity || $slot->available_spots === 0) {
                         return false;
                     }
+
+                    // Only hide if the slot's end time was more than 30 mins ago
+                    if ($slot->end_time && $slot->date) {
+                        $expiryTime = $slot->date->copy()->setTimeFrom($slot->end_time)->addMinutes(30);
+                        if ($expiryTime->isPast()) {
+                            return false;
+                        }
+                    }
+
                     return true;
                 })
                 ->values();
 
-            $futureSlots = (clone $baseSlots)
+            $futureSlots = Slot::with('doctor')
                 ->whereDate('date', '>', $todayStr)
+                ->active()
+                ->where('service', '!=', 'General Checkup')
+                ->withCount(['appointments' => function ($q) {
+                    $q->whereNotIn('status', ['cancelled', 'rejected']);
+                }])
+                ->orderBy('date', 'asc')
                 ->get()
-                ->filter(function ($slot) use ($servicesMap, $user) {
-                    // Check capacity and expiration
-                    if (($slot->capacity - $slot->appointments_count) <= 0 || $slot->available_spots === 0 || $slot->isExpired()) {
+                ->filter(function ($slot) use ($user) {
+                    // Show if there is capacity left
+                    $hasCapacity = ($slot->capacity - $slot->appointments_count) > 0;
+                    if (!$hasCapacity || $slot->available_spots === 0) {
                         return false;
                     }
-                    
+
                     // Don't show slots the user has already booked for themselves
                     $hasBooked = $slot->appointments()
                         ->where('user_id', $user->id)
                         ->whereNotIn('status', ['cancelled', 'rejected'])
                         ->exists();
                     
-                    if ($hasBooked) {
-                        return false;
-                    }
-
-                    $service = $servicesMap[$slot->service] ?? null;
-                    if ($service && $service->provider_type === 'Doctor' && !$slot->doctor_id) {
-                        return false;
-                    }
-                    return true;
+                    return !$hasBooked;
                 })
                 ->values()
                 ->take(12);

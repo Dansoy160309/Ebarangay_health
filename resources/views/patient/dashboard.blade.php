@@ -437,8 +437,11 @@
         </div>
         
         {{-- Today --}}
-        <div class="px-1">
+        <div class="px-1 flex items-center justify-between">
             <h3 class="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em] mb-2">Today</h3>
+            @if(config('app.debug'))
+                <span class="text-[8px] text-gray-300 font-bold uppercase tracking-widest">Slots found: {{ $todaySlots->count() }} ({{ now()->toDateString() }})</span>
+            @endif
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5 mb-6">
             @if(isset($todaySlots) && $todaySlots->count())
