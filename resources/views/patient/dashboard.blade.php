@@ -40,15 +40,25 @@
         if (!p) return true;
         
         const s = service.toLowerCase();
-        if (!p.dob) return !s.includes('immunization') && !s.includes('prenatal') && !s.includes('pre-natal');
+        
+        // If the patient has no DOB, we can't calculate age, so we show all slots
+        if (!p.dob) return true;
         
         const dob = new Date(p.dob);
         const age = (new Date() - dob) / (1000 * 60 * 60 * 24 * 365.25);
         
-        if (s.includes('immunization')) return age <= 12;
+        // We'll be more permissive: only hide slots that are EXPLICITLY restricted
+        // and only if the patient definitely doesn't fit the criteria.
+        
+        // For Immunization: Generally for children, but we'll show it for adults too
+        // in case they are booking for someone else or it's a general vaccination.
+        // We only hide it if it's strictly pediatric and the patient is an adult.
+        // For now, let's keep it visible for everyone to avoid confusion.
+        
         if (s.includes('prenatal') || s.includes('pre-natal')) {
             const isFemale = p.gender && p.gender.toLowerCase() === 'female';
-            return isFemale && age >= 12 && age <= 55;
+            // Only hide prenatal if the patient is male or outside typical age range
+            return isFemale && age >= 10 && age <= 60;
         }
         
         return true;
@@ -434,7 +444,7 @@
             @if(isset($todaySlots) && $todaySlots->count())
             @foreach($todaySlots as $slot)
                 @php $slotAvailable = $slot->isBookable(); @endphp
-                <div 
+                <div x-show="isSlotVisible('{{ $slot->service }}')"
                     class="bg-white shadow-sm rounded-[1.5rem] sm:rounded-[2rem] p-5 md:p-6 border border-gray-100 hover:border-brand-200 hover:shadow-xl transition-all duration-500 flex flex-col h-full group">
                     <div class="flex justify-between items-start mb-4">
                         <div class="bg-brand-50 text-brand-700 rounded-lg px-2.5 py-1 sm:px-3 sm:py-1.5 text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] border border-brand-100">

@@ -482,9 +482,11 @@ class DashboardController extends Controller
                 ->whereDate('date', $todayStr)
                 ->get()
                 ->filter(function ($slot) use ($servicesMap) {
-                    if (($slot->capacity - $slot->appointments_count) <= 0 || $slot->available_spots <= 0 || $slot->isExpired()) {
+                    // Check capacity and expiration
+                    if (($slot->capacity - $slot->appointments_count) <= 0 || $slot->available_spots === 0 || $slot->isExpired()) {
                         return false;
                     }
+                    
                     $service = $servicesMap[$slot->service] ?? null;
                     if ($service && $service->provider_type === 'Doctor' && !$slot->doctor_id) {
                         return false;
@@ -495,15 +497,23 @@ class DashboardController extends Controller
 
             $futureSlots = (clone $baseSlots)
                 ->whereDate('date', '>', $todayStr)
-                ->whereDoesntHave('appointments', function($q) use ($user) {
-                    $q->where('user_id', $user->id)
-                      ->whereNotIn('status', ['cancelled', 'rejected']);
-                })
                 ->get()
-                ->filter(function ($slot) use ($servicesMap) {
-                    if (($slot->capacity - $slot->appointments_count) <= 0 || $slot->available_spots <= 0 || $slot->isExpired()) {
+                ->filter(function ($slot) use ($servicesMap, $user) {
+                    // Check capacity and expiration
+                    if (($slot->capacity - $slot->appointments_count) <= 0 || $slot->available_spots === 0 || $slot->isExpired()) {
                         return false;
                     }
+                    
+                    // Don't show slots the user has already booked for themselves
+                    $hasBooked = $slot->appointments()
+                        ->where('user_id', $user->id)
+                        ->whereNotIn('status', ['cancelled', 'rejected'])
+                        ->exists();
+                    
+                    if ($hasBooked) {
+                        return false;
+                    }
+
                     $service = $servicesMap[$slot->service] ?? null;
                     if ($service && $service->provider_type === 'Doctor' && !$slot->doctor_id) {
                         return false;
@@ -511,7 +521,7 @@ class DashboardController extends Controller
                     return true;
                 })
                 ->values()
-                ->take(10);
+                ->take(12);
 
             $activeAnnouncements = \App\Models\Announcement::where('status', 'active')
                 ->where(function($q) {
