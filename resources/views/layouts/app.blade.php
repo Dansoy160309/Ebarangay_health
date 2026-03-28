@@ -147,7 +147,8 @@
           <main class="flex-1 overflow-x-hidden">
               <div class="w-full">
   @endif
-                  {{-- Flash Messages --}}
+                  {{-- Flash Messages (Hidden on auth pages to avoid duplication) --}}
+                  @if(!request()->routeIs('login', 'register', 'password.*'))
                   <div class="mb-6 space-y-4">
                       @if(session('success'))
                       <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" 
@@ -203,6 +204,7 @@
                       </div>
                       @endif
                   </div>
+                  @endif
 
                   @yield('content')
               </div>

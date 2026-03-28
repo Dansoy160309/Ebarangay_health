@@ -13,13 +13,13 @@
     </div>
 
     {{-- Adjusted size: max-w-sm (smaller) and reduced padding --}}
-    <div class="max-w-sm w-full bg-white rounded-[2rem] shadow-2xl p-6 md:p-8 relative z-10 transition-all duration-300 hover:shadow-3xl border border-gray-100">
-        <div class="text-center mb-8">
-            <div class="w-14 h-14 bg-brand-50 rounded-2xl flex items-center justify-center text-brand-600 text-2xl mx-auto mb-4 shadow-inner border border-brand-100">
+    <div class="max-w-sm w-full bg-white rounded-[1.5rem] shadow-2xl p-6 md:p-7 relative z-10 transition-all duration-300 hover:shadow-3xl border border-gray-100">
+        <div class="text-center mb-6">
+            <div class="w-12 h-12 bg-brand-50 rounded-2xl flex items-center justify-center text-brand-600 text-xl mx-auto mb-3 shadow-inner border border-brand-100">
                 <i class="bi bi-shield-lock-fill"></i>
             </div>
-            <h2 class="text-2xl font-black text-gray-900 mb-1 tracking-tight">Reset Password</h2>
-            <p class="text-xs text-gray-500 font-medium">Almost there! Choose a new secure password for your account.</p>
+            <h2 class="text-xl font-black text-gray-900 mb-1 tracking-tight">Reset Password</h2>
+            <p class="text-[10px] text-gray-500 font-medium leading-relaxed">Almost there! Choose a new secure password for your account.</p>
         </div>
 
         {{-- Error alert removed as requested --}}
