@@ -476,29 +476,33 @@ class DashboardController extends Controller
                 }])
                 ->orderBy('date', 'asc');
 
-            $todayStr = now()->toDateString();
+            $todayStr = today()->toDateString();
 
+            // Fetch today's slots more robustly
             $todaySlots = Slot::with('doctor')
-                ->where('date', $todayStr)
-                ->active()
+                ->whereDate('date', $todayStr)
+                ->where('is_active', true)
                 ->where('service', '!=', 'General Checkup')
                 ->withCount(['appointments' => function ($q) {
                     $q->whereNotIn('status', ['cancelled', 'rejected']);
                 }])
                 ->get()
                 ->filter(function ($slot) {
-                    // Show if there is capacity left
-                    $hasCapacity = ($slot->capacity - $slot->appointments_count) > 0;
+                    // 1. Capacity check: Total capacity - current appointments
+                    $remainingSeats = (int)$slot->capacity - (int)$slot->appointments_count;
+                    if ($remainingSeats <= 0) {
+                        return false;
+                    }
                     
-                    // Show even if it has just started, only hide if it's completely over
-                    // or if it's explicitly marked as full via available_spots
-                    if (!$hasCapacity || $slot->available_spots === 0) {
+                    // 2. Explicit available_spots column (if used)
+                    if ($slot->available_spots === 0) {
                         return false;
                     }
 
-                    // Only hide if the slot's end time was more than 30 mins ago
+                    // 3. Expiration check: Use a more permissive logic for today
+                    // Only hide if the slot's end time was more than 1 hour ago
                     if ($slot->end_time && $slot->date) {
-                        $expiryTime = $slot->date->copy()->setTimeFrom($slot->end_time)->addMinutes(30);
+                        $expiryTime = $slot->date->copy()->setTimeFrom($slot->end_time)->addHour();
                         if ($expiryTime->isPast()) {
                             return false;
                         }
@@ -510,7 +514,7 @@ class DashboardController extends Controller
 
             $futureSlots = Slot::with('doctor')
                 ->whereDate('date', '>', $todayStr)
-                ->active()
+                ->where('is_active', true)
                 ->where('service', '!=', 'General Checkup')
                 ->withCount(['appointments' => function ($q) {
                     $q->whereNotIn('status', ['cancelled', 'rejected']);
@@ -518,9 +522,9 @@ class DashboardController extends Controller
                 ->orderBy('date', 'asc')
                 ->get()
                 ->filter(function ($slot) use ($user) {
-                    // Show if there is capacity left
-                    $hasCapacity = ($slot->capacity - $slot->appointments_count) > 0;
-                    if (!$hasCapacity || $slot->available_spots === 0) {
+                    // Check capacity
+                    $remainingSeats = (int)$slot->capacity - (int)$slot->appointments_count;
+                    if ($remainingSeats <= 0 || $slot->available_spots === 0) {
                         return false;
                     }
 
