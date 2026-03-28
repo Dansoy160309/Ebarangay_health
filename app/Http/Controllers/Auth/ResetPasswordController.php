@@ -31,14 +31,20 @@ class ResetPasswordController extends Controller
             'password' => 'required|string|min:6|confirmed',
         ]);
 
-        // Check token
+        // Check token - Case-insensitive email check to be safer
         $record = DB::table('password_reset_tokens')
-            ->where('email', $request->email)
+            ->whereRaw('LOWER(email) = ?', [strtolower($request->email)])
             ->where('token', $request->token)
             ->first();
 
         if (!$record) {
-            return back()->with('error', 'Invalid or expired token.');
+            // Debug: Check if email exists but token is different
+            $emailExists = DB::table('password_reset_tokens')
+                ->whereRaw('LOWER(email) = ?', [strtolower($request->email)])
+                ->exists();
+            
+            $msg = $emailExists ? 'Invalid token for this email.' : 'Invalid or expired token.';
+            return back()->with('error', $msg);
         }
 
         // Optional: check expiration (60 minutes)

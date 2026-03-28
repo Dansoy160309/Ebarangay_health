@@ -43,13 +43,15 @@ class ForgotPasswordController extends Controller
         // Generate unique token
         $token = Str::random(64);
 
-        // Save token in database
+        // Save token in database (using a fixed salt or plain string for manual comparison)
+        // Laravel's built-in reset uses hashed tokens, but our manual controller expects plain string.
         DB::table('password_reset_tokens')->updateOrInsert(
             ['email' => $request->email],
             ['token' => $token, 'created_at' => Carbon::now()]
         );
 
         // Send email with token link
+        // Use urlencode for email to handle special characters if any
         $resetLink = route('password.reset', ['token' => $token, 'email' => $request->email]);
 
         try {
