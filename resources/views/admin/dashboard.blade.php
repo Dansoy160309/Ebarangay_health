@@ -305,26 +305,6 @@
                 </div>
             </div>
 
-            {{-- Recent Notifications --}}
-            <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 p-8 overflow-hidden">
-                <h3 class="text-sm font-black text-gray-900 uppercase tracking-widest flex items-center gap-3 mb-8">
-                    <i class="bi bi-bell-fill text-brand-600"></i>
-                    Recent Alerts
-                </h3>
-                <div class="space-y-6">
-                    @forelse($notifications as $notification)
-                    <div class="flex gap-4 relative group">
-                        <div class="w-2 h-2 rounded-full bg-brand-500 mt-1.5 shrink-0 group-hover:scale-125 transition"></div>
-                        <div>
-                            <p class="text-xs font-bold text-gray-900 leading-relaxed">{{ $notification->data['message'] ?? 'New notification' }}</p>
-                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">{{ $notification->created_at->diffForHumans() }}</p>
-                        </div>
-                    </div>
-                    @empty
-                    <p class="text-xs text-gray-400 italic text-center">No new notifications</p>
-                    @endforelse
-                </div>
-            </div>
         </div>
 
     </div>

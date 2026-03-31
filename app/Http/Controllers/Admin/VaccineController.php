@@ -30,10 +30,30 @@ class VaccineController extends Controller
             ->where('quantity_remaining', '>', 0)
             ->get();
 
-        $recentAdministrations = VaccineAdministration::with(['vaccine', 'batch', 'patient', 'administeredBy'])
+        $administrationQuery = VaccineAdministration::with(['vaccine', 'batch', 'patient', 'administeredBy']);
+
+        if ($request->filled('admin_search')) {
+            $search = $request->admin_search;
+            $administrationQuery->where(function ($q) use ($search) {
+                $q->whereHas('vaccine', fn($q2) => $q2->where('name', 'like', "%{$search}%"))
+                    ->orWhereHas('batch', fn($q2) => $q2->where('batch_number', 'like', "%{$search}%"))
+                    ->orWhereHas('patient', fn($q2) => $q2->where('first_name', 'like', "%{$search}%")->orWhere('last_name', 'like', "%{$search}%"))
+                    ->orWhereHas('administeredBy', fn($q2) => $q2->where('first_name', 'like', "%{$search}%")->orWhere('last_name', 'like', "%{$search}%"));
+            });
+        }
+
+        if ($request->filled('admin_from')) {
+            $administrationQuery->whereDate('administered_at', '>=', $request->admin_from);
+        }
+
+        if ($request->filled('admin_to')) {
+            $administrationQuery->whereDate('administered_at', '<=', $request->admin_to);
+        }
+
+        $recentAdministrations = $administrationQuery
             ->latest('administered_at')
-            ->limit(10)
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
         return view('admin.vaccines.index', compact('vaccines', 'lowStockVaccines', 'nearExpiryBatches', 'recentAdministrations'));
     }

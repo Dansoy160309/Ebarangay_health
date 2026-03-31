@@ -82,7 +82,7 @@
     </div>
     @endif
 
-    @if(isset($recentAdministrations) && $recentAdministrations->count() > 0)
+    @if(isset($recentAdministrations))
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <div class="px-5 sm:px-6 py-4 border-b border-gray-50 flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -95,7 +95,34 @@
                 </div>
             </div>
         </div>
+
+        <div class="px-5 sm:px-6 py-4 border-b border-gray-50">
+            <form method="GET" action="{{ route('admin.vaccines.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-end">
+                <input type="hidden" name="search" value="{{ request('search') }}" />
+                <div>
+                    <label class="block text-[10px] font-black text-gray-500 uppercase tracking-wide mb-1" for="admin_search">Search</label>
+                    <input id="admin_search" name="admin_search" value="{{ request('admin_search') }}" type="text" placeholder="Vaccine, batch, patient, staff" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:ring-brand-500 focus:border-brand-500" />
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-black text-gray-500 uppercase tracking-wide mb-1" for="admin_from">From</label>
+                    <input id="admin_from" name="admin_from" value="{{ request('admin_from') }}" type="date" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:ring-brand-500 focus:border-brand-500" />
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-black text-gray-500 uppercase tracking-wide mb-1" for="admin_to">To</label>
+                    <input id="admin_to" name="admin_to" value="{{ request('admin_to') }}" type="date" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:ring-brand-500 focus:border-brand-500" />
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button type="submit" class="w-full sm:w-auto px-3 py-2 rounded-lg bg-brand-600 text-white text-[10px] font-black uppercase tracking-wider hover:bg-brand-700 transition">Filter</button>
+                    <a href="{{ route('admin.vaccines.index') }}" class="w-full sm:w-auto px-3 py-2 rounded-lg bg-gray-100 text-gray-700 text-[10px] font-black uppercase tracking-wider hover:bg-gray-200 transition">Reset</a>
+                </div>
+            </form>
+        </div>
+
         <div class="overflow-x-auto">
+            @if($recentAdministrations->count() > 0)
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-gray-50/50">
@@ -120,6 +147,13 @@
                     @endforeach
                 </tbody>
             </table>
+            @else
+                <div class="p-6 text-center text-sm text-gray-500">No vaccine administrations found for the selected filters.</div>
+            @endif
+        </div>
+
+        <div class="px-5 py-4 border-t border-gray-100 bg-gray-50">
+            {{ $recentAdministrations->links() }}
         </div>
     </div>
     @endif
