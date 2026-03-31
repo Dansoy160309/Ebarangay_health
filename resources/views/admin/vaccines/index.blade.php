@@ -146,7 +146,7 @@
                                     {{ substr($vaccine->name, 0, 1) }}
                                 </div>
                                 <div>
-                                    <p class="text-sm font-black text-gray-900">{{ $vaccine->name }}</p>
+                                    <a href="{{ route('admin.vaccines.show', $vaccine->id) }}" class="text-sm font-black text-gray-900 hover:text-brand-600 transition-colors">{{ $vaccine->name }}</a>
                                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ $vaccine->manufacturer ?? 'No Manufacturer' }}</p>
                                 </div>
                             </div>

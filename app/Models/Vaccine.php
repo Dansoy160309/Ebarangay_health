@@ -23,6 +23,11 @@ class Vaccine extends Model
         return $this->hasMany(VaccineBatch::class);
     }
 
+    public function administrations()
+    {
+        return $this->hasMany(VaccineAdministration::class);
+    }
+
     public function getInStockQuantityAttribute()
     {
         return $this->batches()

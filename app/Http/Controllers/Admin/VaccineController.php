@@ -63,6 +63,17 @@ class VaccineController extends Controller
         return view('admin.vaccines.edit', compact('vaccine'));
     }
 
+    public function show(Vaccine $vaccine)
+    {
+        $vaccine->load(['batches' => function($q) {
+            $q->orderBy('expiry_date', 'asc');
+        }, 'administrations' => function($q) {
+            $q->latest('administered_at')->limit(50);
+        }]);
+
+        return view('admin.vaccines.show', compact('vaccine'));
+    }
+
     public function update(Request $request, Vaccine $vaccine)
     {
         $data = $request->validate([
@@ -76,6 +87,20 @@ class VaccineController extends Controller
         $vaccine->update($data);
 
         return redirect()->route('admin.vaccines.index')->with('success', 'Vaccine updated.');
+    }
+
+    public function destroy(Vaccine $vaccine)
+    {
+        // Check if vaccine has been administered to any patient
+        if ($vaccine->administrations()->exists()) {
+            return redirect()->back()->with('error', 'Cannot delete vaccine that has already been administered to patients.');
+        }
+
+        // Batches will be cascade deleted due to database constraint, 
+        // but we can also check for remaining stock if we want to be extra safe
+        $vaccine->delete();
+
+        return redirect()->route('admin.vaccines.index')->with('success', 'Vaccine type deleted successfully.');
     }
 
     public function stockIn(Request $request)
