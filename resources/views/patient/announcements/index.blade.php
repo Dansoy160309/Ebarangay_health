@@ -171,5 +171,7 @@
             </div>
         </div>
     @endif
+
+    @include('components.patient-bottom-nav')
 </div>
 @endsection

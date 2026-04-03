@@ -1132,30 +1132,6 @@
         </div>
     </div>
 
-    <!-- Sticky Mobile Bottom Navigation -->
-    <nav class="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg md:hidden">
-        <div class="max-w-lg mx-auto grid grid-cols-5 gap-1 px-2 py-1 text-xs font-black text-gray-600">
-            <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center py-2 text-gray-600 hover:text-brand-600 focus:outline-none focus:ring-0 active:outline-none">
-                <i class="bi bi-house-door-fill text-lg"></i>
-                <span>Home</span>
-            </a>
-            <a href="{{ route('patient.appointments.index') }}" class="flex flex-col items-center justify-center py-2 text-gray-600 hover:text-brand-600 focus:outline-none focus:ring-0 active:outline-none">
-                <i class="bi bi-calendar2-check-fill text-lg"></i>
-                <span>Booking</span>
-            </a>
-            <a href="{{ route('patient.health-records.index') }}" class="flex flex-col items-center justify-center py-2 text-gray-600 hover:text-brand-600 focus:outline-none focus:ring-0 active:outline-none">
-                <i class="bi bi-file-earmark-medical text-lg"></i>
-                <span>Records</span>
-            </a>
-            <a href="{{ route('patient.announcements.index') }}" class="flex flex-col items-center justify-center py-2 text-gray-600 hover:text-brand-600 focus:outline-none focus:ring-0 active:outline-none">
-                <i class="bi bi-bell-fill text-lg"></i>
-                <span>Advisories</span>
-            </a>
-            <a href="{{ route('patient.profile.index') }}" class="flex flex-col items-center justify-center py-2 text-gray-600 hover:text-brand-600 focus:outline-none focus:ring-0 active:outline-none">
-                <i class="bi bi-person-circle text-lg"></i>
-                <span>Profile</span>
-            </a>
-        </div>
-    </nav>
+    @include('components.patient-bottom-nav')
 </div>
 @endsection
