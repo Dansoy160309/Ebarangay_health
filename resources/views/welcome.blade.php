@@ -227,19 +227,15 @@
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <a href="{{ route('login') }}" class="p-3 rounded-2xl bg-blue-50 hover:bg-blue-100 transition-colors flex flex-col items-center text-center">
-                        <i class="bi bi-calendar2-check-fill text-brand-600 text-xl mb-2"></i>
                         <span class="text-xs font-black text-gray-900">Online Booking</span>
                     </a>
                     <a href="{{ route('login') }}" class="p-3 rounded-2xl bg-purple-50 hover:bg-purple-100 transition-colors flex flex-col items-center text-center">
-                        <i class="bi bi-file-earmark-medical text-purple-600 text-xl mb-2"></i>
                         <span class="text-xs font-black text-gray-900">Health Records</span>
                     </a>
                     <a href="{{ route('login') }}" class="p-3 rounded-2xl bg-emerald-50 hover:bg-emerald-100 transition-colors flex flex-col items-center text-center">
-                        <i class="bi bi-telephone-fill text-emerald-600 text-xl mb-2"></i>
                         <span class="text-xs font-black text-gray-900">Emergency Hotline</span>
                     </a>
                     <a href="{{ route('login') }}" class="p-3 rounded-2xl bg-orange-50 hover:bg-orange-100 transition-colors flex flex-col items-center text-center">
-                        <i class="bi bi-megaphone-fill text-orange-600 text-xl mb-2"></i>
                         <span class="text-xs font-black text-gray-900">Health Advisories</span>
                     </a>
                 </div>
@@ -262,30 +258,7 @@
             </div>
         </div>
 
-        <nav class="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg sm:hidden">
-            <div class="max-w-md mx-auto px-3 py-2 grid grid-cols-5 gap-1 text-xs font-black text-gray-600">
-                <a href="#" class="flex flex-col items-center justify-center py-2 text-gray-600 hover:text-brand-600 focus:outline-none focus:ring-0 active:outline-none">
-                    <i class="bi bi-house-door-fill text-xl"></i>
-                    Home
-                </a>
-                <a href="{{ route('login') }}" class="flex flex-col items-center justify-center py-2 text-gray-600 hover:text-brand-600 focus:outline-none focus:ring-0 active:outline-none">
-                    <i class="bi bi-calendar2-check-fill text-xl"></i>
-                    Booking
-                </a>
-                <a href="{{ route('login') }}" class="flex flex-col items-center justify-center py-2 text-gray-600 hover:text-brand-600 focus:outline-none focus:ring-0 active:outline-none">
-                    <i class="bi bi-file-earmark-medical text-xl"></i>
-                    Records
-                </a>
-                <a href="#features" class="flex flex-col items-center justify-center py-2 text-gray-600 hover:text-brand-600 focus:outline-none focus:ring-0 active:outline-none">
-                    <i class="bi bi-bell-fill text-xl"></i>
-                    Advisories
-                </a>
-                <a href="#contact" class="flex flex-col items-center justify-center py-2 text-gray-600 hover:text-brand-600 focus:outline-none focus:ring-0 active:outline-none">
-                    <i class="bi bi-person-circle text-xl"></i>
-                    Profile
-                </a>
-            </div>
-        </nav>
+
     </section>
 
     <!-- Features Section -->
