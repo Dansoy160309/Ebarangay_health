@@ -60,6 +60,9 @@
         {{-- Right Panel --}}
         <div class="w-full md:w-1/2 p-8 md:p-12 lg:p-16 flex flex-col justify-center bg-white">
             <div class="max-w-md mx-auto w-full">
+                <div class="flex justify-end mb-4">
+                    <a href="{{ url('/') }}" class="text-xs font-black text-brand-600 hover:text-brand-700 uppercase tracking-widest bg-brand-50 px-3 py-1.5 rounded-lg border border-brand-100 shadow-sm">Home</a>
+                </div>
                 <div class="mb-10">
                     <h2 class="text-4xl font-black text-gray-900 mb-2 tracking-tight">Welcome Back! 👋</h2>
                     <p class="text-gray-500 text-lg font-medium">Please enter your details to sign in.</p>

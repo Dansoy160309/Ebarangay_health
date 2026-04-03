@@ -42,6 +42,8 @@
         </div>
     </div>
 
+    @include('components.patient-quick-services')
+
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <!-- Left Column: Contact & Personal Info -->

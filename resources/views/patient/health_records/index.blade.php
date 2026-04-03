@@ -114,6 +114,8 @@
         </div>
     </div>
 
+    @include('components.patient-quick-services')
+
     @php
         $profile = $selectedSubject->patientProfile;
         $prenatalRecords = $records->filter(fn($r) => str_contains(strtolower($r->service->name ?? ''), 'prenatal'))->sortBy('created_at');
