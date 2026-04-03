@@ -195,7 +195,7 @@
             }))
         };
     }
-}" x-init="initClock(); updateCalendar()" class="flex flex-col gap-8" x-cloak>
+}" x-init="initClock(); updateCalendar()" class="flex flex-col gap-8 pb-24" x-cloak>
 
     {{-- 1. Hero Welcome Banner --}}
     <div class="bg-gradient-to-br from-brand-600 via-brand-500 to-indigo-600 rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 text-white shadow-xl shadow-brand-500/20 relative overflow-hidden">
@@ -225,6 +225,53 @@
         <!-- Background Icon -->
         <div class="absolute -right-6 -bottom-6 sm:-right-10 sm:-bottom-10 opacity-10 pointer-events-none">
             <i class="bi bi-heart-pulse-fill text-[8rem] sm:text-[12rem]"></i>
+        </div>
+    </div>
+
+    {{-- Quick Access Cards (Mobile Friendly) --}}
+    <div class="md:hidden space-y-4">
+        <div class="bg-white rounded-3xl shadow-soft border border-gray-100 p-4">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-sm font-black text-gray-900 uppercase tracking-wider">Popular Services</h2>
+                <a href="{{ route('patient.appointments.index') }}" class="text-xs font-bold text-brand-600 hover:text-brand-700">See all</a>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <a href="{{ route('patient.appointments.index') }}" class="p-3 rounded-2xl bg-blue-50 hover:bg-blue-100 transition-colors text-center">
+                    <i class="bi bi-calendar2-check-fill text-brand-600 text-lg mb-1"></i>
+                    <p class="text-xs font-black text-gray-800">Book Appointment</p>
+                </a>
+                <a href="{{ route('patient.health-records.index') }}" class="p-3 rounded-2xl bg-purple-50 hover:bg-purple-100 transition-colors text-center">
+                    <i class="bi bi-file-earmark-medical text-purple-600 text-lg mb-1"></i>
+                    <p class="text-xs font-black text-gray-800">View Records</p>
+                </a>
+                <a href="{{ route('patient.announcements.index') }}" class="p-3 rounded-2xl bg-amber-50 hover:bg-amber-100 transition-colors text-center">
+                    <i class="bi bi-megaphone-fill text-amber-600 text-lg mb-1"></i>
+                    <p class="text-xs font-black text-gray-800">Health Advisories</p>
+                </a>
+                <a href="{{ route('patient.appointments.index') }}" class="p-3 rounded-2xl bg-emerald-50 hover:bg-emerald-100 transition-colors text-center">
+                    <i class="bi bi-clock-history text-emerald-600 text-lg mb-1"></i>
+                    <p class="text-xs font-black text-gray-800">Track Visits</p>
+                </a>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-soft border border-gray-100 p-4">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-sm font-black text-gray-900 uppercase tracking-wider">Barangay Vitality</h2>
+                <span class="text-[10px] font-black text-gray-400 uppercase">Live data</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="p-3 rounded-2xl bg-brand-50 border border-brand-100 text-center">
+                    <p class="text-xs font-black text-gray-500 uppercase tracking-widest">Health Score</p>
+                    <p class="text-2xl font-black text-brand-700">98<span class="text-base">%</span></p>
+                    <p class="text-[10px] font-bold text-gray-500">Vaccination coverage</p>
+                </div>
+                <div class="p-3 rounded-2xl bg-white border border-gray-100 text-center">
+                    <p class="text-xs font-black text-gray-500 uppercase tracking-widest">Active Alerts</p>
+                    <p class="text-2xl font-black text-gray-900">12</p>
+                    <p class="text-[10px] font-bold text-gray-500">Published this week</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1084,5 +1131,31 @@
             </div>
         </div>
     </div>
+
+    <!-- Sticky Mobile Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg md:hidden">
+        <div class="max-w-lg mx-auto grid grid-cols-5 gap-1 px-2 py-1 text-xs font-black text-gray-600">
+            <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center rounded-lg py-2 text-brand-600">
+                <i class="bi bi-house-door-fill text-lg"></i>
+                <span>Home</span>
+            </a>
+            <a href="{{ route('patient.appointments.index') }}" class="flex flex-col items-center justify-center rounded-lg py-2 hover:bg-gray-50">
+                <i class="bi bi-calendar2-check-fill text-lg"></i>
+                <span>Booking</span>
+            </a>
+            <a href="{{ route('patient.health-records.index') }}" class="flex flex-col items-center justify-center rounded-lg py-2 hover:bg-gray-50">
+                <i class="bi bi-file-earmark-medical text-lg"></i>
+                <span>Records</span>
+            </a>
+            <a href="{{ route('patient.announcements.index') }}" class="flex flex-col items-center justify-center rounded-lg py-2 hover:bg-gray-50">
+                <i class="bi bi-bell-fill text-lg"></i>
+                <span>Advisories</span>
+            </a>
+            <a href="{{ route('patient.profile.index') }}" class="flex flex-col items-center justify-center rounded-lg py-2 hover:bg-gray-50">
+                <i class="bi bi-person-circle text-lg"></i>
+                <span>Profile</span>
+            </a>
+        </div>
+    </nav>
 </div>
 @endsection

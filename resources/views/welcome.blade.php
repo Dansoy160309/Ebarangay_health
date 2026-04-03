@@ -42,6 +42,9 @@
     <style>
         [x-cloak] { display: none !important; }
         html { scroll-behavior: smooth; }
+        @media (max-width: 768px) {
+            body { padding-bottom: 74px; }
+        }
     </style>
 </head>
 <body class="antialiased bg-gray-50 text-gray-800" x-data="{ mobileMenuOpen: false }">
@@ -197,6 +200,93 @@
             </div>
         </div>
     </div>
+
+    <!-- Mobile-First Home Cards (New) -->
+    <section id="mobile-home" class="py-8 bg-gray-50 md:hidden">
+        <div class="max-w-md mx-auto px-4">
+            <div class="bg-white rounded-3xl shadow-soft border border-gray-100 p-5 mb-5">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center shadow-lg">
+                            <i class="bi bi-heart-pulse-fill text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-black uppercase tracking-widest text-brand-600">CareHaven</p>
+                            <h2 class="text-xl font-black text-gray-900">Better Healthcare for Our Community</h2>
+                        </div>
+                    </div>
+                    <a href="{{ route('login') }}" class="px-4 py-2 bg-brand-600 text-white text-xs font-black rounded-xl shadow-lg hover:bg-brand-700 transition-colors">Get Started</a>
+                </div>
+                <p class="text-gray-600 text-sm leading-relaxed">Access barangay health services from home. Book appointments, view records, and stay updated with health advisories.</p>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-soft border border-gray-100 p-4 mb-5">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-sm font-black text-gray-900 uppercase tracking-wider">Popular Services</h3>
+                    <a href="#features" class="text-xs font-bold text-brand-600 hover:text-brand-700">See all</a>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <a href="{{ route('login') }}" class="p-3 rounded-2xl bg-blue-50 hover:bg-blue-100 transition-colors flex flex-col items-center text-center">
+                        <i class="bi bi-calendar2-check-fill text-brand-600 text-xl mb-2"></i>
+                        <span class="text-xs font-black text-gray-900">Online Booking</span>
+                    </a>
+                    <a href="{{ route('login') }}" class="p-3 rounded-2xl bg-purple-50 hover:bg-purple-100 transition-colors flex flex-col items-center text-center">
+                        <i class="bi bi-file-earmark-medical text-purple-600 text-xl mb-2"></i>
+                        <span class="text-xs font-black text-gray-900">Health Records</span>
+                    </a>
+                    <a href="{{ route('login') }}" class="p-3 rounded-2xl bg-emerald-50 hover:bg-emerald-100 transition-colors flex flex-col items-center text-center">
+                        <i class="bi bi-telephone-fill text-emerald-600 text-xl mb-2"></i>
+                        <span class="text-xs font-black text-gray-900">Emergency Hotline</span>
+                    </a>
+                    <a href="{{ route('login') }}" class="p-3 rounded-2xl bg-orange-50 hover:bg-orange-100 transition-colors flex flex-col items-center text-center">
+                        <i class="bi bi-megaphone-fill text-orange-600 text-xl mb-2"></i>
+                        <span class="text-xs font-black text-gray-900">Health Advisories</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-soft border border-gray-100 p-4 mb-20">
+                <h3 class="text-xs font-black text-gray-500 uppercase tracking-widest mb-3">Barangay Vitality</h3>
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex-1 p-4 rounded-2xl bg-brand-50 border border-brand-100">
+                        <p class="text-xs font-black uppercase tracking-widest text-gray-500">Health Score</p>
+                        <p class="text-3xl font-black text-brand-700">98<span class="text-base">%</span></p>
+                        <p class="text-xs text-gray-500">Vaccination & Outreach</p>
+                    </div>
+                    <div class="flex-1 p-4 rounded-2xl bg-white border border-gray-100">
+                        <p class="text-xs font-black uppercase tracking-widest text-gray-500">Active Alerts</p>
+                        <p class="text-3xl font-black text-gray-900">12</p>
+                        <p class="text-xs text-gray-500">Critical updates this week</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg sm:hidden">
+            <div class="max-w-md mx-auto px-3 py-2 grid grid-cols-5 gap-1 text-xs font-black text-gray-600">
+                <a href="#" class="flex flex-col items-center justify-center py-2 rounded-lg text-brand-600">
+                    <i class="bi bi-house-door-fill text-xl"></i>
+                    Home
+                </a>
+                <a href="{{ route('login') }}" class="flex flex-col items-center justify-center py-2 rounded-lg hover:bg-gray-50">
+                    <i class="bi bi-calendar2-check-fill text-xl"></i>
+                    Booking
+                </a>
+                <a href="{{ route('login') }}" class="flex flex-col items-center justify-center py-2 rounded-lg hover:bg-gray-50">
+                    <i class="bi bi-file-earmark-medical text-xl"></i>
+                    Records
+                </a>
+                <a href="#features" class="flex flex-col items-center justify-center py-2 rounded-lg hover:bg-gray-50">
+                    <i class="bi bi-bell-fill text-xl"></i>
+                    Advisories
+                </a>
+                <a href="#contact" class="flex flex-col items-center justify-center py-2 rounded-lg hover:bg-gray-50">
+                    <i class="bi bi-person-circle text-xl"></i>
+                    Profile
+                </a>
+            </div>
+        </nav>
+    </section>
 
     <!-- Features Section -->
     <section id="features" class="py-24 bg-white relative overflow-hidden">
