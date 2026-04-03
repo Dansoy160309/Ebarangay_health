@@ -264,23 +264,23 @@
 
         <nav class="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg sm:hidden">
             <div class="max-w-md mx-auto px-3 py-2 grid grid-cols-5 gap-1 text-xs font-black text-gray-600">
-                <a href="#" class="flex flex-col items-center justify-center py-2 rounded-lg text-brand-600">
+                <a href="#" class="flex flex-col items-center justify-center py-2 text-gray-600 hover:text-brand-600 focus:outline-none focus:ring-0 active:outline-none">
                     <i class="bi bi-house-door-fill text-xl"></i>
                     Home
                 </a>
-                <a href="{{ route('login') }}" class="flex flex-col items-center justify-center py-2 rounded-lg hover:bg-gray-50">
+                <a href="{{ route('login') }}" class="flex flex-col items-center justify-center py-2 text-gray-600 hover:text-brand-600 focus:outline-none focus:ring-0 active:outline-none">
                     <i class="bi bi-calendar2-check-fill text-xl"></i>
                     Booking
                 </a>
-                <a href="{{ route('login') }}" class="flex flex-col items-center justify-center py-2 rounded-lg hover:bg-gray-50">
+                <a href="{{ route('login') }}" class="flex flex-col items-center justify-center py-2 text-gray-600 hover:text-brand-600 focus:outline-none focus:ring-0 active:outline-none">
                     <i class="bi bi-file-earmark-medical text-xl"></i>
                     Records
                 </a>
-                <a href="#features" class="flex flex-col items-center justify-center py-2 rounded-lg hover:bg-gray-50">
+                <a href="#features" class="flex flex-col items-center justify-center py-2 text-gray-600 hover:text-brand-600 focus:outline-none focus:ring-0 active:outline-none">
                     <i class="bi bi-bell-fill text-xl"></i>
                     Advisories
                 </a>
-                <a href="#contact" class="flex flex-col items-center justify-center py-2 rounded-lg hover:bg-gray-50">
+                <a href="#contact" class="flex flex-col items-center justify-center py-2 text-gray-600 hover:text-brand-600 focus:outline-none focus:ring-0 active:outline-none">
                     <i class="bi bi-person-circle text-xl"></i>
                     Profile
                 </a>
