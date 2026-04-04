@@ -12,10 +12,9 @@
         <div class="absolute -bottom-[10%] left-[20%] w-[40%] h-[40%] bg-purple-200/30 rounded-full blur-3xl mix-blend-multiply animate-blob animation-delay-4000"></div>
     </div>
 
-    <div class="max-w-6xl w-full bg-white rounded-[2rem] shadow-2xl overflow-hidden flex min-h-[650px] relative z-10 transition-all duration-300 hover:shadow-3xl">
+    <div class="max-w-5xl w-full bg-white rounded-2xl shadow-xl overflow-hidden flex min-h-[420px] md:min-h-[480px] relative z-10 transition-all duration-300 hover:shadow-2xl">
         
-        {{-- Left Panel --}}
-        <div class="hidden md:flex md:w-1/2 bg-gradient-to-br from-brand-700 via-brand-600 to-brand-800 p-12 flex-col justify-between relative overflow-hidden text-white">
+        {{-- Left Panel --}}        <div class="hidden md:flex md:w-1/2 bg-gradient-to-br from-brand-700 via-brand-600 to-brand-800 p-6 md:p-8 flex-col justify-between relative overflow-hidden text-white">
             
             {{-- Abstract Pattern Overlay --}}
             <div class="absolute inset-0 opacity-10 pattern-grid-lg"></div>
@@ -58,14 +57,11 @@
         </div>
 
         {{-- Right Panel --}}
-        <div class="w-full md:w-1/2 p-8 md:p-12 lg:p-16 flex flex-col justify-center bg-white">
-            <div class="max-w-md mx-auto w-full">
-                <div class="flex justify-end mb-4">
-                    <a href="{{ url('/') }}" class="text-xs font-black text-brand-600 hover:text-brand-700 uppercase tracking-widest bg-brand-50 px-3 py-1.5 rounded-lg border border-brand-100 shadow-sm">Landing</a>
-                </div>
-                <div class="mb-10">
-                    <h2 class="text-4xl font-black text-gray-900 mb-2 tracking-tight">Welcome Back! 👋</h2>
-                    <p class="text-gray-500 text-lg font-medium">Please enter your details to sign in.</p>
+        <div class="w-full md:w-1/2 p-5 md:p-6 lg:p-7 flex flex-col justify-center bg-white">
+            <div class="max-w-sm mx-auto w-full space-y-4">
+                <div class="mb-6">
+                    <h2 class="text-4xl font-black text-gray-900 mb-1 tracking-tight">Welcome Back! 👋</h2>
+                    <p class="text-gray-500 text-base font-medium">Please enter your details to sign in.</p>
                 </div>
 
                 @if (session('info'))
@@ -92,7 +88,7 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('login.attempt') }}" class="space-y-7">
+                <form method="POST" action="{{ route('login.attempt') }}" class="space-y-4">
                     @csrf
 
                     <div>
@@ -141,6 +137,12 @@
                         Sign In <i class="bi bi-arrow-right ml-2 text-xl"></i>
                     </button>
                 </form>
+
+                <div class="mt-4 text-center">
+                    <a href="{{ url('/') }}" class="inline-flex items-center justify-center px-6 py-2 text-xs font-black text-brand-600 bg-brand-50 border border-brand-100 rounded-lg uppercase tracking-widest hover:bg-brand-100 hover:text-brand-700 transition-all">
+                        Back to Home Page
+                    </a>
+                </div>
 
                 <div class="mt-10 pt-6 border-t border-gray-100 text-center">
                     <p class="text-sm text-gray-500">
