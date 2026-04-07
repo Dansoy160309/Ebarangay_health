@@ -149,18 +149,33 @@
                         </a>
                     </div>
 
-                    <div class="mt-14 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-10 text-gray-600">
-                        <div class="flex items-center gap-3">
-                            <i class="bi bi-check-circle-fill text-green-500 text-2xl"></i>
-                            <span class="text-base font-semibold">Easy Scheduling</span>
+                    <div class="mt-14 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="rounded-3xl bg-white shadow-soft border border-gray-100 p-5 flex items-start gap-4">
+                            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-green-100 text-green-600 text-2xl">
+                                <i class="bi bi-calendar-check"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-gray-900">Easy Scheduling</p>
+                                <p class="mt-1 text-sm text-gray-500">Book appointments fast</p>
+                            </div>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <i class="bi bi-check-circle-fill text-green-500 text-2xl"></i>
-                            <span class="text-base font-semibold">Secure Records</span>
+                        <div class="rounded-3xl bg-white shadow-soft border border-gray-100 p-5 flex items-start gap-4">
+                            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 text-2xl">
+                                <i class="bi bi-file-earmark-lock"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-gray-900">Secure Records</p>
+                                <p class="mt-1 text-sm text-gray-500">Keep data protected</p>
+                            </div>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <i class="bi bi-check-circle-fill text-green-500 text-2xl"></i>
-                            <span class="text-base font-semibold">24/7 Access</span>
+                        <div class="rounded-3xl bg-white shadow-soft border border-gray-100 p-5 flex items-start gap-4">
+                            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-600 text-2xl">
+                                <i class="bi bi-clock-history"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-gray-900">24/7 Access</p>
+                                <p class="mt-1 text-sm text-gray-500">Support anytime</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -172,7 +187,7 @@
                     
                     {{-- Main Image Container --}}
                     <div class="relative z-10 rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white transform rotate-2 hover:rotate-0 transition-all duration-500 max-h-[520px]">
-                        <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=2070&auto=format&fit=crop" alt="Doctor" class="w-full h-[340px] md:h-[420px] lg:h-[480px] object-cover">
+                        <img src="{{ asset('assets/images/hero-doctor.jpg') }}" alt="Healthcare professional" class="w-full h-[340px] md:h-[420px] lg:h-[480px] object-cover">
                     </div>
 
                     {{-- Floating Card 1: Active Patients --}}
@@ -272,58 +287,23 @@
             </div>
 
             <div class="grid md:grid-cols-3 gap-10">
-                {{-- Feature 1 --}}
-                <div class="bg-white p-10 rounded-[2.5rem] shadow-card hover:shadow-soft transition-all duration-500 group border border-gray-100 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-brand-50 rounded-full -mr-16 -mt-16 group-hover:bg-brand-100 transition-colors"></div>
-                    <div class="w-16 h-16 bg-brand-100 rounded-2xl flex items-center justify-center text-brand-600 text-3xl mb-8 group-hover:scale-110 transition-transform relative z-10">
-                        <i class="bi bi-calendar2-check-fill"></i>
-                    </div>
-                    <h3 class="text-2xl font-black text-gray-900 mb-4 relative z-10">Online Appointment</h3>
-                    <p class="text-gray-500 leading-relaxed mb-6 relative z-10">Skip the long lines. Book your check-ups and consultations online with your preferred healthcare provider.</p>
-                    <ul class="space-y-3 relative z-10">
-                        <li class="flex items-center gap-3 text-sm font-bold text-gray-600">
-                            <i class="bi bi-check2 text-brand-500"></i> Easy Scheduling
-                        </li>
-                        <li class="flex items-center gap-3 text-sm font-bold text-gray-600">
-                            <i class="bi bi-check2 text-brand-500"></i> Real-time Availability
-                        </li>
-                    </ul>
+                <div class="bg-white p-10 rounded-[2.5rem] shadow-soft border border-gray-100 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-brand-50 rounded-full -mr-16 -mt-16"></div>
+                    <h3 class="text-3xl font-black text-gray-900 mb-4 relative z-10">Easy Scheduling</h3>
+                    <p class="text-gray-500 leading-relaxed mb-6 relative z-10">Book barangay health appointments quickly and easily with one click. No more waiting in line.</p>
+                    <p class="text-sm font-semibold text-brand-600 relative z-10">Scroll down to see more benefits.</p>
                 </div>
-
-                {{-- Feature 2 --}}
-                <div class="bg-white p-10 rounded-[2.5rem] shadow-card hover:shadow-soft transition-all duration-500 group border border-gray-100 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-purple-50 rounded-full -mr-16 -mt-16 group-hover:bg-purple-100 transition-colors"></div>
-                    <div class="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center text-purple-600 text-3xl mb-8 group-hover:scale-110 transition-transform relative z-10">
-                        <i class="bi bi-shield-lock-fill"></i>
-                    </div>
-                    <h3 class="text-2xl font-black text-gray-900 mb-4 relative z-10">Digital Records</h3>
-                    <p class="text-gray-500 leading-relaxed mb-6 relative z-10">Securely access your medical history, prescriptions, and lab results anytime from any device.</p>
-                    <ul class="space-y-3 relative z-10">
-                        <li class="flex items-center gap-3 text-sm font-bold text-gray-600">
-                            <i class="bi bi-check2 text-purple-500"></i> HIPAA Compliant
-                        </li>
-                        <li class="flex items-center gap-3 text-sm font-bold text-gray-600">
-                            <i class="bi bi-check2 text-purple-500"></i> Easy Data Export
-                        </li>
-                    </ul>
+                <div class="bg-white p-10 rounded-[2.5rem] shadow-soft border border-gray-100 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-purple-50 rounded-full -mr-16 -mt-16"></div>
+                    <h3 class="text-3xl font-black text-gray-900 mb-4 relative z-10">Secure Records</h3>
+                    <p class="text-gray-500 leading-relaxed mb-6 relative z-10">Keep your medical information safe and accessible anytime through our secure system.</p>
+                    <p class="text-sm font-semibold text-brand-600 relative z-10">No icons, just clear service details.</p>
                 </div>
-
-                {{-- Feature 3 --}}
-                <div class="bg-white p-10 rounded-[2.5rem] shadow-card hover:shadow-soft transition-all duration-500 group border border-gray-100 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-full -mr-16 -mt-16 group-hover:bg-amber-100 transition-colors"></div>
-                    <div class="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-600 text-3xl mb-8 group-hover:scale-110 transition-transform relative z-10">
-                        <i class="bi bi-megaphone-fill"></i>
-                    </div>
-                    <h3 class="text-2xl font-black text-gray-900 mb-4 relative z-10">Health Alerts</h3>
-                    <p class="text-gray-500 leading-relaxed mb-6 relative z-10">Stay informed about vaccination drives, medical missions, and health alerts in your local community.</p>
-                    <ul class="space-y-3 relative z-10">
-                        <li class="flex items-center gap-3 text-sm font-bold text-gray-600">
-                            <i class="bi bi-check2 text-amber-500"></i> Real-time Notifications
-                        </li>
-                        <li class="flex items-center gap-3 text-sm font-bold text-gray-600">
-                            <i class="bi bi-check2 text-amber-500"></i> Community Updates
-                        </li>
-                    </ul>
+                <div class="bg-white p-10 rounded-[2.5rem] shadow-soft border border-gray-100 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-full -mr-16 -mt-16"></div>
+                    <h3 class="text-3xl font-black text-gray-900 mb-4 relative z-10">24/7 Access</h3>
+                    <p class="text-gray-500 leading-relaxed mb-6 relative z-10">Access your health services and records anytime, even outside clinic hours.</p>
+                    <p class="text-sm font-semibold text-brand-600 relative z-10">Everything available whenever you need it.</p>
                 </div>
             </div>
         </div>
