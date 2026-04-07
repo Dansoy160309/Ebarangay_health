@@ -150,32 +150,17 @@
                     </div>
 
                     <div class="mt-14 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="rounded-3xl bg-white shadow-soft border border-gray-100 p-5 flex items-start gap-4">
-                            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-green-100 text-green-600 text-2xl">
-                                <i class="bi bi-calendar-check"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-bold text-gray-900">Easy Scheduling</p>
-                                <p class="mt-1 text-sm text-gray-500">Book appointments fast</p>
-                            </div>
+                        <div class="rounded-3xl bg-white shadow-soft border border-gray-100 p-6">
+                            <p class="text-sm uppercase font-semibold tracking-wide text-brand-600">Easy Scheduling</p>
+                            <p class="mt-3 text-base font-semibold text-gray-900">Book appointments fast with just a few taps.</p>
                         </div>
-                        <div class="rounded-3xl bg-white shadow-soft border border-gray-100 p-5 flex items-start gap-4">
-                            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 text-2xl">
-                                <i class="bi bi-file-earmark-lock"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-bold text-gray-900">Secure Records</p>
-                                <p class="mt-1 text-sm text-gray-500">Keep data protected</p>
-                            </div>
+                        <div class="rounded-3xl bg-white shadow-soft border border-gray-100 p-6">
+                            <p class="text-sm uppercase font-semibold tracking-wide text-brand-600">Secure Records</p>
+                            <p class="mt-3 text-base font-semibold text-gray-900">Store patient history safely in one place.</p>
                         </div>
-                        <div class="rounded-3xl bg-white shadow-soft border border-gray-100 p-5 flex items-start gap-4">
-                            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-600 text-2xl">
-                                <i class="bi bi-clock-history"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-bold text-gray-900">24/7 Access</p>
-                                <p class="mt-1 text-sm text-gray-500">Support anytime</p>
-                            </div>
+                        <div class="rounded-3xl bg-white shadow-soft border border-gray-100 p-6">
+                            <p class="text-sm uppercase font-semibold tracking-wide text-brand-600">24/7 Access</p>
+                            <p class="mt-3 text-base font-semibold text-gray-900">View health updates anytime, anywhere.</p>
                         </div>
                     </div>
                 </div>
@@ -190,45 +175,52 @@
                         <svg viewBox="0 0 1200 900" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
                             <defs>
                                 <linearGradient id="bg-hero" x1="0" y1="0" x2="1" y2="1">
-                                    <stop offset="0%" stop-color="#F8FBFF" />
-                                    <stop offset="100%" stop-color="#E9F3FF" />
+                                    <stop offset="0%" stop-color="#E0F2FE" />
+                                    <stop offset="100%" stop-color="#FFFFFF" />
                                 </linearGradient>
-                                <linearGradient id="panel-hero" x1="0" y1="0" x2="1" y2="1">
+                                <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
                                     <stop offset="0%" stop-color="#FFFFFF" />
-                                    <stop offset="100%" stop-color="#EFF6FF" />
+                                    <stop offset="100%" stop-color="#EEF6FF" />
                                 </linearGradient>
                             </defs>
 
-                            <rect x="40" y="120" width="1120" height="660" rx="70" fill="url(#bg-hero)" />
-                            <rect x="90" y="170" width="820" height="520" rx="50" fill="url(#panel-hero)" />
-                            <rect x="220" y="220" width="520" height="260" rx="40" fill="#FFFFFF" stroke="#DCE7FF" stroke-width="3" />
-                            <rect x="260" y="270" width="160" height="18" rx="9" fill="#3B82F6" />
-                            <rect x="260" y="310" width="240" height="14" rx="7" fill="#60A5FA" />
-                            <rect x="260" y="342" width="200" height="14" rx="7" fill="#93C5FD" />
-                            <rect x="260" y="380" width="180" height="14" rx="7" fill="#BFDBFE" />
-                            <rect x="260" y="420" width="120" height="16" rx="8" fill="#E0E7FF" />
-                            <rect x="260" y="450" width="90" height="16" rx="8" fill="#C7D2FE" />
-                            <rect x="760" y="280" width="180" height="140" rx="28" fill="#FFFFFF" stroke="#DCE7FF" stroke-width="3" />
-                            <rect x="790" y="320" width="120" height="18" rx="9" fill="#2563EB" />
-                            <rect x="790" y="360" width="88" height="14" rx="7" fill="#60A5FA" />
-                            <rect x="790" y="390" width="118" height="14" rx="7" fill="#93C5FD" />
-                            <rect x="790" y="430" width="96" height="14" rx="7" fill="#DBEAFE" />
-                            <rect x="724" y="500" width="250" height="180" rx="40" fill="#FFFFFF" stroke="#DCE7FF" stroke-width="3" />
-                            <rect x="760" y="538" width="160" height="18" rx="9" fill="#2563EB" />
-                            <rect x="760" y="578" width="100" height="14" rx="7" fill="#60A5FA" />
-                            <rect x="760" y="610" width="140" height="14" rx="7" fill="#93C5FD" />
-                            <rect x="735" y="660" width="80" height="80" rx="24" fill="#2563EB" />
-                            <path d="M765 700V720" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" />
-                            <path d="M745 710H785" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" />
-                            <rect x="520" y="270" width="240" height="240" rx="40" fill="#EFF6FF" />
-                            <rect x="580" y="320" width="120" height="18" rx="9" fill="#2563EB" />
-                            <rect x="580" y="360" width="90" height="14" rx="7" fill="#60A5FA" />
-                            <rect x="580" y="390" width="170" height="14" rx="7" fill="#93C5FD" />
-                            <rect x="580" y="430" width="130" height="14" rx="7" fill="#DBEAFE" />
-                            <rect x="520" y="540" width="260" height="120" rx="40" fill="#F8FAFC" />
-                            <path d="M570 590H700" stroke="#2563EB" stroke-width="20" stroke-linecap="round" />
-                            <path d="M640 560V660" stroke="#2563EB" stroke-width="20" stroke-linecap="round" />
-                            <path d="M600 630H680" stroke="#60A5FA" stroke-width="16" stroke-linecap="round" />
+                            <rect width="1200" height="900" rx="70" fill="url(#bg-hero)" />
+                            <rect x="120" y="140" width="960" height="600" rx="60" fill="url(#glass)" stroke="#D1E9FF" stroke-width="4" />
+
+                            <rect x="180" y="220" width="330" height="100" rx="32" fill="#2563EB" />
+                            <text x="200" y="285" fill="#FFFFFF" font-size="32" font-weight="700" font-family="Inter, Arial, sans-serif">Barangay Clinic</text>
+                            <rect x="180" y="320" width="140" height="14" rx="7" fill="#60A5FA" />
+                            <rect x="180" y="350" width="210" height="14" rx="7" fill="#93C5FD" />
+
+                            <rect x="560" y="220" width="360" height="280" rx="40" fill="#FFFFFF" stroke="#D1E9FF" stroke-width="3" />
+                            <rect x="620" y="280" width="120" height="24" rx="12" fill="#2563EB" />
+                            <rect x="620" y="320" width="170" height="14" rx="7" fill="#60A5FA" />
+                            <rect x="620" y="350" width="210" height="14" rx="7" fill="#93C5FD" />
+                            <rect x="620" y="380" width="160" height="14" rx="7" fill="#DBEAFE" />
+                            <rect x="620" y="420" width="220" height="16" rx="8" fill="#E0E7FF" />
+                            <rect x="620" y="450" width="120" height="16" rx="8" fill="#C7D2FE" />
+
+                            <rect x="200" y="460" width="260" height="180" rx="40" fill="#FFFFFF" stroke="#D1E9FF" stroke-width="3" />
+                            <rect x="240" y="520" width="180" height="14" rx="7" fill="#2563EB" />
+                            <rect x="240" y="550" width="140" height="14" rx="7" fill="#60A5FA" />
+                            <rect x="240" y="580" width="200" height="14" rx="7" fill="#93C5FD" />
+                            <rect x="240" y="615" width="130" height="14" rx="7" fill="#DBEAFE" />
+
+                            <rect x="620" y="560" width="180" height="180" rx="44" fill="#2563EB" opacity="0.15" />
+                            <rect x="700" y="620" width="100" height="100" rx="24" fill="#2563EB" />
+                            <path d="M740 650V700" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round" />
+                            <path d="M720 670H760" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round" />
+
+                            <rect x="840" y="320" width="240" height="220" rx="40" fill="#FFFFFF" stroke="#D1E9FF" stroke-width="3" />
+                            <rect x="900" y="380" width="120" height="16" rx="8" fill="#2563EB" />
+                            <rect x="900" y="410" width="90" height="14" rx="7" fill="#60A5FA" />
+                            <rect x="900" y="440" width="140" height="14" rx="7" fill="#93C5FD" />
+                            <rect x="900" y="470" width="80" height="14" rx="7" fill="#DBEAFE" />
+
+                            <rect x="900" y="560" width="180" height="120" rx="32" fill="#F8FAFC" />
+                            <path d="M940 610H1020" stroke="#2563EB" stroke-width="18" stroke-linecap="round" />
+                            <path d="M980 570V660" stroke="#2563EB" stroke-width="18" stroke-linecap="round" />
+                            <path d="M960 600H1000" stroke="#60A5FA" stroke-width="14" stroke-linecap="round" />
                         </svg>
                     </div>
 
