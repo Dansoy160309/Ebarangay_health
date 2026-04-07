@@ -51,16 +51,16 @@
 
     <!-- Navbar -->
     <nav class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100">
-        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-brand-500/30">
-                    <i class="bi bi-heart-pulse-fill text-xl"></i>
+        <div class="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-brand-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-brand-500/30">
+                    <i class="bi bi-heart-pulse-fill text-2xl"></i>
                 </div>
-                <span class="text-xl font-bold text-gray-900 tracking-tight">E-Barangay Health</span>
+                <span class="text-2xl font-bold text-gray-900 tracking-tight">E-Barangay Health</span>
             </div>
 
             <!-- Desktop Menu -->
-            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
+            <div class="hidden md:flex items-center gap-10 text-base font-medium text-gray-600">
                 <a href="#features" class="hover:text-brand-600 transition-colors">Features</a>
                 <a href="#about" class="hover:text-brand-600 transition-colors">About Us</a>
                 <a href="#contact" class="hover:text-brand-600 transition-colors">Contact</a>
@@ -68,9 +68,9 @@
 
             <div class="hidden md:flex items-center gap-4">
                     @if (Route::has('login'))
-                        <a href="{{ route('login') }}" class="px-5 py-2.5 text-sm font-semibold text-gray-700 hover:text-brand-600 transition-colors">Log in</a>
+                        <a href="{{ route('login') }}" class="px-6 py-3 text-base font-semibold text-gray-700 hover:text-brand-600 transition-colors">Log in</a>
 
-                        <a href="{{ route('login') }}" class="px-5 py-2.5 bg-brand-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-brand-500/30 hover:bg-brand-700 hover:shadow-brand-500/40 transition-all transform hover:-translate-y-0.5">
+                        <a href="{{ route('login') }}" class="px-6 py-3 bg-brand-600 text-white text-base font-semibold rounded-xl shadow-lg shadow-brand-500/30 hover:bg-brand-700 hover:shadow-brand-500/40 transition-all transform hover:-translate-y-0.5">
                             Get Started
                         </a>
                     @endif
@@ -116,9 +116,9 @@
     </nav>
 
     <!-- Hero Section -->
-    <div class="relative overflow-hidden pt-16 pb-32 lg:pt-32">
+    <div class="relative overflow-hidden min-h-[88vh] pt-16 pb-24 lg:pt-24 lg:pb-28">
         <div class="max-w-7xl mx-auto px-6 relative z-10">
-            <div class="flex flex-col lg:flex-row items-center gap-16">
+            <div class="flex flex-col lg:flex-row items-center lg:items-start gap-20">
                 
                 <!-- Hero Content -->
                 <div class="lg:w-1/2 text-center lg:text-left">
@@ -130,37 +130,37 @@
                         Digital Health Services
                     </div>
                     
-                    <h1 class="text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-6">
+                    <h1 class="text-6xl lg:text-7xl font-extrabold text-gray-900 leading-tight mb-6">
                         Better Healthcare for <br>
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-indigo-600">Our Community</span>
                     </h1>
                     
-                    <p class="text-lg text-gray-600 mb-8 leading-relaxed max-w-2xl mx-auto lg:mx-0">
+                    <p class="text-xl lg:text-2xl text-gray-600 mb-10 leading-relaxed max-w-2xl mx-auto lg:mx-0">
                         Access barangay health services from the comfort of your home. Book appointments, view health records, and stay updated with the latest health advisories.
                     </p>
 
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                        <a href="{{ route('login') }}" class="px-8 py-4 bg-brand-600 text-white font-black rounded-2xl shadow-lg shadow-brand-500/30 hover:bg-brand-700 hover:shadow-brand-500/40 transition-all transform hover:-translate-y-1 text-center flex items-center justify-center gap-2 group">
+                    <div class="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start">
+                        <a href="{{ route('login') }}" class="px-10 py-5 bg-brand-600 text-white font-black rounded-2xl shadow-lg shadow-brand-500/30 hover:bg-brand-700 hover:shadow-brand-500/40 transition-all transform hover:-translate-y-1 text-center flex items-center justify-center gap-3 group text-base">
                             Get Started
                             <i class="bi bi-arrow-right group-hover:translate-x-1 transition-transform"></i>
                         </a>
-                        <a href="#features" class="px-8 py-4 bg-white text-gray-700 font-bold rounded-2xl shadow-md border border-gray-100 hover:bg-gray-50 transition-all text-center">
+                        <a href="#features" class="px-10 py-5 bg-white text-gray-700 font-bold rounded-2xl shadow-md border border-gray-100 hover:bg-gray-50 transition-all text-center text-base">
                             Learn More
                         </a>
                     </div>
 
-                    <div class="mt-12 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-8 text-gray-600">
-                        <div class="flex items-center gap-2">
-                            <i class="bi bi-check-circle-fill text-green-500 text-xl"></i>
-                            <span class="text-sm font-semibold">Easy Scheduling</span>
+                    <div class="mt-14 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-10 text-gray-600">
+                        <div class="flex items-center gap-3">
+                            <i class="bi bi-check-circle-fill text-green-500 text-2xl"></i>
+                            <span class="text-base font-semibold">Easy Scheduling</span>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <i class="bi bi-check-circle-fill text-green-500 text-xl"></i>
-                            <span class="text-sm font-semibold">Secure Records</span>
+                        <div class="flex items-center gap-3">
+                            <i class="bi bi-check-circle-fill text-green-500 text-2xl"></i>
+                            <span class="text-base font-semibold">Secure Records</span>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <i class="bi bi-check-circle-fill text-green-500 text-xl"></i>
-                            <span class="text-sm font-semibold">24/7 Access</span>
+                        <div class="flex items-center gap-3">
+                            <i class="bi bi-check-circle-fill text-green-500 text-2xl"></i>
+                            <span class="text-base font-semibold">24/7 Access</span>
                         </div>
                     </div>
                 </div>
@@ -171,29 +171,29 @@
                     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-brand-100 to-blue-50 rounded-full blur-3xl opacity-60 z-0"></div>
                     
                     {{-- Main Image Container --}}
-                    <div class="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-4 border-white transform rotate-2 hover:rotate-0 transition-all duration-500">
-                        <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=2070&auto=format&fit=crop" alt="Doctor" class="w-full h-auto object-cover">
+                    <div class="relative z-10 rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white transform rotate-2 hover:rotate-0 transition-all duration-500 max-h-[520px]">
+                        <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=2070&auto=format&fit=crop" alt="Doctor" class="w-full h-[340px] md:h-[420px] lg:h-[480px] object-cover">
                     </div>
 
                     {{-- Floating Card 1: Active Patients --}}
-                    <div class="absolute -right-4 top-10 z-20 bg-white p-4 rounded-2xl shadow-soft flex items-center gap-4 animate-bounce" style="animation-duration: 3s;">
-                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-brand-600">
-                            <i class="bi bi-people-fill text-xl"></i>
+                    <div class="absolute -right-6 top-10 z-20 bg-white p-5 rounded-3xl shadow-soft flex items-center gap-4 animate-bounce" style="animation-duration: 3s;">
+                        <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-brand-600">
+                            <i class="bi bi-people-fill text-2xl"></i>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Active Patients</p>
-                            <p class="text-lg font-bold text-gray-900">500+</p>
+                            <p class="text-xs sm:text-sm text-gray-500 font-semibold uppercase tracking-wider">Active Patients</p>
+                            <p class="text-2xl font-bold text-gray-900">500+</p>
                         </div>
                     </div>
 
                     {{-- Floating Card 2: Appointment Confirmed --}}
-                    <div class="absolute -left-8 bottom-20 z-20 bg-white p-4 rounded-2xl shadow-soft flex items-center gap-4 animate-bounce" style="animation-duration: 4s; animation-delay: 1s;">
-                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600">
-                            <i class="bi bi-check-lg text-xl"></i>
+                    <div class="absolute -left-10 bottom-16 z-20 bg-white p-5 rounded-3xl shadow-soft flex items-center gap-4 animate-bounce" style="animation-duration: 4s; animation-delay: 1s;">
+                        <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center text-green-600">
+                            <i class="bi bi-check-lg text-2xl"></i>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Appointment</p>
-                            <p class="text-lg font-bold text-gray-900">Confirmed</p>
+                            <p class="text-xs sm:text-sm text-gray-500 font-semibold uppercase tracking-wider">Appointment</p>
+                            <p class="text-2xl font-bold text-gray-900">Confirmed</p>
                         </div>
                     </div>
                 </div>
