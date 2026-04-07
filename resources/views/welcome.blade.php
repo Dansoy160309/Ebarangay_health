@@ -187,7 +187,49 @@
                     
                     {{-- Main Image Container --}}
                     <div class="relative z-10 rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white transform rotate-2 hover:rotate-0 transition-all duration-500 max-h-[520px] min-h-[520px] bg-white">
-                        <img src="/assets/images/hero-doctor.jpg" alt="Healthcare professional" class="w-full h-full object-cover" loading="eager">
+                        <svg viewBox="0 0 1200 900" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="bg-hero" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#F8FBFF" />
+                                    <stop offset="100%" stop-color="#E9F3FF" />
+                                </linearGradient>
+                                <linearGradient id="panel-hero" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#FFFFFF" />
+                                    <stop offset="100%" stop-color="#EFF6FF" />
+                                </linearGradient>
+                            </defs>
+
+                            <rect x="40" y="120" width="1120" height="660" rx="70" fill="url(#bg-hero)" />
+                            <rect x="90" y="170" width="820" height="520" rx="50" fill="url(#panel-hero)" />
+                            <rect x="220" y="220" width="520" height="260" rx="40" fill="#FFFFFF" stroke="#DCE7FF" stroke-width="3" />
+                            <rect x="260" y="270" width="160" height="18" rx="9" fill="#3B82F6" />
+                            <rect x="260" y="310" width="240" height="14" rx="7" fill="#60A5FA" />
+                            <rect x="260" y="342" width="200" height="14" rx="7" fill="#93C5FD" />
+                            <rect x="260" y="380" width="180" height="14" rx="7" fill="#BFDBFE" />
+                            <rect x="260" y="420" width="120" height="16" rx="8" fill="#E0E7FF" />
+                            <rect x="260" y="450" width="90" height="16" rx="8" fill="#C7D2FE" />
+                            <rect x="760" y="280" width="180" height="140" rx="28" fill="#FFFFFF" stroke="#DCE7FF" stroke-width="3" />
+                            <rect x="790" y="320" width="120" height="18" rx="9" fill="#2563EB" />
+                            <rect x="790" y="360" width="88" height="14" rx="7" fill="#60A5FA" />
+                            <rect x="790" y="390" width="118" height="14" rx="7" fill="#93C5FD" />
+                            <rect x="790" y="430" width="96" height="14" rx="7" fill="#DBEAFE" />
+                            <rect x="724" y="500" width="250" height="180" rx="40" fill="#FFFFFF" stroke="#DCE7FF" stroke-width="3" />
+                            <rect x="760" y="538" width="160" height="18" rx="9" fill="#2563EB" />
+                            <rect x="760" y="578" width="100" height="14" rx="7" fill="#60A5FA" />
+                            <rect x="760" y="610" width="140" height="14" rx="7" fill="#93C5FD" />
+                            <rect x="735" y="660" width="80" height="80" rx="24" fill="#2563EB" />
+                            <path d="M765 700V720" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" />
+                            <path d="M745 710H785" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" />
+                            <rect x="520" y="270" width="240" height="240" rx="40" fill="#EFF6FF" />
+                            <rect x="580" y="320" width="120" height="18" rx="9" fill="#2563EB" />
+                            <rect x="580" y="360" width="90" height="14" rx="7" fill="#60A5FA" />
+                            <rect x="580" y="390" width="170" height="14" rx="7" fill="#93C5FD" />
+                            <rect x="580" y="430" width="130" height="14" rx="7" fill="#DBEAFE" />
+                            <rect x="520" y="540" width="260" height="120" rx="40" fill="#F8FAFC" />
+                            <path d="M570 590H700" stroke="#2563EB" stroke-width="20" stroke-linecap="round" />
+                            <path d="M640 560V660" stroke="#2563EB" stroke-width="20" stroke-linecap="round" />
+                            <path d="M600 630H680" stroke="#60A5FA" stroke-width="16" stroke-linecap="round" />
+                        </svg>
                     </div>
 
                     {{-- Floating Card 1: Active Patients --}}
