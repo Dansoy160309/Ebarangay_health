@@ -99,14 +99,14 @@
              class="md:hidden absolute top-20 left-0 w-full bg-white border-b border-gray-100 shadow-xl z-40"
              style="display: none;">
             <div class="px-6 py-4 space-y-4">
-                <a href="#features" @click="mobileMenuOpen = false" class="block text-base font-medium text-gray-600 hover:text-brand-600 hover:bg-gray-50 px-4 py-2 rounded-lg transition-colors">Features</a>
-                <a href="#about" @click="mobileMenuOpen = false" class="block text-base font-medium text-gray-600 hover:text-brand-600 hover:bg-gray-50 px-4 py-2 rounded-lg transition-colors">About Us</a>
-                <a href="#contact" @click="mobileMenuOpen = false" class="block text-base font-medium text-gray-600 hover:text-brand-600 hover:bg-gray-50 px-4 py-2 rounded-lg transition-colors">Contact</a>
+                <a href="#features" @click="mobileMenuOpen = false" class="block text-sm font-medium text-gray-600 hover:text-brand-600 hover:bg-gray-50 px-4 py-2 rounded-lg transition-colors">Features</a>
+                <a href="#about" @click="mobileMenuOpen = false" class="block text-sm font-medium text-gray-600 hover:text-brand-600 hover:bg-gray-50 px-4 py-2 rounded-lg transition-colors">About Us</a>
+                <a href="#contact" @click="mobileMenuOpen = false" class="block text-sm font-medium text-gray-600 hover:text-brand-600 hover:bg-gray-50 px-4 py-2 rounded-lg transition-colors">Contact</a>
                 
                 <div class="pt-4 border-t border-gray-100 flex flex-col gap-3">
                     @if (Route::has('login'))
-                        <a href="{{ route('login') }}" class="block text-center w-full px-5 py-3 text-base font-semibold text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors">Log in</a>
-                        <a href="{{ route('login') }}" class="block text-center w-full px-5 py-3 bg-brand-600 text-white text-base font-semibold rounded-xl shadow-lg shadow-brand-500/30 hover:bg-brand-700 transition-colors">
+                        <a href="{{ route('login') }}" class="block text-center w-full px-5 py-3 text-sm font-semibold text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors">Log in</a>
+                        <a href="{{ route('login') }}" class="block text-center w-full px-5 py-3 bg-brand-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-brand-500/30 hover:bg-brand-700 transition-colors">
                             Get Started
                         </a>
                     @endif
@@ -130,21 +130,21 @@
                         Digital Health Services
                     </div>
                     
-                    <h1 class="text-6xl lg:text-7xl font-extrabold text-gray-900 leading-tight mb-6">
+                    <h1 class="text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-6">
                         Better Healthcare for <br>
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-indigo-600">Our Community</span>
                     </h1>
                     
-                    <p class="text-xl lg:text-2xl text-gray-600 mb-10 leading-relaxed max-w-2xl mx-auto lg:mx-0">
+                    <p class="text-lg lg:text-xl text-gray-600 mb-10 leading-relaxed max-w-2xl mx-auto lg:mx-0">
                         Access barangay health services from the comfort of your home. Book appointments, view health records, and stay updated with the latest health advisories.
                     </p>
 
                     <div class="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start">
-                        <a href="{{ route('login') }}" class="px-10 py-5 bg-brand-600 text-white font-black rounded-2xl shadow-lg shadow-brand-500/30 hover:bg-brand-700 hover:shadow-brand-500/40 transition-all transform hover:-translate-y-1 text-center flex items-center justify-center gap-3 group text-base">
+                        <a href="{{ route('login') }}" class="px-10 py-5 bg-brand-600 text-white font-black rounded-2xl shadow-lg shadow-brand-500/30 hover:bg-brand-700 hover:shadow-brand-500/40 transition-all transform hover:-translate-y-1 text-center flex items-center justify-center gap-3 group text-sm">
                             Get Started
                             <i class="bi bi-arrow-right group-hover:translate-x-1 transition-transform"></i>
                         </a>
-                        <a href="#features" class="px-10 py-5 bg-white text-gray-700 font-bold rounded-2xl shadow-md border border-gray-100 hover:bg-gray-50 transition-all text-center text-base">
+                        <a href="#features" class="px-10 py-5 bg-white text-gray-700 font-bold rounded-2xl shadow-md border border-gray-100 hover:bg-gray-50 transition-all text-center text-sm">
                             Learn More
                         </a>
                     </div>
