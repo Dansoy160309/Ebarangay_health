@@ -186,8 +186,8 @@
                     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-brand-100 to-blue-50 rounded-full blur-3xl opacity-60 z-0"></div>
                     
                     {{-- Main Image Container --}}
-                    <div class="relative z-10 rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white transform rotate-2 hover:rotate-0 transition-all duration-500 max-h-[520px]">
-                        <img src="{{ asset('assets/images/hero-doctor.jpg') }}" alt="Healthcare professional" class="w-full h-[340px] md:h-[420px] lg:h-[480px] object-cover">
+                    <div class="relative z-10 rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white transform rotate-2 hover:rotate-0 transition-all duration-500 max-h-[520px] min-h-[520px] bg-white">
+                        <img src="/assets/images/hero-doctor.jpg" alt="Healthcare professional" class="w-full h-full object-cover" loading="eager">
                     </div>
 
                     {{-- Floating Card 1: Active Patients --}}
