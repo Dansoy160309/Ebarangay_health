@@ -155,6 +155,7 @@
                     <tr class="bg-gray-50/50 border-b border-gray-100">
                         <th class="px-10 py-8 text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Service Provider</th>
                         <th class="px-10 py-8 text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Schedule Window</th>
+                        <th class="px-10 py-8 text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Booked Patients</th>
                         <th class="px-10 py-8 text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Capacity Tracking</th>
                         <th class="px-10 py-8 text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Health Status</th>
                         <th class="px-10 py-8 text-right text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Management</th>
@@ -194,6 +195,47 @@
                                         <i class="bi bi-clock text-gray-400 text-[10px]"></i>
                                         <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ $slot->displayTime() }}</span>
                                     </div>
+                                </div>
+                            </td>
+                            <td class="px-10 py-8">
+                                @php
+                                    $bookedAppointments = $slot->appointments()
+                                        ->whereNotIn('status', ['cancelled', 'rejected'])
+                                        ->with('user')
+                                        ->get();
+                                @endphp
+                                <div class="relative group/patients">
+                                    <div class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-50 rounded-lg border border-brand-100 cursor-pointer hover:bg-brand-100 transition-all">
+                                        <i class="bi bi-people-fill text-brand-600 text-sm"></i>
+                                        <span class="text-[10px] font-black text-brand-700 uppercase tracking-widest">
+                                            {{ $bookedAppointments->count() }} 
+                                            <span class="text-[9px] font-bold">{{ $bookedAppointments->count() === 1 ? 'Patient' : 'Patients' }}</span>
+                                        </span>
+                                    </div>
+
+                                    {{-- Hover Tooltip with Patient List --}}
+                                    @if($bookedAppointments->count() > 0)
+                                        <div class="absolute left-0 top-full mt-2 w-72 bg-white rounded-xl shadow-2xl border border-gray-200 p-4 z-50 opacity-0 invisible group-hover/patients:opacity-100 group-hover/patients:visible transition-all duration-200 pointer-events-none group-hover/patients:pointer-events-auto">
+                                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 pb-3 border-b border-gray-100">Booked Patients</p>
+                                            <div class="space-y-2 max-h-64 overflow-y-auto">
+                                                @foreach($bookedAppointments as $appointment)
+                                                    <div class="flex items-center gap-2.5 px-3 py-2.5 bg-gradient-to-r from-brand-50 to-transparent rounded-lg border border-brand-100/50 hover:border-brand-200 transition-colors">
+                                                        <div class="w-6 h-6 rounded-full bg-brand-100 flex items-center justify-center text-brand-600 text-[9px] font-black shrink-0">
+                                                            <i class="bi bi-person-fill"></i>
+                                                        </div>
+                                                        <div class="flex-1 min-w-0">
+                                                            <p class="text-[10px] font-black text-gray-900 truncate">{{ $appointment->user->full_name }}</p>
+                                                            <p class="text-[8px] font-bold text-brand-600 uppercase tracking-[0.15em]">{{ $appointment->user->patient_code ?? 'N/A' }}</p>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @else
+                                        <div class="absolute left-0 top-full mt-2 bg-white rounded-xl shadow-2xl border border-gray-200 px-4 py-3 z-50 opacity-0 invisible group-hover/patients:opacity-100 group-hover/patients:visible transition-all duration-200 whitespace-nowrap text-[9px] font-bold text-gray-500 pointer-events-none group-hover/patients:pointer-events-auto">
+                                            No bookings yet
+                                        </div>
+                                    @endif
                                 </div>
                             </td>
                             <td class="px-10 py-8">
@@ -325,6 +367,38 @@
                         <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
                             <div class="h-full bg-brand-600 rounded-full shadow-sm" style="width:<?php echo $pct; ?>%;"></div>
                         </div>
+                    </div>
+
+                    {{-- Booked Patients Section (Mobile) --}}
+                    <div class="space-y-2">
+                        <p class="text-[9px] font-black text-gray-900 uppercase tracking-widest">Booked Patients</p>
+                        @php
+                            $bookedAppointments = $slot->appointments()
+                                ->whereNotIn('status', ['cancelled', 'rejected'])
+                                ->with('user')
+                                ->get();
+                        @endphp
+                        @if($bookedAppointments->count() > 0)
+                            <div class="inline-flex items-center gap-2 px-3 py-2 bg-brand-50 rounded-lg border border-brand-100">
+                                <i class="bi bi-people-fill text-brand-600 text-sm"></i>
+                                <span class="text-[9px] font-black text-brand-700 uppercase tracking-widest">
+                                    {{ $bookedAppointments->count() }} {{ $bookedAppointments->count() === 1 ? 'Patient' : 'Patients' }}
+                                </span>
+                            </div>
+                            <div class="space-y-1.5 text-[8px]">
+                                @foreach($bookedAppointments->take(3) as $appointment)
+                                    <div class="flex items-center gap-2 px-2 py-1 bg-gradient-to-r from-brand-50 to-transparent rounded border border-brand-100/50">
+                                        <i class="bi bi-person-fill text-brand-600 text-[10px]"></i>
+                                        <span class="font-bold text-gray-900 truncate">{{ $appointment->user->full_name }}</span>
+                                    </div>
+                                @endforeach
+                                @if($bookedAppointments->count() > 3)
+                                    <p class="text-gray-500 font-bold italic px-2">+{{ $bookedAppointments->count() - 3 }} more...</p>
+                                @endif
+                            </div>
+                        @else
+                            <p class="text-[9px] font-bold text-gray-400 italic">No bookings</p>
+                        @endif
                     </div>
 
                     <div class="flex items-center gap-3 pt-2">

@@ -32,7 +32,7 @@ class SlotController extends Controller
             Slot::whereDate('date', '<', today())->update(['is_active' => false]);
         }
 
-        $query = Slot::with('doctor'); // Eager load doctor
+        $query = Slot::with(['doctor', 'appointments.user']); // Eager load doctor and appointments with users
 
         // Filter by service
         if ($request->filled('service')) {
@@ -54,7 +54,7 @@ class SlotController extends Controller
             $query->where('is_active', $request->status === 'active');
         }
 
-        $query->orderBy('date')->orderBy('start_time');
+        $query->orderByDesc('date')->orderByDesc('start_time');
 
         // Header Stats
         $stats = [

@@ -43,23 +43,26 @@ class PhilSmsChannel
         $recipient = $messageData['recipient'];
         $body = $messageData['body'];
 
-        // 3.1 Format recipient to international format (63 prefix)
-        $recipient = preg_replace('/[^0-9]/', '', $recipient); // Remove non-numeric
-        if (str_starts_with($recipient, '0')) {
-            $recipient = '63' . substr($recipient, 1);
-        } elseif (strlen($recipient) === 10 && str_starts_with($recipient, '9')) {
-            $recipient = '63' . $recipient;
+        // Format phone number for PhilSMS (add +63 prefix and remove 0 if present)
+        $phoneNumber = preg_replace('/[^\d\+]/', '', $recipient);
+        // If starts with 0, replace with +63
+        if (substr($phoneNumber, 0, 1) === '0') {
+            $phoneNumber = '+63' . substr($phoneNumber, 1);
+        }
+        // If doesn't start with +, add +63
+        elseif (substr($phoneNumber, 0, 1) !== '+') {
+            $phoneNumber = '+63' . $phoneNumber;
         }
 
         try {
             $apiUrl = config('services.philsms.api_url', 'https://dashboard.philsms.com/api/v3/sms/send');
             
-            $response = Http::withHeaders([
+            $response = Http::timeout(10)->withHeaders([
                 'Authorization' => 'Bearer ' . config('services.philsms.api_token'),
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
             ])->post($apiUrl, [
-                'recipient' => $recipient,
+                'recipient' => $phoneNumber,
                 'sender_id' => config('services.philsms.sender_id', 'PhilSMS'),
                 'message' => $body,
             ]);
@@ -67,7 +70,7 @@ class PhilSmsChannel
             // 4. Log the attempt
             SmsLog::create([
                 'user_id' => isset($notifiable->id) ? $notifiable->id : null,
-                'recipient' => $recipient,
+                'recipient' => $phoneNumber,
                 'message' => $body,
                 'status' => $response->successful() ? 'sent' : 'failed',
                 'gateway_response' => $response->body(),
@@ -83,7 +86,7 @@ class PhilSmsChannel
             // Log the exception
             SmsLog::create([
                 'user_id' => isset($notifiable->id) ? $notifiable->id : null,
-                'recipient' => $recipient,
+                'recipient' => $phoneNumber,
                 'message' => $body,
                 'status' => 'failed',
                 'gateway_response' => 'Exception: ' . $e->getMessage(),
