@@ -3,10 +3,10 @@
 @section('title', 'Appointment Slots')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
     {{-- Header Section --}}
-    <div class="bg-gradient-to-br from-brand-700 via-brand-600 to-brand-500 rounded-[2.5rem] p-8 sm:p-12 text-white shadow-2xl relative overflow-hidden">
+    <div class="bg-gradient-to-br from-brand-700 via-brand-600 to-brand-500 rounded-[2rem] p-6 sm:p-8 text-white shadow-lg relative overflow-hidden">
         <!-- Decorative elements -->
         <div class="absolute inset-0 bg-white/5 opacity-10" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
         <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-white/10 rounded-full blur-3xl"></div>
@@ -22,40 +22,40 @@
                     </div>
                     <span class="text-xs font-black uppercase tracking-[0.2em] opacity-80 text-white/90">Clinical Scheduling</span>
                 </div>
-                <h1 class="text-4xl sm:text-5xl font-black mb-4 tracking-tight leading-tight">
+                <h1 class="text-3xl sm:text-4xl font-black mb-3 tracking-tight leading-tight">
                     Appointment Slots
                 </h1>
-                <p class="text-brand-50 text-lg font-medium leading-relaxed opacity-90">
-                    Monitor clinical availability and manage appointment capacities for the medical team.
+                <p class="text-brand-50 text-sm font-medium leading-relaxed opacity-90">
+                    Monitor availability and capacity at a glance.
                 </p>
             </div>
 
             <!-- Header Stats -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 w-full lg:w-auto shrink-0">
-                <div class="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/20 text-center shadow-lg group hover:bg-white/20 transition-all duration-300">
-                    <p class="text-[10px] font-black uppercase tracking-widest opacity-70 mb-2">Today's Slots</p>
-                    <p class="text-3xl font-black tracking-tighter">{{ $stats['today_slots'] }}</p>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full lg:w-auto shrink-0">
+                <div class="bg-white/10 backdrop-blur-md p-4 rounded-3xl border border-white/20 text-center shadow-lg group hover:bg-white/20 transition-all duration-300">
+                    <p class="text-[9px] font-black uppercase tracking-widest opacity-70 mb-2">Today's Slots</p>
+                    <p class="text-2xl font-black tracking-tighter">{{ $stats['today_slots'] }}</p>
                 </div>
-                <div class="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/20 text-center shadow-lg group hover:bg-white/20 transition-all duration-300">
-                    <p class="text-[10px] font-black uppercase tracking-widest opacity-70 mb-2">Active</p>
-                    <p class="text-3xl font-black tracking-tighter text-green-300">{{ $stats['active_slots'] }}</p>
+                <div class="bg-white/10 backdrop-blur-md p-4 rounded-3xl border border-white/20 text-center shadow-lg group hover:bg-white/20 transition-all duration-300">
+                    <p class="text-[9px] font-black uppercase tracking-widest opacity-70 mb-2">Active</p>
+                    <p class="text-2xl font-black tracking-tighter text-green-300">{{ $stats['active_slots'] }}</p>
                 </div>
-                <div class="hidden sm:block bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/20 text-center shadow-lg group hover:bg-white/20 transition-all duration-300">
-                    <p class="text-[10px] font-black uppercase tracking-widest opacity-70 mb-2">Total Capacity</p>
-                    <p class="text-3xl font-black tracking-tighter text-blue-300">{{ $stats['total_capacity'] }}</p>
+                <div class="hidden sm:block bg-white/10 backdrop-blur-md p-4 rounded-3xl border border-white/20 text-center shadow-lg group hover:bg-white/20 transition-all duration-300">
+                    <p class="text-[9px] font-black uppercase tracking-widest opacity-70 mb-2">Total Capacity</p>
+                    <p class="text-2xl font-black tracking-tighter text-blue-300">{{ $stats['total_capacity'] }}</p>
                 </div>
             </div>
         </div>
     </div>
 
     {{-- Filter Card --}}
-    <div class="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 p-8">
-        <form method="GET" action="{{ route('healthworker.slots.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <div class="bg-white rounded-[2rem] shadow-lg shadow-gray-200/50 border border-gray-100 p-6">
+        <form method="GET" action="{{ route('healthworker.slots.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-3">
             {{-- Service Filter --}}
             <div class="space-y-2">
-                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Medical Service</label>
+                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">Medical Service</label>
                 <div class="relative group">
-                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
                         <i class="bi bi-search"></i>
                     </div>
                     <input 
@@ -114,45 +114,41 @@
     {{-- Slots List --}}
     <div class="bg-white rounded-[3rem] shadow-2xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-100">
+            <table class="min-w-full divide-y divide-gray-100 text-sm">
                 <thead>
                     <tr class="bg-gray-50/50">
-                        <th class="px-8 py-6 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Service & Provider</th>
-                        <th class="px-6 py-6 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Schedule</th>
-                        <th class="px-6 py-6 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Clinical Capacity</th>
-                        <th class="px-6 py-6 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Status</th>
-                        <th class="px-8 py-6 text-right text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Clinical View</th>
+                        <th class="px-3 py-2 text-left text-[8px] font-black text-gray-400 uppercase tracking-[0.18em]">Service</th>
+                        <th class="px-3 py-2 text-left text-[8px] font-black text-gray-400 uppercase tracking-[0.18em]">Schedule</th>
+                        <th class="px-3 py-2 text-left text-[8px] font-black text-gray-400 uppercase tracking-[0.18em]">Capacity</th>
+                        <th class="px-3 py-2 text-left text-[8px] font-black text-gray-400 uppercase tracking-[0.18em]">Status</th>
+                        <th class="px-3 py-2 text-right text-[8px] font-black text-gray-400 uppercase tracking-[0.18em]">Action</th>
                     </tr>
                 </thead>
 
                 <tbody class="divide-y divide-gray-50 bg-white">
                     @forelse ($slots as $slot)
                         <tr class="hover:bg-gray-50/80 transition-all group">
-                            <td class="px-8 py-6">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-xl shadow-inner border border-brand-100 group-hover:scale-110 transition-transform">
+                            <td class="px-3 py-2">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-9 h-9 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-base border border-brand-100 group-hover:scale-105 transition-transform">
                                         <i class="bi bi-bandaid-fill"></i>
                                     </div>
                                     <div>
                                         <div class="text-sm font-black text-gray-900 leading-tight mb-0.5">{{ $slot->service }}</div>
-                                        <div class="text-[10px] font-bold text-brand-500 uppercase tracking-widest flex items-center gap-1.5">
+                                        <div class="text-[9px] font-bold text-brand-500 uppercase tracking-[0.18em] flex items-center gap-1">
                                             @if($slot->doctor)
-                                                <i class="bi bi-person-badge"></i> Dr. {{ $slot->doctor->full_name }}
+                                                Dr. {{ $slot->doctor->full_name }}
                                             @else
-                                                <i class="bi bi-people"></i> Midwife / Any Provider
+                                                Midwife / Any
                                             @endif
                                         </div>
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-6 py-6">
-                                <div class="flex flex-col gap-1">
-                                    <div class="text-sm font-black text-gray-900 flex items-center gap-2">
-                                        <i class="bi bi-calendar3 text-brand-400"></i>
-                                        {{ \Carbon\Carbon::parse($slot->date)->format('M d, Y') }}
-                                    </div>
-                                    <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                                        <i class="bi bi-clock text-gray-300"></i>
+                            <td class="px-4 py-3">
+                                <div class="space-y-1">
+                                    <div class="text-sm font-black text-gray-900">{{ \Carbon\Carbon::parse($slot->date)->format('M d, Y') }}</div>
+                                    <div class="text-[9px] font-black text-gray-400 uppercase tracking-[0.18em] flex items-center gap-1">
                                         {{ \Carbon\Carbon::parse($slot->start_time)->format('h:i A') }}
                                         @if($slot->end_time)
                                             - {{ \Carbon\Carbon::parse($slot->end_time)->format('h:i A') }}
@@ -160,36 +156,33 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-6 py-6">
+                            <td class="px-4 py-3">
                                 @php
                                     $booked = $slot->appointments_count ?? 0;
                                     $percent = $slot->capacity > 0 ? ($booked / $slot->capacity) * 100 : 0;
                                     $barColor = $percent >= 100 ? 'bg-red-500' : ($percent >= 80 ? 'bg-orange-500' : 'bg-brand-500');
                                 @endphp
-                                <div class="flex flex-col gap-2 min-w-[120px]">
-                                    <div class="flex justify-between items-end">
-                                        <span class="text-sm font-black text-gray-900">{{ $booked }} / {{ $slot->capacity }}</span>
-                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Seats</span>
-                                    </div>
-                                    <div class="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                                <div class="flex flex-col gap-1">
+                                    <div class="text-sm font-black text-gray-900">{{ $booked }} / {{ $slot->capacity }}</div>
+                                    <div class="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
                                         <div class="h-full {{ $barColor }} rounded-full transition-all duration-500" style="width: {{ min($percent, 100) }}%"></div>
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-6 py-6">
+                            <td class="px-3 py-2">
                                 @if($slot->is_active)
-                                    <span class="inline-flex items-center px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-green-50 text-green-600 border border-green-100">
-                                        <span class="w-1.5 h-1.5 rounded-full mr-2 bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[8px] font-black uppercase tracking-[0.16em] bg-green-50 text-green-600 border border-green-100">
+                                        <span class="w-1.5 h-1.5 rounded-full mr-2 bg-green-500"></span>
                                         Available
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-gray-50 text-gray-400 border border-gray-100">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[8px] font-black uppercase tracking-[0.16em] bg-gray-50 text-gray-400 border border-gray-100">
                                         <span class="w-1.5 h-1.5 rounded-full mr-2 bg-gray-300"></span>
                                         Inactive
                                     </span>
                                 @endif
                             </td>
-                            <td class="px-8 py-6 text-right">
+                            <td class="px-3 py-2 text-right">
                                 <button 
                                     onclick="openSlotModal(this)"
                                     data-service="{{ $slot->service }}"
@@ -200,8 +193,8 @@
                                     data-capacity="{{ $slot->capacity }}"
                                     data-booked="{{ $booked }}"
                                     data-status="{{ $slot->is_active ? 'Active' : 'Inactive' }}"
-                                    class="inline-flex items-center gap-2 bg-gray-50 text-gray-400 px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-600 hover:text-white transition-all shadow-sm hover:shadow-brand-600/20 active:scale-[0.98]">
-                                    Details <i class="bi bi-chevron-right text-lg"></i>
+                                    class="inline-flex items-center justify-center bg-gray-50 text-gray-500 p-2 rounded-2xl text-[9px] font-black uppercase tracking-[0.18em] hover:bg-brand-600 hover:text-white transition-all shadow-sm active:scale-[0.98]">
+                                    <i class="bi bi-info-circle"></i>
                                 </button>
                             </td>
                         </tr>

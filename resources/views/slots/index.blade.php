@@ -3,291 +3,125 @@
 @section('title', 'Manage Slots')
 
 @section('content')
-<div class="flex flex-col gap-4 sm:gap-6">
-    
-    {{-- Top-Aligned Compact Header --}}
-    <div class="relative z-10 bg-white rounded-2xl sm:rounded-2xl p-5 sm:p-6 border border-gray-100 shadow-sm overflow-hidden group">
-        <div class="absolute top-0 right-0 w-48 h-48 bg-brand-50 rounded-full blur-2xl -mr-24 -mt-24 opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
-        
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5">
-            <div class="max-w-xl">
-                <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-lg bg-brand-50 text-brand-600 border border-brand-100 mb-2 sm:mb-3">
-                    <i class="bi bi-calendar-event text-[8px]"></i>
-                    <span class="text-[8px] font-black uppercase tracking-tighter">Operational Management</span>
-                </div>
-                <h1 class="text-xl sm:text-3xl font-black text-gray-900 tracking-tight leading-tight mb-1 sm:mb-2">
-                    Manage <span class="text-brand-600 underline decoration-brand-200 decoration-2 underline-offset-3">Appointment Slots</span>
-                </h1>
-                <p class="text-gray-500 font-medium text-[11px] sm:text-xs leading-relaxed">
-                    Configure available <span class="text-gray-900 font-black">time windows</span> and monitor clinical availability for your health center.
-                </p>
-            </div>
-
-            <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                <a href="{{ route('midwife.slots.create') }}" 
-                   class="flex-1 sm:flex-none inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-brand-600 text-white font-black text-[9px] sm:text-xs uppercase tracking-tighter shadow-lg shadow-brand-500/15 hover:bg-brand-700 hover:scale-105 transition-all transform group">
-                    <i class="bi bi-plus-lg mr-2 group-hover:rotate-90 transition-transform"></i>
-                    Add New Slot
-                </a>
-            </div>
+<div class="flex flex-col gap-6">
+    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Manage Slots</h1>
+            <p class="text-sm text-gray-600 mt-2">Compact appointment availability list.</p>
         </div>
+        <a href="{{ route('midwife.slots.create') }}" class="inline-flex items-center gap-2 px-4 py-2.5 border border-brand-600 text-brand-600 rounded text-sm font-semibold hover:bg-brand-50 transition-colors">
+            <i class="bi bi-plus-lg"></i>Add Slot
+        </a>
     </div>
 
-    <!-- Quick Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10">
-        {{-- Today's Slots --}}
-        <div class="bg-white rounded-lg p-5 border border-gray-100 shadow-sm relative overflow-hidden group hover:border-brand-200 transition-all duration-500">
-            <div class="absolute top-0 right-0 w-20 h-20 bg-brand-50 rounded-full blur-2xl -mr-10 -mt-10 opacity-50 group-hover:opacity-100 transition-opacity"></div>
-            <div class="relative z-10 flex items-center gap-3.5">
-                <div class="w-12 h-12 rounded-lg bg-brand-50 flex items-center justify-center text-brand-600 shadow-inner group-hover:scale-110 transition-transform duration-500">
-                    <i class="bi bi-calendar-check-fill text-2xl"></i>
-                </div>
-                <div>
-                    <p class="text-[8px] font-black text-gray-400 uppercase tracking-[0.15em] mb-0.5">Scheduled Today</p>
-                    <h3 class="text-3xl font-black text-gray-900 group-hover:text-brand-600 transition-colors">{{ $stats['today_slots'] }}</h3>
-                </div>
-            </div>
+    <form method="GET" action="{{ route('midwife.slots.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end mb-4">
+        <div class="space-y-2">
+            <label class="text-xs font-semibold text-gray-700">Service</label>
+            <select name="service" class="w-full px-3 py-2.5 border border-gray-200 rounded text-sm text-gray-700 bg-white">
+                <option value="">All Services</option>
+                @foreach($services as $service)
+                    <option value="{{ $service->name }}" {{ request('service') === $service->name ? 'selected' : '' }}>{{ $service->name }}</option>
+                @endforeach
+            </select>
         </div>
-        
-        {{-- Active Slots --}}
-        <div class="bg-white rounded-lg p-5 border border-gray-100 shadow-sm relative overflow-hidden group hover:border-indigo-200 transition-all duration-500">
-            <div class="absolute top-0 right-0 w-20 h-20 bg-indigo-50 rounded-full blur-2xl -mr-10 -mt-10 opacity-50 group-hover:opacity-100 transition-opacity"></div>
-            <div class="relative z-10 flex items-center gap-3.5">
-                <div class="w-12 h-12 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 shadow-inner group-hover:scale-110 transition-transform duration-500">
-                    <i class="bi bi-lightning-charge-fill text-2xl"></i>
-                </div>
-                <div>
-                    <p class="text-[8px] font-black text-gray-400 uppercase tracking-[0.15em] mb-0.5">Active Window</p>
-                    <h3 class="text-3xl font-black text-gray-900 group-hover:text-indigo-600 transition-colors">{{ $stats['active_slots'] }}</h3>
-                </div>
-            </div>
+        <div class="space-y-2">
+            <label class="text-xs font-semibold text-gray-700">Date</label>
+            <input type="date" name="date" value="{{ request('date') }}" class="w-full px-3 py-2.5 border border-gray-200 rounded text-sm text-gray-700 bg-white">
         </div>
-
-        {{-- Total Capacity --}}
-        <div class="bg-white rounded-lg p-5 border border-gray-100 shadow-sm relative overflow-hidden group hover:border-emerald-200 transition-all duration-500">
-            <div class="absolute top-0 right-0 w-20 h-20 bg-emerald-50 rounded-full blur-2xl -mr-10 -mt-10 opacity-50 group-hover:opacity-100 transition-opacity"></div>
-            <div class="relative z-10 flex items-center gap-3.5">
-                <div class="w-12 h-12 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 shadow-inner group-hover:scale-110 transition-transform duration-500">
-                    <i class="bi bi-people-fill text-2xl"></i>
-                </div>
-                <div>
-                    <p class="text-[8px] font-black text-gray-400 uppercase tracking-[0.15em] mb-0.5">Total Capacity</p>
-                    <h3 class="text-3xl font-black text-gray-900 group-hover:text-emerald-600 transition-colors">{{ number_format($stats['total_capacity']) }}</h3>
-                </div>
-            </div>
+        <div class="space-y-2">
+            <label class="text-xs font-semibold text-gray-700">Status</label>
+            <select name="status" class="w-full px-3 py-2.5 border border-gray-200 rounded text-sm text-gray-700 bg-white">
+                <option value="">All Status</option>
+                <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
+                <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
+            </select>
         </div>
-    </div>
+        <div class="flex gap-3">
+            <button type="submit" class="flex-1 px-4 py-2.5 bg-brand-600 text-white rounded text-sm font-semibold uppercase tracking-[0.1em] hover:bg-brand-700 transition-colors">Filter</button>
+            <a href="{{ route('midwife.slots.index') }}" class="px-4 py-2.5 border border-gray-200 rounded text-sm text-gray-700 hover:bg-gray-50 transition-colors font-semibold">Reset</a>
+        </div>
+    </form>
 
-    {{-- Filter Card --}}
-    <div class="bg-white rounded-2xl shadow-md shadow-brand-500/3 border border-gray-100 p-5 relative z-10 overflow-hidden group/filter transition-all hover:border-brand-200">
-        <form method="GET" action="{{ route('midwife.slots.index') }}" class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-4 items-end">
-            {{-- Service Filter --}}
-            <div class="space-y-2">
-                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-tighter ml-3">Service Type</label>
-                <div class="relative group/input">
-                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 group-focus-within/input:text-brand-500 transition-colors">
-                        <i class="bi bi-bandaid text-xs"></i>
-                    </div>
-                    <select name="service" class="block w-full pl-10 pr-3 py-2.5 bg-gray-50 border-none rounded-lg text-xs font-bold text-gray-900 focus:ring-3 focus:ring-brand-500/10 focus:bg-white transition-all appearance-none cursor-pointer">
-                        <option value="">All Services</option>
-                        @foreach($services as $service)
-                            <option value="{{ $service->name }}" {{ request('service') === $service->name ? 'selected' : '' }}>
-                                {{ $service->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
-            {{-- Date Filter --}}
-            <div class="space-y-2">
-                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-tighter ml-3">Scheduled Date</label>
-                <div class="relative group/input">
-                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 group-focus-within/input:text-brand-500 transition-colors">
-                        <i class="bi bi-calendar3 text-xs"></i>
-                    </div>
-                    <input type="date" name="date" value="{{ request('date') }}"
-                           class="block w-full pl-10 pr-3 py-2.5 bg-gray-50 border-none rounded-lg text-xs font-bold text-gray-900 focus:ring-3 focus:ring-brand-500/10 focus:bg-white transition-all cursor-pointer">
-                </div>
-            </div>
-
-            {{-- Status Filter --}}
-            <div class="space-y-2">
-                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-tighter ml-3">Current Status</label>
-                <div class="relative group/input">
-                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 group-focus-within/input:text-brand-500 transition-colors">
-                        <i class="bi bi-toggle-on text-xs"></i>
-                    </div>
-                    <select name="status" class="block w-full pl-10 pr-3 py-2.5 bg-gray-50 border-none rounded-lg text-xs font-bold text-gray-900 focus:ring-3 focus:ring-brand-500/10 focus:bg-white transition-all appearance-none cursor-pointer">
-                        <option value="">All Status</option>
-                        <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
-                        <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
-                    </select>
-                </div>
-            </div>
-
-            {{-- Quick Presets & Buttons --}}
-            <div class="lg:col-span-2 flex items-center gap-2.5">
-                <div class="flex items-center gap-1.5 bg-gray-50 p-1.5 rounded-lg border border-gray-100 flex-grow">
-                    <button type="button" id="btnToday" class="px-3 py-1.5 rounded-md text-[8px] font-black uppercase tracking-tighter text-gray-500 hover:bg-white hover:text-brand-600 hover:shadow-sm transition-all flex-grow">Today</button>
-                    <button type="button" id="btnActive" class="px-3 py-1.5 rounded-md text-[8px] font-black uppercase tracking-tighter text-gray-500 hover:bg-white hover:text-indigo-600 hover:shadow-sm transition-all flex-grow">Active</button>
-                </div>
-                
-                <div class="flex items-center gap-1.5 shrink-0">
-                    <button type="submit" class="px-4 py-2.5 bg-brand-600 text-white rounded-lg font-black text-[8px] uppercase tracking-tighter shadow-lg shadow-brand-500/15 hover:bg-brand-700 hover:-translate-y-0.5 transition-all flex items-center gap-1.5">
-                        <i class="bi bi-funnel text-xs"></i>
-                        Filter
-                    </button>
-                    <a href="{{ route('midwife.slots.index') }}" class="p-2.5 bg-gray-100 text-gray-500 rounded-lg hover:bg-red-50 hover:text-red-600 transition-all border border-transparent hover:border-red-100" title="Reset Filters">
-                        <i class="bi bi-arrow-counterclockwise text-sm"></i>
-                    </a>
-                </div>
-            </div>
-        </form>
-    </div>
-
-    {{-- Slots List Section --}}
-    <div class="bg-white rounded-[3.5rem] shadow-soft border border-gray-100 overflow-hidden relative z-10">
-        {{-- Desktop Table View --}}
-        <div class="hidden md:block overflow-x-auto">
-            <table class="w-full text-left border-collapse">
+    <div class="bg-white border border-gray-200 rounded-md overflow-visible">
+        {{-- Desktop Table --}}
+        <div class="hidden md:block overflow-x-auto overflow-y-visible relative">
+            <table class="w-full text-left text-xs border-collapse overflow-visible">
                 <thead>
-                    <tr class="bg-gray-50/50 border-b border-gray-100">
-                        <th class="px-10 py-8 text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Service Provider</th>
-                        <th class="px-10 py-8 text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Schedule Window</th>
-                        <th class="px-10 py-8 text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Booked Patients</th>
-                        <th class="px-10 py-8 text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Capacity Tracking</th>
-                        <th class="px-10 py-8 text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Health Status</th>
-                        <th class="px-10 py-8 text-right text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Management</th>
+                    <tr class="bg-gray-50 border-b border-gray-200">
+                        <th class="px-3 py-2 font-bold text-gray-600 uppercase">Service</th>
+                        <th class="px-3 py-2 font-bold text-gray-600 uppercase">Provider</th>
+                        <th class="px-3 py-2 font-bold text-gray-600 uppercase">Date & Time</th>
+                        <th class="px-3 py-2 font-bold text-gray-600 uppercase">Booked</th>
+                        <th class="px-3 py-2 font-bold text-gray-600 uppercase">Capacity</th>
+                        <th class="px-3 py-2 font-bold text-gray-600 uppercase">Status</th>
+                        <th class="px-3 py-2 text-right font-bold text-gray-600 uppercase">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-50">
+                <tbody class="divide-y divide-gray-100">
                     @forelse($slots as $slot)
-                        <tr class="hover:bg-gray-50/80 transition-all duration-300 group/row {{ $slot->isExpired() ? 'opacity-60 grayscale-[0.3]' : '' }}">
-                            <td class="px-10 py-8">
-                                <div class="flex items-center gap-5">
-                                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-50 to-brand-100 text-brand-600 flex items-center justify-center text-xl shadow-inner group-hover/row:scale-110 transition-transform duration-500">
-                                        <i class="bi bi-bandaid"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-base font-black text-gray-900 group-hover/row:text-brand-600 transition-colors leading-tight mb-1.5 tracking-tight">{{ $slot->service }}</p>
-                                        <div class="flex items-center gap-2">
-                                            @if($slot->doctor)
-                                                <span class="text-[9px] font-black text-brand-500 uppercase tracking-widest bg-brand-50 px-2 py-0.5 rounded-md border border-brand-100/50">
-                                                    {{ $slot->doctor->isDoctor() ? 'Doctor' : 'Midwife' }}
-                                                </span>
-                                                <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{{ $slot->doctor->full_name }}</span>
-                                            @else
-                                                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest bg-gray-100 px-2 py-0.5 rounded-md">General</span>
-                                                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Medical Team</span>
-                                            @endif
-                                        </div>
-                                    </div>
+                        @php
+                            $bookedAppointments = $slot->appointments()->whereNotIn('status', ['cancelled', 'rejected'])->with('user')->get();
+                        @endphp
+                        <tr class="group hover:bg-gray-50 transition-colors {{ $slot->isExpired() ? 'opacity-50' : '' }}">
+                            <td class="px-3 py-2">
+                                <div class="flex items-center gap-2">
+                                    <i class="bi bi-bandaid text-brand-500"></i>
+                                    <span class="font-semibold text-gray-900 text-sm">{{ $slot->service }}</span>
                                 </div>
                             </td>
-                            <td class="px-10 py-8">
-                                <div class="space-y-1.5">
-                                    <div class="flex items-center gap-2">
-                                        <i class="bi bi-calendar3 text-brand-500 text-sm"></i>
-                                        <span class="text-sm font-black text-gray-900 uppercase tracking-tight">{{ $slot->date->format('M d, Y') }}</span>
-                                    </div>
-                                    <div class="flex items-center gap-2 ml-6">
-                                        <i class="bi bi-clock text-gray-400 text-[10px]"></i>
-                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ $slot->displayTime() }}</span>
-                                    </div>
-                                </div>
+                            <td class="px-3 py-2 text-[11px]">
+                                @if($slot->doctor)
+                                    <span class="font-bold text-gray-900">{{ $slot->doctor->isDoctor() ? 'Dr. ' : '' }}{{ $slot->doctor->full_name }}</span>
+                                @else
+                                    <span class="text-gray-500">Medical Team</span>
+                                @endif
                             </td>
-                            <td class="px-10 py-8">
-                                @php
-                                    $bookedAppointments = $slot->appointments()
-                                        ->whereNotIn('status', ['cancelled', 'rejected'])
-                                        ->with('user')
-                                        ->get();
-                                @endphp
-                                <div class="relative group/patients">
-                                    <div class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-50 rounded-lg border border-brand-100 cursor-pointer hover:bg-brand-100 transition-all">
-                                        <i class="bi bi-people-fill text-brand-600 text-sm"></i>
-                                        <span class="text-[10px] font-black text-brand-700 uppercase tracking-widest">
-                                            {{ $bookedAppointments->count() }} 
-                                            <span class="text-[9px] font-bold">{{ $bookedAppointments->count() === 1 ? 'Patient' : 'Patients' }}</span>
-                                        </span>
-                                    </div>
-
-                                    {{-- Hover Tooltip with Patient List --}}
-                                    @if($bookedAppointments->count() > 0)
-                                        <div class="absolute left-0 top-full mt-2 w-72 bg-white rounded-xl shadow-2xl border border-gray-200 p-4 z-50 opacity-0 invisible group-hover/patients:opacity-100 group-hover/patients:visible transition-all duration-200 pointer-events-none group-hover/patients:pointer-events-auto">
-                                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 pb-3 border-b border-gray-100">Booked Patients</p>
-                                            <div class="space-y-2 max-h-64 overflow-y-auto">
-                                                @foreach($bookedAppointments as $appointment)
-                                                    <div class="flex items-center gap-2.5 px-3 py-2.5 bg-gradient-to-r from-brand-50 to-transparent rounded-lg border border-brand-100/50 hover:border-brand-200 transition-colors">
-                                                        <div class="w-6 h-6 rounded-full bg-brand-100 flex items-center justify-center text-brand-600 text-[9px] font-black shrink-0">
-                                                            <i class="bi bi-person-fill"></i>
-                                                        </div>
-                                                        <div class="flex-1 min-w-0">
-                                                            <p class="text-[10px] font-black text-gray-900 truncate">{{ $appointment->user->full_name }}</p>
-                                                            <p class="text-[8px] font-bold text-brand-600 uppercase tracking-[0.15em]">{{ $appointment->user->patient_code ?? 'N/A' }}</p>
-                                                        </div>
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    @else
-                                        <div class="absolute left-0 top-full mt-2 bg-white rounded-xl shadow-2xl border border-gray-200 px-4 py-3 z-50 opacity-0 invisible group-hover/patients:opacity-100 group-hover/patients:visible transition-all duration-200 whitespace-nowrap text-[9px] font-bold text-gray-500 pointer-events-none group-hover/patients:pointer-events-auto">
-                                            No bookings yet
-                                        </div>
-                                    @endif
-                                </div>
+                            <td class="px-3 py-2 text-[11px]">
+                                <div class="font-semibold text-gray-900">{{ $slot->date->format('M d, Y') }}</div>
+                                <div class="text-gray-500">{{ $slot->displayTime() }}</div>
                             </td>
-                            <td class="px-10 py-8">
+                            <td class="px-3 py-2 text-[11px] font-semibold text-gray-700 relative booked-tooltip-cell" data-patients='@json($bookedAppointments->map(function($appointment){ return [
+                                        'name' => $appointment->user->full_name ?? 'Unknown',
+                                        'code' => $appointment->user->patient_code ?? 'No code',
+                                    ]; }))'>
+                                <span>{{ $bookedAppointments->count() }} booked</span>
+                            </td>
+                            <td class="px-3 py-2 text-[11px]">
                                 @php
                                     $booked = $slot->bookedCount();
                                     $cap = max($slot->capacity, 0);
                                     $pct = $cap > 0 ? round(($booked / $cap) * 100) : 0;
                                 @endphp
-                                <div class="flex flex-col gap-3">
-                                    <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-2">
-                                            <span class="text-[10px] font-black text-gray-900 uppercase tracking-widest">{{ $booked }} / {{ $cap }}</span>
-                                            <span class="text-[8px] font-bold text-gray-400 uppercase tracking-[0.2em]">Booked</span>
-                                        </div>
-                                        <span class="text-[10px] font-black {{ $slot->remainingSeats() > 0 ? 'text-emerald-600' : 'text-red-600' }} uppercase tracking-widest">
-                                            {{ $slot->remainingSeats() }} Left
-                                        </span>
-                                    </div>
-                                    <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden border border-gray-50">
-                                        @php
-                                            $barColor = $pct >= 100 ? 'from-red-500 to-red-400' : 'from-brand-500 to-brand-400';
-                                        @endphp
-                                        <div class="h-full bg-gradient-to-r {{ $barColor }} rounded-full transition-all duration-700 shadow-sm" style="width:<?php echo $pct; ?>%;"></div>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-semibold text-gray-900">{{ $booked }}/{{ $cap }}</span>
+                                    <div class="w-14 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                                        <div class="h-full bg-brand-500" style="width:{{ $pct }}%;"></div>
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-10 py-8">
+                            <td class="px-3 py-2">
                                 @php
                                     $statusColors = [
-                                        'green' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
-                                        'red' => 'bg-red-50 text-red-700 border-red-100',
-                                        'gray' => 'bg-gray-50 text-gray-600 border-gray-100',
+                                        'green' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                        'red' => 'bg-red-50 text-red-700 border-red-200',
+                                        'gray' => 'bg-gray-50 text-gray-600 border-gray-200',
                                     ];
                                     $colorClass = $statusColors[$slot->status_color] ?? $statusColors['gray'];
                                 @endphp
-                                <span class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl {{ $colorClass }} text-[10px] font-black uppercase tracking-widest border shadow-sm">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-current {{ $slot->status_color === 'green' ? 'animate-pulse' : '' }}"></span>
-                                    {{ $slot->status_label }}
+                                <span class="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-bold border {{ $colorClass }}">
+                                    <span class="w-1 h-1 rounded-full bg-current"></span>{{ $slot->status_label }}
                                 </span>
                             </td>
-                            <td class="px-10 py-8 text-right">
-                                <div class="flex items-center justify-end gap-3 opacity-40 group-hover/row:opacity-100 transition-opacity">
-                                    <a href="{{ route('midwife.slots.edit', $slot->id) }}" 
-                                       class="p-3 bg-yellow-50 text-yellow-600 rounded-xl hover:bg-yellow-600 hover:text-white transition-all border border-yellow-100 group/btn" title="Edit Slot">
-                                        <i class="bi bi-pencil-square text-lg"></i>
+                            <td class="px-3 py-2 text-right">
+                                <div class="flex items-center justify-end gap-2 opacity-70 hover:opacity-100 transition-opacity">
+                                    <a href="{{ route('midwife.slots.edit', $slot->id) }}" class="p-1.5 bg-yellow-50 text-yellow-600 rounded hover:bg-yellow-600 hover:text-white transition-colors border border-yellow-200" title="Edit">
+                                        <i class="bi bi-pencil-square text-sm"></i>
                                     </a>
-                                    <form action="{{ route('midwife.slots.destroy', $slot->id) }}" method="POST" 
-                                          onsubmit="return confirm('Are you sure you want to delete this slot?');" class="inline">
+                                    <form action="{{ route('midwife.slots.destroy', $slot->id) }}" method="POST" onsubmit="return confirm('Delete this slot?');" class="inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="p-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all border border-red-100 group/btn" title="Delete Slot">
-                                            <i class="bi bi-trash3 text-lg"></i>
+                                        <button type="submit" class="p-1.5 bg-red-50 text-red-600 rounded hover:bg-red-600 hover:text-white transition-colors border border-red-200" title="Delete">
+                                            <i class="bi bi-trash3 text-sm"></i>
                                         </button>
                                     </form>
                                 </div>
@@ -295,13 +129,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-10 py-24 text-center">
-                                <div class="w-24 h-24 bg-gray-50 rounded-3xl flex items-center justify-center mx-auto mb-6 text-gray-200 shadow-inner">
-                                    <i class="bi bi-calendar-x text-5xl"></i>
-                                </div>
-                                <h3 class="text-xl font-black text-gray-900 mb-2">No Appointment Slots</h3>
-                                <p class="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Try adjusting your filters or create a new slot window</p>
-                            </td>
+                            <td colspan="7" class="px-4 py-8 text-center text-gray-500">No slots found</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -309,196 +137,230 @@
         </div>
 
         {{-- Mobile Card View --}}
-        <div class="md:hidden divide-y divide-gray-50">
+        <div class="md:hidden divide-y divide-gray-100">
             @forelse($slots as $slot)
-                <div class="p-8 space-y-6 {{ $slot->isExpired() ? 'opacity-60' : '' }}">
-                    <div class="flex justify-between items-start">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-xl shadow-inner">
-                                <i class="bi bi-bandaid"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-lg font-black text-gray-900 leading-tight">{{ $slot->service }}</h4>
-                                <p class="text-[9px] font-black text-brand-600 uppercase tracking-widest mt-1">
-                                    {{ $slot->doctor ? ($slot->doctor->isDoctor() ? 'Dr. ' . $slot->doctor->last_name : 'Midwife ' . $slot->doctor->first_name) : 'Medical Team' }}
-                                </p>
+                <div class="p-3 space-y-2 {{ $slot->isExpired() ? 'opacity-50' : '' }}">
+                    <div class="flex justify-between items-start gap-2">
+                        <div class="flex items-center gap-2 flex-1 min-w-0">
+                            <i class="bi bi-bandaid text-brand-600 text-lg shrink-0"></i>
+                            <div class="min-w-0">
+                                <h4 class="font-bold text-gray-900">{{ $slot->service }}</h4>
+                                <p class="text-xs text-gray-500">{{ $slot->doctor?->full_name ?? 'Medical Team' }}</p>
                             </div>
                         </div>
                         @php
                             $statusColors = [
-                                'green' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
-                                'red' => 'bg-red-50 text-red-700 border-red-100',
-                                'gray' => 'bg-gray-50 text-gray-600 border-gray-100',
+                                'green' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                'red' => 'bg-red-50 text-red-700 border-red-200',
+                                'gray' => 'bg-gray-50 text-gray-600 border-gray-200',
                             ];
-                            $colorClass = $statusColors[$slot->status_color] ?? $statusColors['gray'];
                         @endphp
-                        <span class="px-3 py-1 rounded-full {{ $colorClass }} text-[8px] font-black uppercase tracking-widest border">
+                        <span class="px-2 py-1 rounded text-xs font-bold border whitespace-nowrap {{ $statusColors[$slot->status_color] ?? $statusColors['gray'] }}">
                             {{ $slot->status_label }}
                         </span>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="space-y-1">
-                            <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-1.5">
-                                <i class="bi bi-calendar3"></i> Date
-                            </p>
-                            <p class="text-xs font-black text-gray-900">{{ $slot->date->format('M d, Y') }}</p>
+                    <div class="grid grid-cols-2 gap-2 text-[10px]">
+                        <div class="bg-gray-50 p-2 rounded border border-gray-200">
+                            <p class="text-gray-600 font-semibold mb-0.5">Date</p>
+                            <p class="font-bold text-gray-900">{{ $slot->date->format('M d, Y') }}</p>
                         </div>
-                        <div class="space-y-1">
-                            <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-1.5">
-                                <i class="bi bi-clock"></i> Time
-                            </p>
-                            <p class="text-xs font-black text-gray-900">{{ $slot->displayTime() }}</p>
+                        <div class="bg-gray-50 p-2 rounded border border-gray-200">
+                            <p class="text-gray-600 font-semibold mb-0.5">Time</p>
+                            <p class="font-bold text-gray-900">{{ $slot->displayTime() }}</p>
                         </div>
                     </div>
 
-                    <div class="space-y-2">
-                        @php
-                            $booked = $slot->bookedCount();
-                            $cap = max($slot->capacity, 0);
-                            $pct = $cap > 0 ? round(($booked / $cap) * 100) : 0;
-                        @endphp
-                        <div class="flex justify-between items-center">
-                            <span class="text-[9px] font-black text-gray-900 uppercase tracking-widest">Capacity Tracker</span>
-                            <span class="text-[9px] font-black {{ $slot->remainingSeats() > 0 ? 'text-emerald-600' : 'text-red-600' }} uppercase tracking-widest">
-                                {{ $booked }}/{{ $cap }} ({{ $slot->remainingSeats() }} Left)
-                            </span>
+                    @php
+                        $booked = $slot->bookedCount();
+                        $cap = max($slot->capacity, 0);
+                        $pct = $cap > 0 ? round(($booked / $cap) * 100) : 0;
+                    @endphp
+                    <div class="bg-gray-50 p-2 rounded border border-gray-200 text-xs">
+                        <div class="flex justify-between mb-1">
+                            <span class="font-bold text-gray-600">Capacity</span>
+                            <span class="font-bold text-gray-900">{{ $booked }}/{{ $cap }}</span>
                         </div>
-                        <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                            <div class="h-full bg-brand-600 rounded-full shadow-sm" style="width:<?php echo $pct; ?>%;"></div>
+                        <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="h-full bg-brand-500" style="width:{{ $pct }}%;"></div>
                         </div>
                     </div>
 
-                    {{-- Booked Patients Section (Mobile) --}}
-                    <div class="space-y-2">
-                        <p class="text-[9px] font-black text-gray-900 uppercase tracking-widest">Booked Patients</p>
-                        @php
-                            $bookedAppointments = $slot->appointments()
-                                ->whereNotIn('status', ['cancelled', 'rejected'])
-                                ->with('user')
-                                ->get();
-                        @endphp
-                        @if($bookedAppointments->count() > 0)
-                            <div class="inline-flex items-center gap-2 px-3 py-2 bg-brand-50 rounded-lg border border-brand-100">
-                                <i class="bi bi-people-fill text-brand-600 text-sm"></i>
-                                <span class="text-[9px] font-black text-brand-700 uppercase tracking-widest">
-                                    {{ $bookedAppointments->count() }} {{ $bookedAppointments->count() === 1 ? 'Patient' : 'Patients' }}
-                                </span>
-                            </div>
-                            <div class="space-y-1.5 text-[8px]">
-                                @foreach($bookedAppointments->take(3) as $appointment)
-                                    <div class="flex items-center gap-2 px-2 py-1 bg-gradient-to-r from-brand-50 to-transparent rounded border border-brand-100/50">
-                                        <i class="bi bi-person-fill text-brand-600 text-[10px]"></i>
-                                        <span class="font-bold text-gray-900 truncate">{{ $appointment->user->full_name }}</span>
-                                    </div>
-                                @endforeach
-                                @if($bookedAppointments->count() > 3)
-                                    <p class="text-gray-500 font-bold italic px-2">+{{ $bookedAppointments->count() - 3 }} more...</p>
-                                @endif
-                            </div>
-                        @else
-                            <p class="text-[9px] font-bold text-gray-400 italic">No bookings</p>
-                        @endif
-                    </div>
-
-                    <div class="flex items-center gap-3 pt-2">
-                        <a href="{{ route('midwife.slots.edit', $slot->id) }}" class="flex-1 py-3.5 bg-yellow-50 text-yellow-600 rounded-2xl text-[10px] font-black uppercase tracking-widest text-center border border-yellow-100">
-                            Edit Slot
+                    <div class="flex gap-2">
+                        <a href="{{ route('midwife.slots.edit', $slot->id) }}" class="flex-1 px-2 py-1.5 bg-yellow-50 text-yellow-700 rounded text-[10px] font-bold text-center border border-yellow-200 hover:bg-yellow-600 hover:text-white hover:border-yellow-600 transition-colors">
+                            Edit
                         </a>
-                        <form action="{{ route('midwife.slots.destroy', $slot->id) }}" method="POST" class="flex-1">
+                        <form action="{{ route('midwife.slots.destroy', $slot->id) }}" method="POST" class="flex-1" onsubmit="return confirm('Delete this slot?');">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="w-full py-3.5 bg-red-50 text-red-600 rounded-2xl text-[10px] font-black uppercase tracking-widest text-center border border-red-100" onclick="return confirm('Are you sure?')">
+                            <button type="submit" class="w-full px-2 py-1.5 bg-red-50 text-red-700 rounded text-[10px] font-bold border border-red-200 hover:bg-red-600 hover:text-white hover:border-red-600 transition-colors">
                                 Delete
                             </button>
                         </form>
                     </div>
                 </div>
             @empty
-                <div class="p-16 text-center text-gray-400 font-bold uppercase tracking-widest text-xs">
-                    No slots found
-                </div>
+                <div class="p-6 text-center text-gray-500 text-sm">No slots found</div>
             @endforelse
         </div>
-
+        
         @if($slots->hasPages())
-            <div class="px-10 py-8 border-t border-gray-50 bg-gray-50/30">
-                {{ $slots->appends(request()->query())->links() }}
+            <div class="px-4 py-4 border-t border-gray-200 bg-gray-50 text-center">
+                <button id="loadMoreBtn" class="px-6 py-2.5 bg-brand-600 text-white rounded-lg text-sm font-semibold hover:bg-brand-700 transition-colors" data-page="{{ $slots->currentPage() }}" data-has-more="{{ $slots->hasMorePages() ? 'true' : 'false' }}">
+                    <i class="bi bi-download mr-2"></i>Load More Slots
+                </button>
+                <div id="loadingIndicator" class="hidden mt-2 text-brand-600 text-sm font-semibold">
+                    <i class="bi bi-hourglass-split animate-spin mr-2"></i>Loading...
+                </div>
             </div>
         @endif
     </div>
-
-    {{-- Management Protocols / Legend --}}
-    <div class="bg-gray-900 rounded-[3rem] p-10 lg:p-14 text-white relative overflow-hidden group">
-        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-500 rounded-full blur-[100px] -mr-32 -mt-32 opacity-20 group-hover:opacity-40 transition-opacity duration-700"></div>
-        <div class="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-                <h3 class="text-2xl font-black mb-4 tracking-tight">Scheduling Protocols</h3>
-                <p class="text-gray-400 font-medium leading-relaxed mb-8">
-                    Slots are automatically deactivated once the date has passed. Ensure that slots are correctly assigned to either a Midwife or a Doctor based on the service requirement.
-                </p>
-                <div class="flex flex-wrap gap-4">
-                    <div class="flex items-center gap-3 bg-white/5 px-5 py-3 rounded-2xl border border-white/10">
-                        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                        <span class="text-[10px] font-black uppercase tracking-widest">Active & Open</span>
-                    </div>
-                    <div class="flex items-center gap-3 bg-white/5 px-5 py-3 rounded-2xl border border-white/10">
-                        <div class="w-2 h-2 rounded-full bg-red-500"></div>
-                        <span class="text-[10px] font-black uppercase tracking-widest">Full / Expired</span>
-                    </div>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-6">
-                <div class="p-6 bg-white/5 rounded-3xl border border-white/10 hover:bg-white/10 transition-colors">
-                    <i class="bi bi-shield-check text-brand-400 text-2xl mb-4 block"></i>
-                    <h4 class="text-sm font-black uppercase tracking-widest mb-2">Provider Type</h4>
-                    <p class="text-[10px] text-gray-500 font-bold leading-relaxed">System enforces provider matching for clinical safety.</p>
-                </div>
-                <div class="p-6 bg-white/5 rounded-3xl border border-white/10 hover:bg-white/10 transition-colors">
-                    <i class="bi bi-clock-history text-indigo-400 text-2xl mb-4 block"></i>
-                    <h4 class="text-sm font-black uppercase tracking-widest mb-2">Auto-Archive</h4>
-                    <p class="text-[10px] text-gray-500 font-bold leading-relaxed">Past slots are locked to maintain historical accuracy.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Small inline script for quick presets --}}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const todayBtn = document.getElementById('btnToday');
-            const activeBtn = document.getElementById('btnActive');
-            const dateInput = document.querySelector('input[name="date"]');
-            const statusSelect = document.querySelector('select[name="status"]');
-
-            if (todayBtn && dateInput) {
-                todayBtn.addEventListener('click', () => {
-                    const d = new Date();
-                    const yyyy = d.getFullYear();
-                    const mm = String(d.getMonth() + 1).padStart(2, '0');
-                    const dd = String(d.getDate()).padStart(2, '0');
-                    dateInput.value = `${yyyy}-${mm}-${dd}`;
-                });
-            }
-            if (activeBtn && statusSelect) {
-                activeBtn.addEventListener('click', () => {
-                    statusSelect.value = 'active';
-                });
-            }
-        });
-    </script>
-
-    <style>
-        @keyframes bounce-subtle {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        .animate-bounce-subtle {
-            animation: bounce-subtle 3s infinite ease-in-out;
-        }
-        .shadow-soft {
-            box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.05);
-        }
-    </style>
 </div>
+
+<div id="bookedPatientsTooltip" class="hidden fixed z-50 pointer-events-none">
+    <div class="bg-white border border-gray-200 rounded-2xl shadow-[0_20px_50px_rgba(15,23,42,0.18)] text-xs text-gray-700 overflow-hidden w-64 max-w-[16rem]">
+        <div class="px-3 py-2 border-b border-gray-100 font-semibold text-gray-900 bg-white">Booked patients</div>
+        <div id="bookedPatientsTooltipList" class="max-h-52 overflow-y-auto bg-white"></div>
+    </div>
+</div>
+
+<script>
+    // Load More functionality
+    document.getElementById('loadMoreBtn')?.addEventListener('click', function() {
+        const btn = this;
+        const hasMore = btn.dataset.hasMore === 'true';
+        const currentPage = parseInt(btn.dataset.page);
+        const nextPage = currentPage + 1;
+        const loading = document.getElementById('loadingIndicator');
+        
+        if (!hasMore) {
+            btn.style.display = 'none';
+            return;
+        }
+
+        btn.style.display = 'none';
+        loading.classList.remove('hidden');
+
+        // Build query string with current filters
+        const params = new URLSearchParams(window.location.search);
+        params.set('page', nextPage);
+        params.set('load_more', '1');
+
+        fetch(`{{ route('midwife.slots.index') }}?${params.toString()}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'text/html'
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            // Parse the HTML response
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            
+            // Extract new table rows
+            const newRows = doc.querySelectorAll('table tbody tr');
+            const tbody = document.querySelector('table tbody');
+            
+            if (tbody && newRows.length > 0) {
+                newRows.forEach(row => {
+                    const clonedRow = row.cloneNode(true);
+                    tbody.appendChild(clonedRow);
+                    
+                    // Re-initialize booked tooltip for new rows
+                    const bookedCell = clonedRow.querySelector('.booked-tooltip-cell');
+                    if (bookedCell) {
+                        initializeBookedTooltip(bookedCell);
+                    }
+                });
+            }
+
+            // Update button state
+            const newDoc = doc.body;
+            const nextBtn = newDoc.querySelector('#loadMoreBtn');
+            if (nextBtn) {
+                btn.dataset.page = nextBtn.dataset.page;
+                btn.dataset.hasMore = nextBtn.dataset.hasMore;
+                
+                if (nextBtn.dataset.hasMore === 'false') {
+                    btn.style.display = 'none';
+                } else {
+                    btn.style.display = 'inline-flex';
+                }
+            }
+
+            loading.classList.add('hidden');
+            btn.style.display = btn.dataset.hasMore === 'true' ? 'inline-flex' : 'none';
+        })
+        .catch(error => {
+            console.error('Error loading more slots:', error);
+            loading.classList.add('hidden');
+            btn.style.display = 'inline-flex';
+            alert('Error loading more slots. Please try again.');
+        });
+    });
+
+    // Booked Tooltip Initialization
+    function initializeBookedTooltip(cell) {
+        const tooltip = document.getElementById('bookedPatientsTooltip');
+        const list = document.getElementById('bookedPatientsTooltipList');
+
+        const escapeHtml = (text) => {
+            if (!text) return '';
+            return text.replace(/[&<>"']/g, function(match) {
+                return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#39;'
+                }[match];
+            });
+        };
+
+        const patients = cell.dataset.patients ? JSON.parse(cell.dataset.patients) : [];
+        if (!patients.length) return;
+
+        const showTooltip = () => {
+            list.innerHTML = patients.map(patient => `
+                <div class="px-3 py-2 hover:bg-gray-50 transition-colors flex items-start gap-2">
+                    <i class="bi bi-person-fill text-gray-400 mt-0.5"></i>
+                    <div class="min-w-0">
+                        <p class="truncate font-semibold text-gray-900">${escapeHtml(patient.name)}</p>
+                        <p class="truncate text-[10px] text-gray-500">${escapeHtml(patient.code)}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            tooltip.classList.remove('hidden');
+            const rect = cell.getBoundingClientRect();
+            const tooltipRect = tooltip.getBoundingClientRect();
+            let left = rect.left;
+            let top = rect.bottom + 8;
+
+            if (left + tooltipRect.width > window.innerWidth - 16) {
+                left = window.innerWidth - tooltipRect.width - 16;
+            }
+            if (left < 16) {
+                left = 16;
+            }
+            if (top + tooltipRect.height > window.innerHeight - 16) {
+                top = rect.top - tooltipRect.height - 8;
+            }
+
+            tooltip.style.left = `${left}px`;
+            tooltip.style.top = `${top}px`;
+        };
+
+        cell.addEventListener('mouseenter', showTooltip);
+        cell.addEventListener('mouseleave', () => tooltip.classList.add('hidden'));
+    }
+
+    // Initialize tooltips for existing rows
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.booked-tooltip-cell').forEach(cell => {
+            initializeBookedTooltip(cell);
+        });
+    });
+</script>
 @endsection
