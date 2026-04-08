@@ -109,10 +109,10 @@
         <h2 class="text-xs font-black text-gray-400 uppercase tracking-[0.3em] px-4 mb-4">Your Schedule</h2>
         @forelse($appointments as $appointment)
             @php $slot = $appointment->slot; @endphp
-            <div class="bg-white rounded-[2.5rem] p-8 shadow-sm relative overflow-hidden border border-gray-100 group transition-all duration-500 hover:shadow-xl hover:border-brand-100 mx-4">
+            <div class="bg-white rounded-[2rem] p-5 shadow-sm relative overflow-hidden border border-gray-100 group transition-all duration-500 hover:shadow-xl hover:border-brand-100 mx-4">
                 {{-- Header: Time & Status --}}
-                <div class="flex justify-between items-center mb-6">
-                    <div class="flex items-center gap-3 text-gray-500 text-[10px] font-black uppercase tracking-widest bg-gray-50 px-4 py-2 rounded-2xl border border-gray-100 shadow-sm">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="flex items-center gap-2 text-gray-500 text-[10px] font-black uppercase tracking-widest bg-gray-50 px-3 py-1.5 rounded-2xl border border-gray-100 shadow-sm">
                         <i class="bi bi-calendar3 text-brand-400"></i>
                         {{ $appointment->formatted_date ?? $slot?->date?->format('M d, Y') ?? 'N/A' }}
                     </div>
@@ -151,6 +151,11 @@
                             $label = 'No Show';
                             $statusClass = 'bg-orange-50 text-orange-700 border-orange-100';
                         }
+                        // 3b. Explicit No Show Status
+                        elseif ($status === 'no_show') {
+                            $label = 'No Show';
+                            $statusClass = 'bg-orange-50 text-orange-700 border-orange-100';
+                        }
                         // 4. Final States
                         elseif ($status === 'completed') {
                             $label = 'Finished';
@@ -168,12 +173,12 @@
 
                 {{-- Body: Service --}}
                 <div class="mb-8">
-                    <div class="flex items-center gap-5 mb-6">
-                        <div class="h-14 w-14 rounded-2xl bg-brand-50 flex items-center justify-center text-brand-600 text-xl font-bold shrink-0 shadow-inner border border-brand-100">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="h-12 w-12 rounded-2xl bg-brand-50 flex items-center justify-center text-brand-600 text-lg font-bold shrink-0 shadow-inner border border-brand-100">
                             <i class="bi bi-bandaid-fill"></i>
                         </div>
                         <div>
-                            <h3 class="text-xl font-black text-gray-900 leading-tight group-hover:text-brand-600 transition">{{ $slot?->service ?? $appointment->service ?? 'N/A' }}</h3>
+                            <h3 class="text-lg font-black text-gray-900 leading-tight group-hover:text-brand-600 transition">{{ $slot?->service ?? $appointment->service ?? 'N/A' }}</h3>
                             <div class="flex items-center gap-2 mt-1">
                                 <p class="text-[10px] font-black text-blue-600 uppercase tracking-widest">
                                     @if($slot?->doctor)
@@ -195,7 +200,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flex items-center gap-4 text-sm text-gray-700 bg-gray-50/50 p-4 rounded-2xl border border-gray-100 group-hover:bg-white transition-colors">
+                    <div class="flex items-center gap-3 text-sm text-gray-700 bg-gray-50/50 p-3 rounded-2xl border border-gray-100 group-hover:bg-white transition-colors">
                         <i class="bi bi-clock text-brand-500"></i>
                         <span class="font-bold text-gray-900">
                             @if($slot?->start_time)
@@ -212,32 +217,41 @@
                 </div>
 
                 {{-- Footer: Actions --}}
-                <div class="flex items-center justify-end pt-6 border-t border-gray-50 gap-3">
-                    @if(!in_array($appointment->status, ['cancelled', 'rejected', 'completed']))
+                <div class="flex items-center justify-end pt-4 border-t border-gray-50 gap-3">
+                    @php
+                        $apptDate = ($slot ? \Illuminate\Support\Carbon::parse($slot->date) : null) ?? $appointment->scheduled_at;
+                        $isPastDate = $apptDate && $apptDate->copy()->startOfDay()->lessThan(\Illuminate\Support\Carbon::today());
+                        $canCancel = !in_array($appointment->status, ['cancelled', 'rejected', 'completed']) && !$isPastDate;
+                    @endphp
+                    @if($canCancel)
                         <form action="{{ route('patient.appointments.cancel', $appointment->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this appointment?');" class="w-full">
                             @csrf
-                            <button type="submit" class="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-red-50 text-red-600 text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all shadow-sm border border-red-100">
+                            <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-red-50 text-red-600 text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all shadow-sm border border-red-100">
                                 <i class="bi bi-x-circle"></i> Cancel Appointment
                             </button>
                         </form>
+                    @else
+                        <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-300 border border-gray-100">
+                            <i class="bi bi-lock-fill"></i>
+                        </div>
                     @endif
                 </div>
             </div>
         @empty
-            <div class="bg-white rounded-[3rem] p-12 text-center shadow-sm border border-gray-100 mx-4">
-                <div class="w-20 h-20 bg-gray-50 rounded-[2rem] flex items-center justify-center mx-auto mb-6 text-gray-300 border border-gray-100">
-                    <i class="bi bi-calendar-x text-4xl"></i>
+            <div class="bg-white rounded-[2.5rem] p-8 text-center shadow-sm border border-gray-100 mx-4">
+                <div class="w-20 h-20 bg-gray-50 rounded-[1.75rem] flex items-center justify-center mx-auto mb-5 text-gray-300 border border-gray-100">
+                    <i class="bi bi-calendar-x text-3xl"></i>
                 </div>
-                <h3 class="text-xl font-black text-gray-900 mb-2">No Appointments Found</h3>
+                <h3 class="text-lg font-black text-gray-900 mb-2">No Appointments Found</h3>
                 <p class="text-gray-400 font-medium max-w-sm mx-auto leading-relaxed">Your history is empty. Book a new appointment to start your health tracking.</p>
             </div>
         @endforelse
     </div>
 
-    <div class="hidden md:block bg-white rounded-[3.5rem] shadow-sm border border-gray-100 overflow-hidden relative group/table">
-        <div class="px-12 py-10 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
-            <h2 class="text-2xl font-black text-gray-900 tracking-tight flex items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-brand-50 flex items-center justify-center text-brand-600 shadow-inner">
+    <div class="hidden md:block bg-white rounded-[3rem] shadow-sm border border-gray-100 overflow-hidden relative group/table">
+        <div class="px-8 py-8 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
+            <h2 class="text-xl font-black text-gray-900 tracking-tight flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-brand-50 flex items-center justify-center text-brand-600 shadow-inner">
                     <i class="bi bi-clock-history"></i>
                 </div>
                 Appointment History
@@ -252,19 +266,19 @@
                 <table class="min-w-full divide-y divide-gray-100">
                     <thead class="bg-gray-50/30">
                         <tr>
-                            <th scope="col" class="px-12 py-8 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Service Details</th>
-                            <th scope="col" class="px-12 py-8 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Schedule</th>
-                            <th scope="col" class="px-12 py-8 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Status</th>
-                            <th scope="col" class="px-12 py-8 text-right text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Actions</th>
+                            <th scope="col" class="px-6 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Service Details</th>
+                            <th scope="col" class="px-6 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Schedule</th>
+                            <th scope="col" class="px-6 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Status</th>
+                            <th scope="col" class="px-6 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-50">
                         @foreach($appointments as $appointment)
                             @php $slot = $appointment->slot; @endphp
                             <tr class="hover:bg-gray-50/80 transition-all duration-300 group/row">
-                                <td class="px-12 py-10 whitespace-nowrap">
-                                    <div class="flex items-center gap-5">
-                                        <div class="w-14 h-14 rounded-2xl bg-brand-50 flex items-center justify-center text-brand-600 text-xl shadow-inner group-hover/row:scale-110 transition-transform">
+                                <td class="px-6 py-5 whitespace-nowrap">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-12 h-12 rounded-2xl bg-brand-50 flex items-center justify-center text-brand-600 text-lg shadow-inner group-hover/row:scale-110 transition-transform">
                                             <i class="bi bi-bandaid-fill"></i>
                                         </div>
                                         <div>
@@ -297,9 +311,9 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-12 py-10 whitespace-nowrap">
-                                    <div class="text-base font-black text-gray-900 tracking-tight">{{ $appointment->formatted_date ?? $slot?->date?->format('M d, Y') ?? 'N/A' }}</div>
-                                    <div class="text-[11px] font-bold text-gray-400 uppercase tracking-widest mt-1 flex items-center gap-2">
+                                <td class="px-6 py-5 whitespace-nowrap">
+                                    <div class="text-sm font-black text-gray-900 tracking-tight">{{ $appointment->formatted_date ?? $slot?->date?->format('M d, Y') ?? 'N/A' }}</div>
+                                    <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1 flex items-center gap-2">
                                         <i class="bi bi-clock text-brand-400"></i>
                                         @if($slot?->start_time)
                                             {{ \Carbon\Carbon::parse($slot->start_time)->format('g:i A') }} -
@@ -309,7 +323,7 @@
                                         @endif
                                     </div>
                                 </td>
-                                <td class="px-12 py-10 whitespace-nowrap">
+                                <td class="px-6 py-5 whitespace-nowrap">
                                     @php
                                     $status = $appointment->status;
                                     // 💉 Fix: Slot date should always take precedence for status check, matching display logic
@@ -345,6 +359,11 @@
                                         $label = 'No Show';
                                         $colorClass = 'bg-orange-50 text-orange-700 border-orange-100';
                                     }
+                                    // 3b. Explicit No Show Status
+                                    elseif ($status === 'no_show') {
+                                        $label = 'No Show';
+                                        $colorClass = 'bg-orange-50 text-orange-700 border-orange-100';
+                                    }
                                     // 4. Final States
                                     elseif ($status === 'completed') {
                                         $label = 'Finished';
@@ -355,17 +374,22 @@
                                         $colorClass = 'bg-gray-50 text-gray-500 border-gray-100';
                                     }
                                     @endphp
-                                    <span class="inline-flex px-5 py-2.5 rounded-[1.25rem] text-[10px] font-black uppercase tracking-[0.2em] border {{ $colorClass }}">
+                                    <span class="inline-flex px-4 py-2 rounded-[1.25rem] text-[10px] font-black uppercase tracking-[0.2em] border {{ $colorClass }}">
                                         {{ $label }}
                                     </span>
                                 </td>
-                                <td class="px-12 py-10 whitespace-nowrap text-right">
+                                <td class="px-6 py-5 whitespace-nowrap text-right">
                                     <div class="flex items-center justify-end gap-3">
-                                        @if(!in_array($appointment->status, ['cancelled', 'rejected', 'completed']))
+                                        @php
+                                            $apptDate = ($slot ? \Illuminate\Support\Carbon::parse($slot->date) : null) ?? $appointment->scheduled_at;
+                                            $isPastDate = $apptDate && $apptDate->copy()->startOfDay()->lessThan(\Illuminate\Support\Carbon::today());
+                                            $canCancel = !in_array($appointment->status, ['cancelled', 'rejected', 'completed']) && !$isPastDate;
+                                        @endphp
+                                        @if($canCancel)
                                             <form action="{{ route('patient.appointments.cancel', $appointment->id) }}" method="POST"
                                                   onsubmit="return confirm('Are you sure you want to cancel this appointment?');" class="inline">
                                                 @csrf
-                                                <button type="submit" class="px-8 py-4 bg-red-50 text-red-600 rounded-[1.25rem] text-[10px] font-black uppercase tracking-[0.2em] hover:bg-red-600 hover:text-white transition-all border border-red-100 shadow-sm active:scale-95">
+                                                <button type="submit" class="px-5 py-3 bg-red-50 text-red-600 rounded-[1.25rem] text-[10px] font-black uppercase tracking-[0.2em] hover:bg-red-600 hover:text-white transition-all border border-red-100 shadow-sm active:scale-95">
                                                     Cancel Visit
                                                 </button>
                                             </form>
@@ -398,47 +422,33 @@
     <div id="available-slots-section" class="pt-10">
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 px-4">
             <div>
-                <h2 class="text-3xl font-black text-gray-900 tracking-tight flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-brand-50 flex items-center justify-center text-brand-600 shadow-inner">
+                <h2 class="text-2xl font-black text-gray-900 tracking-tight flex items-center gap-3 uppercase">
+                    <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600 shadow-inner">
                         <i class="bi bi-calendar-plus-fill"></i>
                     </div>
                     Available Slots
                 </h2>
                 <p class="text-sm font-bold text-gray-400 uppercase tracking-widest mt-4 ml-1">Choose an open consultation slot to book your visit</p>
             </div>
-            
-            <div class="flex flex-col gap-4">
-                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Who is this appointment for?</label>
-                <div class="relative group">
-                    <select x-model="selectedPatientId" 
-                            class="pl-12 pr-10 py-4 bg-white border border-gray-200 rounded-2xl text-xs font-black uppercase tracking-widest focus:ring-4 focus:ring-brand-500/10 transition-all w-72 shadow-sm appearance-none cursor-pointer">
-                        <template x-for="p in patients" :key="p.id">
-                            <option :value="p.id" x-text="p.id == {{ Auth::user()->id }} ? 'Myself (' + p.name + ')' : p.name"></option>
-                        </template>
-                    </select>
-                    <div class="absolute left-5 top-1/2 -translate-y-1/2 text-brand-600 group-hover:scale-110 transition-transform">
-                        <i class="bi bi-person-circle"></i>
-                    </div>
-                    <div class="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-                        <i class="bi bi-chevron-down"></i>
-                    </div>
-                </div>
-            </div>
         </div>
 
-        {{-- Today's Slots --}}
+        {{-- Today's Slots Section --}}
+        <div class="px-4 mb-4 flex items-center justify-between">
+            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Today</h3>
+            @if(isset($todaySlots) && $todaySlots->count())
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ $todaySlots->count() }} slot{{ $todaySlots->count() !== 1 ? 's' : '' }} available</span>
+            @endif
+        </div>
+
         @if(isset($todaySlots) && $todaySlots->count())
-            <div class="px-4 mb-4">
-                <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Today</h3>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5 mb-8">
                 @foreach($todaySlots as $slot)
                     @php $slotAvailable = $slot->isBookable(); @endphp
                     <div 
                          x-transition:enter="transition ease-out duration-300"
                          x-transition:enter-start="opacity-0 scale-95"
                          x-transition:enter-end="opacity-100 scale-100"
-                         class="bg-white shadow-sm rounded-[3.5rem] p-10 border border-gray-100 hover:border-brand-200 hover:shadow-2xl transition-all duration-500 flex flex-col h-full group transform hover:-translate-y-3">
+                         class="bg-white shadow-sm rounded-[1.5rem] p-5 md:p-6 border border-gray-100 hover:border-brand-200 hover:shadow-xl transition-all duration-500 flex flex-col h-full group transform hover:-translate-y-1">
                         <div class="flex justify-between items-start mb-8">
                             <div class="bg-brand-50 text-brand-700 rounded-2xl px-5 py-2.5 text-[10px] font-black uppercase tracking-[0.2em] border border-brand-100">
                                 {{ $slot->service }}
@@ -453,9 +463,9 @@
                         </div>
                         
                         <div class="space-y-6 mb-10 flex-1">
-                            <div class="flex items-center gap-5 text-gray-700">
-                                <div class="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all border border-gray-100/50 shadow-inner">
-                                    <i class="bi bi-calendar-event text-lg"></i>
+                            <div class="flex items-center gap-3 text-gray-700">
+                                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-brand-50 group-hover:text-brand-500 transition-colors border border-gray-100/50 shadow-inner">
+                                    <i class="bi bi-calendar-event text-xs sm:text-sm"></i>
                                 </div>
                                 <div>
                                     <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Schedule Date</p>
@@ -463,9 +473,9 @@
                                 </div>
                             </div>
                             
-                            <div class="flex items-center gap-5 text-gray-700">
-                                <div class="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all border border-gray-100/50 shadow-inner">
-                                    <i class="bi bi-person-badge text-lg"></i>
+                            <div class="flex items-center gap-3 text-gray-700">
+                                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-brand-50 group-hover:text-brand-500 transition-colors border border-gray-100/50 shadow-inner">
+                                    <i class="bi bi-person-badge text-xs sm:text-sm"></i>
                                 </div>
                                 <div>
                                     <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Medical Provider</p>
@@ -485,9 +495,9 @@
                                 </div>
                             </div>
 
-                            <div class="flex items-center gap-5 text-gray-700">
-                                <div class="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all border border-gray-100/50 shadow-inner">
-                                    <i class="bi bi-clock text-lg"></i>
+                            <div class="flex items-center gap-3 text-gray-700">
+                                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-brand-50 group-hover:text-brand-500 transition-colors border border-gray-100/50 shadow-inner">
+                                    <i class="bi bi-clock text-xs sm:text-sm"></i>
                                 </div>
                                 <div>
                                     <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Time Slot</p>
@@ -515,7 +525,7 @@
                                 time: '{{ ($slot->start_time ? \Carbon\Carbon::parse($slot->start_time)->format('g:i A') : 'N/A') . ' - ' . ($slot->end_time ? \Carbon\Carbon::parse($slot->end_time)->format('g:i A') : '') }}',
                                 provider: '{{ $slot->doctor ? ($slot->doctor->isDoctor() ? 'Dr. ' . $slot->doctor->last_name : 'Midwife ' . $slot->doctor->first_name) : 'Medical Team' }}'
                             }"
-                            class="w-full py-5 rounded-[1.75rem] text-xs font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-lg group/btn"
+                            class="w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-lg group/btn"
                             :class="{
                                 'bg-brand-600 hover:bg-brand-700 text-white shadow-brand-500/20 hover:shadow-brand-500/40 transform active:scale-95': {{ $slotAvailable ? 'true' : 'false' }},
                                 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60': {{ $slotAvailable ? 'false' : 'true' }}
@@ -530,21 +540,52 @@
                     </div>
                 @endforeach
             </div>
+        @else
+            <div class="bg-white rounded-[2rem] border border-gray-100 p-16 text-center mb-8 shadow-sm">
+                <div class="w-16 h-16 bg-gray-50 rounded-[1.5rem] flex items-center justify-center text-gray-200 mx-auto mb-4">
+                    <i class="bi bi-calendar-x text-3xl"></i>
+                </div>
+                <p class="text-lg font-black text-gray-900">No Slots Today</p>
+                <p class="text-sm font-bold text-gray-400 mt-2">Check back later for new schedules</p>
+            </div>
         @endif
 
-        {{-- Upcoming Slots (filtered) --}}
-        @if(isset($futureSlots) && $futureSlots->count())
-            <div class="px-4 mb-4">
-                <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Upcoming</h3>
+        {{-- Upcoming Slots Section --}}
+        <div class="px-4 mb-4 flex items-center justify-between">
+            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Upcoming</h3>
+            <div class="flex items-center gap-6">
+                @if(isset($futureSlots) && $futureSlots->count())
+                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ $futureSlots->count() }} slot{{ $futureSlots->count() !== 1 ? 's' : '' }} available</span>
+                @endif
+                <div class="flex flex-col gap-2">
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">For:</label>
+                    <div class="relative group">
+                        <select x-model="selectedPatientId" 
+                                class="pl-10 pr-10 py-3 bg-white border border-gray-200 rounded-xl text-[10px] font-black uppercase tracking-widest focus:ring-4 focus:ring-brand-500/10 transition-all shadow-sm appearance-none cursor-pointer">
+                            <template x-for="p in patients" :key="p.id">
+                                <option :value="p.id" x-text="p.id == {{ Auth::user()->id }} ? 'Me (' + p.name + ')' : p.name"></option>
+                            </template>
+                        </select>
+                        <div class="absolute left-3 top-1/2 -translate-y-1/2 text-brand-600 text-sm pointer-events-none">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                        <div class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                            <i class="bi bi-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        </div>
+
+        @if(isset($futureSlots) && $futureSlots->count())
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5 mb-8">
                 @foreach($futureSlots as $slot)
                     @php $slotAvailable = $slot->isBookable(); @endphp
                     <div x-show="isSlotVisible('{{ $slot->service }}')" 
                          x-transition:enter="transition ease-out duration-300"
                          x-transition:enter-start="opacity-0 scale-95"
                          x-transition:enter-end="opacity-100 scale-100"
-                         class="bg-white shadow-sm rounded-[3.5rem] p-10 border border-gray-100 hover:border-brand-200 hover:shadow-2xl transition-all duration-500 flex flex-col h-full group transform hover:-translate-y-3">
+                         class="bg-white shadow-sm rounded-[1.5rem] p-5 md:p-6 border border-gray-100 hover:border-brand-200 hover:shadow-xl transition-all duration-500 flex flex-col h-full group transform hover:-translate-y-1">
                         <div class="flex justify-between items-start mb-8">
                             <div class="bg-brand-50 text-brand-700 rounded-2xl px-5 py-2.5 text-[10px] font-black uppercase tracking-[0.2em] border border-brand-100">
                                 {{ $slot->service }}
@@ -559,9 +600,9 @@
                         </div>
 
                         <div class="space-y-6 mb-10 flex-1">
-                            <div class="flex items-center gap-5 text-gray-700">
-                                <div class="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all border border-gray-100/50 shadow-inner">
-                                    <i class="bi bi-calendar-event text-lg"></i>
+                            <div class="flex items-center gap-3 text-gray-700">
+                                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-brand-50 group-hover:text-brand-500 transition-colors border border-gray-100/50 shadow-inner">
+                                    <i class="bi bi-calendar-event text-xs sm:text-sm"></i>
                                 </div>
                                 <div>
                                     <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Schedule Date</p>
@@ -569,9 +610,9 @@
                                 </div>
                             </div>
                             
-                            <div class="flex items-center gap-5 text-gray-700">
-                                <div class="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all border border-gray-100/50 shadow-inner">
-                                    <i class="bi bi-person-badge text-lg"></i>
+                            <div class="flex items-center gap-3 text-gray-700">
+                                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-brand-50 group-hover:text-brand-500 transition-colors border border-gray-100/50 shadow-inner">
+                                    <i class="bi bi-person-badge text-xs sm:text-sm"></i>
                                 </div>
                                 <div>
                                     <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Medical Provider</p>
@@ -591,9 +632,9 @@
                                 </div>
                             </div>
 
-                            <div class="flex items-center gap-5 text-gray-700">
-                                <div class="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all border border-gray-100/50 shadow-inner">
-                                    <i class="bi bi-clock text-lg"></i>
+                            <div class="flex items-center gap-3 text-gray-700">
+                                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-brand-50 group-hover:text-brand-500 transition-colors border border-gray-100/50 shadow-inner">
+                                    <i class="bi bi-clock text-xs sm:text-sm"></i>
                                 </div>
                                 <div>
                                     <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Time Slot</p>
@@ -621,7 +662,7 @@
                                 time: '{{ ($slot->start_time ? \Carbon\Carbon::parse($slot->start_time)->format('g:i A') : 'N/A') . ' - ' . ($slot->end_time ? \Carbon\Carbon::parse($slot->end_time)->format('g:i A') : '') }}',
                                 provider: '{{ $slot->doctor ? ($slot->doctor->isDoctor() ? 'Dr. ' . $slot->doctor->last_name : 'Midwife ' . $slot->doctor->first_name) : 'Medical Team' }}'
                             }"
-                            class="w-full py-5 rounded-[1.75rem] text-xs font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-lg group/btn"
+                            class="w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-lg group/btn"
                             :class="{
                                 'bg-brand-600 hover:bg-brand-700 text-white shadow-brand-500/20 hover:shadow-brand-500/40 transform active:scale-95': {{ $slotAvailable ? 'true' : 'false' }},
                                 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60': {{ $slotAvailable ? 'false' : 'true' }}
@@ -636,29 +677,235 @@
                     </div>
                 @endforeach
             </div>
-
-            {{-- Dynamic Empty State for Filtered Slots --}}
-            <div x-show="!document.querySelector('.grid > div[style*=\'display: block\']') && !document.querySelector('.grid > div:not([style*=\'display: none\'])')" 
-                 class="bg-white rounded-[4rem] border-2 border-dashed border-gray-100 p-20 text-center shadow-sm"
-                 style="display: none;">
-                <div class="w-20 h-20 bg-brand-50 rounded-3xl flex items-center justify-center text-brand-300 mx-auto mb-6">
-                    <i class="bi bi-person-x text-4xl"></i>
-                </div>
-                <h3 class="text-xl font-black text-gray-900 mb-2">No Matching Slots</h3>
-                <p class="text-gray-400 font-medium max-w-sm mx-auto">There are no slots available for the selected patient's profile (Age/Service requirements).</p>
-            </div>
         @else
-            <div class="bg-white rounded-[5rem] border-2 border-dashed border-gray-100 p-24 text-center shadow-sm relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-80 h-80 bg-gray-50 rounded-full blur-3xl -mr-40 -mt-40"></div>
-                <div class="relative z-10">
-                    <div class="w-24 h-24 bg-gray-50 rounded-[2.5rem] flex items-center justify-center text-gray-300 mx-auto mb-8 border border-gray-100 shadow-inner transform -rotate-6">
-                        <i class="bi bi-calendar-x text-5xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-black text-gray-900 mb-4 tracking-tight">No Available Slots</h3>
-                    <p class="text-gray-400 font-medium max-w-sm mx-auto leading-relaxed text-lg">Check back later for new schedules or contact the health center for urgent concerns.</p>
+            <div class="bg-white rounded-[2rem] border border-gray-100 p-16 text-center mb-8 shadow-sm">
+                <div class="w-16 h-16 bg-gray-50 rounded-[1.5rem] flex items-center justify-center text-gray-200 mx-auto mb-4">
+                    <i class="bi bi-calendar-x text-3xl"></i>
                 </div>
+                <p class="text-lg font-black text-gray-900">No Upcoming Slots</p>
+                <p class="text-sm font-bold text-gray-400 mt-2">Check back later for new schedules</p>
             </div>
         @endif
+
+    {{-- ===========================
+         UPCOMING VISITS SECTION
+    ============================ --}}
+    @php
+    $upcomingAppointments = $appointments
+        ->where('status', '!=', 'cancelled')
+        ->where('status', '!=', 'rejected')
+        ->filter(function($appointment) {
+            $date = $appointment->scheduled_at ?? ($appointment->slot?->date ?? null);
+            return $date && $date->greaterThanOrEqualTo(now()->startOfDay());
+        })
+        ->sortBy('scheduled_at');
+    @endphp
+
+    <div class="space-y-6">
+        <div class="flex items-center gap-3 px-4">
+            <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600 shadow-inner">
+                <i class="bi bi-calendar-week-fill text-xl"></i>
+            </div>
+            <h2 class="text-lg font-black text-gray-900 tracking-tight uppercase">Upcoming Visits</h2>
+        </div>
+
+        <div class="hidden md:block bg-white shadow-sm rounded-[2.5rem] border border-gray-100 overflow-hidden">
+            {{-- Desktop Table View --}}
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-100">
+                    <thead class="bg-gray-50/50">
+                        <tr>
+                            <th class="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Service</th>
+                            <th class="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Date & Time</th>
+                            <th class="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
+                            <th class="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50">
+                        @forelse($upcomingAppointments as $appointment)
+                            <tr class="hover:bg-gray-50/50 transition-colors">
+                                <td class="px-8 py-6">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600 shadow-inner">
+                                            <i class="bi bi-bandaid-fill"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-black text-gray-900 tracking-tight">{{ $appointment->slot?->service ?? $appointment->service ?? 'N/A' }}</p>
+                                            <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1">
+                                                @if($appointment->slot?->doctor)
+                                                    @if($appointment->slot->doctor->isDoctor())
+                                                        Dr. {{ $appointment->slot->doctor->last_name }}
+                                                    @elseif($appointment->slot->doctor->isMidwife())
+                                                        Midwife {{ $appointment->slot->doctor->first_name }}
+                                                    @else
+                                                        {{ $appointment->slot->doctor->full_name }}
+                                                    @endif
+                                                @else
+                                                    Medical Team
+                                                @endif
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-8 py-6">
+                                    <div class="text-sm font-black text-gray-900 tracking-tight">{{ $appointment->scheduled_at->format('M d, Y') ?? $appointment->slot?->date?->format('M d, Y') ?? 'N/A' }}</div>
+                                    <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">{{ $appointment->scheduled_at->format('g:i A') ?? 'N/A' }}</div>
+                                </td>
+                                <td class="px-8 py-6">
+                                    @php
+                                    $status = $appointment->status;
+                                    $apptDate = $appointment->scheduled_at ?? ($appointment->slot ? \Carbon\Carbon::parse($appointment->slot->date) : null);
+                                    $today = \Carbon\Carbon::today();
+                                    $apptDateOnly = $apptDate ? $apptDate->copy()->startOfDay() : null;
+                                    $isToday = $apptDateOnly ? $apptDateOnly->equalTo($today) : false;
+                                    $isFuture = $apptDateOnly ? $apptDateOnly->greaterThan($today) : false;
+                                    $isPast = $apptDateOnly ? $apptDateOnly->lessThan($today) : false;
+                                    $label = ucfirst($status);
+                                    $colorClass = 'bg-gray-100 text-gray-800';
+                                    
+                                    if ($isFuture && in_array($status, ['approved', 'pending', 'rescheduled'])) {
+                                        $label = 'Upcoming';
+                                        $colorClass = 'bg-brand-50 text-brand-700 border-brand-100';
+                                    } elseif ($isToday && in_array($status, ['approved', 'pending', 'rescheduled'])) {
+                                        $label = 'Today';
+                                        $colorClass = 'bg-blue-50 text-blue-700 border-blue-100';
+                                    } elseif ($isPast && in_array($status, ['approved', 'rescheduled', 'pending'])) {
+                                        $label = 'No Show';
+                                        $colorClass = 'bg-orange-50 text-orange-700 border-orange-100';
+                                    } elseif ($status === 'no_show') {
+                                        $label = 'No Show';
+                                        $colorClass = 'bg-orange-50 text-orange-700 border-orange-100';
+                                    }
+                                    @endphp
+                                    <span class="inline-flex px-5 py-2.5 rounded-[1.25rem] text-[10px] font-black uppercase tracking-[0.2em] border {{ $colorClass }}">
+                                        {{ $label }}
+                                    </span>
+                                </td>
+                                <td class="px-8 py-6 text-right">
+                                    <div class="flex items-center justify-end gap-3">
+                                        @php
+                                            $apptDate = $appointment->scheduled_at ?? ($appointment->slot ? \Illuminate\Support\Carbon::parse($appointment->slot->date) : null);
+                                            $isPastDate = $apptDate && $apptDate->copy()->startOfDay()->lessThan(\Illuminate\Support\Carbon::today());
+                                            $canCancel = !in_array($appointment->status, ['cancelled', 'rejected', 'completed']) && !$isPastDate;
+                                        @endphp
+                                        @if($canCancel)
+                                            <form action="{{ route('patient.appointments.cancel', $appointment->id) }}" method="POST"
+                                                  onsubmit="return confirm('Are you sure you want to cancel this appointment?');" class="inline">
+                                                @csrf
+                                                <button type="submit" class="px-8 py-4 bg-red-50 text-red-600 rounded-[1.25rem] text-[10px] font-black uppercase tracking-[0.2em] hover:bg-red-600 hover:text-white transition-all border border-red-100 shadow-sm active:scale-95">
+                                                    Cancel
+                                                </button>
+                                            </form>
+                                        @else
+                                            <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-300 border border-gray-100">
+                                                <i class="bi bi-lock-fill"></i>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="px-8 py-16 text-center">
+                                    <div class="flex flex-col items-center justify-center">
+                                        <div class="w-16 h-16 bg-gray-50 rounded-[2rem] flex items-center justify-center text-gray-200 mb-4 border border-gray-100">
+                                            <i class="bi bi-calendar-x text-3xl"></i>
+                                        </div>
+                                        <p class="text-lg font-black text-gray-900">No Upcoming Visits</p>
+                                        <p class="text-sm font-bold text-gray-400 mt-2">Book a new appointment to get started</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {{-- Mobile Card View --}}
+        <div class="md:hidden space-y-4 px-4">
+            @forelse($upcomingAppointments as $appointment)
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <p class="text-sm font-black text-gray-900">{{ $appointment->slot?->service ?? $appointment->service ?? 'N/A' }}</p>
+                            <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1">
+                                @if($appointment->slot?->doctor)
+                                    Dr. {{ $appointment->slot->doctor->last_name }}
+                                @else
+                                    Medical Team
+                                @endif
+                            </p>
+                        </div>
+                        @php
+                        $status = $appointment->status;
+                        $apptDate = $appointment->scheduled_at ?? ($appointment->slot ? \Illuminate\Support\Carbon::parse($appointment->slot->date) : null);
+                        $today = \Illuminate\Support\Carbon::today();
+                        $apptDateOnly = $apptDate ? $apptDate->copy()->startOfDay() : null;
+                        $isToday = $apptDateOnly ? $apptDateOnly->equalTo($today) : false;
+                        $isFuture = $apptDateOnly ? $apptDateOnly->greaterThan($today) : false;
+                        $isPast = $apptDateOnly ? $apptDateOnly->lessThan($today) : false;
+                        
+                        $label = ucfirst($status);
+                        $colorClass = 'bg-gray-50 text-gray-600 border-gray-100';
+                        
+                        if ($isFuture && in_array($status, ['approved', 'pending', 'rescheduled'])) {
+                            $label = 'Upcoming';
+                            $colorClass = 'bg-brand-50 text-brand-700 border-brand-100';
+                        } elseif ($isToday && in_array($status, ['approved', 'pending', 'rescheduled'])) {
+                            $label = 'Today';
+                            $colorClass = 'bg-blue-50 text-blue-700 border-blue-100';
+                        } elseif ($isPast && in_array($status, ['approved', 'rescheduled', 'pending'])) {
+                            $label = 'No Show';
+                            $colorClass = 'bg-orange-50 text-orange-700 border-orange-100';
+                        } elseif ($status === 'no_show') {
+                            $label = 'No Show';
+                            $colorClass = 'bg-orange-50 text-orange-700 border-orange-100';
+                        }
+                        @endphp
+                        <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase border {{ $colorClass }}">
+                            {{ $label }}
+                        </span>
+                    </div>
+                    <div class="space-y-2 mb-4 text-[10px] text-gray-600">
+                        <div class="flex items-center gap-2">
+                            <i class="bi bi-calendar text-brand-600"></i>
+                            {{ $appointment->scheduled_at->format('M d, Y') }}
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="bi bi-clock text-brand-600"></i>
+                            {{ $appointment->scheduled_at->format('g:i A') }}
+                        </div>
+                    </div>
+                    <div class="pt-4 border-t border-gray-50">
+                        @php
+                            $apptDate = $appointment->scheduled_at ?? ($appointment->slot ? \Illuminate\Support\Carbon::parse($appointment->slot->date) : null);
+                            $isPastDate = $apptDate && $apptDate->copy()->startOfDay()->lessThan(\Illuminate\Support\Carbon::today());
+                            $canCancel = !in_array($appointment->status, ['cancelled', 'rejected', 'completed']) && !$isPastDate;
+                        @endphp
+                        @if($canCancel)
+                            <form action="{{ route('patient.appointments.cancel', $appointment->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this appointment?');" class="w-full">
+                                @csrf
+                                <button type="submit" class="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-red-50 text-red-600 text-[9px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all shadow-sm border border-red-100">
+                                    <i class="bi bi-x-circle"></i> Cancel
+                                </button>
+                            </form>
+                        @else
+                            <div class="w-full flex items-center justify-center py-2.5 rounded-xl bg-gray-50 border border-gray-100">
+                                <div class="flex items-center gap-2 text-gray-400 text-[9px] font-black uppercase tracking-widest">
+                                    <i class="bi bi-lock-fill"></i> Cannot Cancel
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @empty
+                <div class="bg-white rounded-2xl p-8 text-center border border-gray-100 shadow-sm">
+                    <i class="bi bi-calendar-x text-3xl text-gray-300 mb-3 block"></i>
+                    <p class="font-black text-gray-900">No Upcoming Visits</p>
+                </div>
+            @endforelse
+        </div>
     </div>
 
     {{-- ===========================
@@ -804,3 +1051,6 @@
     @include('components.patient-bottom-nav')
 </div>
 @endsection
+
+
+
