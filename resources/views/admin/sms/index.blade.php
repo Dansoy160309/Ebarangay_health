@@ -71,10 +71,7 @@
                         
                         @php
                             $toggles = [
-                                'sms_appointment_booked' => 'New Booking',
-                                'sms_appointment_confirmed' => 'Confirmation',
                                 'sms_appointment_reminders' => 'Reminders',
-                                'sms_appointment_cancelled' => 'Cancellations',
                                 'sms_defaulter_recall' => 'Defaulter Recall',
                             ];
                         @endphp

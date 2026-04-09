@@ -7,14 +7,11 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\Appointment;
 
-use App\Channels\PhilSmsChannel;
-
 class AppointmentBookedNotification extends Notification
 {
     use Queueable;
 
     protected $appointment;
-    public $smsType = 'sms_appointment_booked';
 
     /**
      * Create a new notification instance.
@@ -29,8 +26,8 @@ class AppointmentBookedNotification extends Notification
      */
     public function via($notifiable)
     {
-        // Send email, database, and SMS notification
-        return ['mail', 'database', PhilSmsChannel::class];
+        // Send email and database notification
+        return ['mail', 'database'];
     }
 
     /**
@@ -45,21 +42,6 @@ class AppointmentBookedNotification extends Notification
             ->line('📅 Date & Time: ' . $this->appointment->scheduled_at->format('F d, Y h:i A'))
             ->line('Status: ' . ucfirst($this->appointment->status))
             ->line('Thank you for using E-Barangay Health!');
-    }
-
-    /**
-     * Build the SMS representation of the notification.
-     */
-    public function toSms($notifiable)
-    {
-        if (empty($notifiable->contact_no)) {
-            return [];
-        }
-
-        return [
-            'recipient' => $notifiable->contact_no,
-            'body'      => 'Your appointment for ' . $this->appointment->service . ' on ' . $this->appointment->scheduled_at->format('M d, Y h:i A') . ' is confirmed. Thank you, E-Barangay Health.',
-        ];
     }
 
     /**

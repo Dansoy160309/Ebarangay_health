@@ -7,6 +7,7 @@ use App\Models\DoctorAvailability;
 use App\Models\Appointment;
 use App\Notifications\DoctorArrivalNotification;
 use App\Notifications\DoctorAbsenceNotification;
+use App\Notifications\DoctorDelayedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 
@@ -71,7 +72,7 @@ class DoctorPresenceController extends Controller
         }
 
         $availability->loadMissing('doctor');
-        $notifiedCount = $this->notifyPatients($availability, new DoctorArrivalNotification($availability));
+        $notifiedCount = $this->notifyAllPatients($availability, new DoctorArrivalNotification($availability));
         $doctorName = $availability->doctor?->full_name ?? 'Doctor';
 
         return back()->with('success', "Dr. {$doctorName} marked as arrived. {$notifiedCount} patient(s) notified.");
@@ -99,7 +100,7 @@ class DoctorPresenceController extends Controller
         }
 
         $availability->loadMissing('doctor');
-        $notifiedCount = $this->notifyPatients($availability, new DoctorAbsenceNotification($availability));
+        $notifiedCount = $this->notifyAllPatients($availability, new DoctorAbsenceNotification($availability));
         $doctorName = $availability->doctor?->full_name ?? 'Doctor';
 
         return back()->with('warning', "Dr. {$doctorName} marked as absent. {$notifiedCount} patient(s) notified.");
@@ -129,37 +130,25 @@ class DoctorPresenceController extends Controller
             ]);
         }
 
-        return back()->with('info', "Dr. {$availability->doctor->full_name} marked as delayed.");
+        $availability->loadMissing('doctor');
+        $notifiedCount = $this->notifyAllPatients($availability, new DoctorDelayedNotification($availability));
+        $doctorName = $availability->doctor?->full_name ?? 'Doctor';
+
+        return back()->with('info', "Dr. {$doctorName} marked as delayed. {$notifiedCount} patient(s) notified.");
     }
 
-    protected function notifyPatients(DoctorAvailability $availability, $notification): int
+    protected function notifyAllPatients(DoctorAvailability $availability, $notification): int
     {
-        $date = $availability->date->toDateString();
+        // Get ALL patients in the system
+        $allPatients = \App\Models\User::where('role', 'patient')
+            ->where('status', true) // Only active patients
+            ->get();
 
-        $appointments = Appointment::query()
-            ->whereHas('slot', function ($q) use ($availability, $date) {
-                $q->where('doctor_id', $availability->doctor_id)
-                    ->whereDate('date', $date);
-            })
-            ->whereNotIn('status', ['cancelled', 'rejected', 'archived', 'completed', 'no_show'])
-            ->get(['user_id', 'booked_by']);
-
-        $recipientIds = $appointments
-            ->pluck('user_id')
-            ->merge($appointments->pluck('booked_by')->filter())
-            ->unique()
-            ->values();
-
-        if ($recipientIds->isEmpty()) {
+        if ($allPatients->isEmpty()) {
             return 0;
         }
 
-        $recipients = \App\Models\User::whereIn('id', $recipientIds)->get();
-        if ($recipients->isEmpty()) {
-            return 0;
-        }
-
-        Notification::send($recipients, $notification);
-        return $recipients->count();
+        Notification::send($allPatients, $notification);
+        return $allPatients->count();
     }
 }
