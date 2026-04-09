@@ -1,0 +1,548 @@
+/* ============================================================================
+   Mobile Loading States & Performance Optimizations
+   ============================================================================ */
+
+/* 1. GLOBAL PERFORMANCE OPTIMIZATIONS */
+@media (max-width: 640px) {
+    * {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    img {
+        -webkit-user-drag: none;
+        user-select: none;
+    }
+
+    body {
+        /* Optimize for mobile browsers */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+}
+
+/* 2. LOADING SPINNER ANIMATIONS */
+@media (max-width: 640px) {
+    .spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(14, 165, 233, 0.1);
+        border-top-color: #0ea5e9;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Pulse animation */
+    .pulse {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+
+    /* Bounce animation */
+    .bounce {
+        animation: bounce 1s infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    /* Wave animation */
+    .wave {
+        animation: wave 1.2s ease-in-out infinite;
+    }
+
+    @keyframes wave {
+        0%, 100% { transform: scaleY(1); }
+        50% { transform: scaleY(0.5); }
+    }
+}
+
+/* 3. SKELETON LOADERS */
+@media (max-width: 640px) {
+    .skeleton {
+        background: linear-gradient(
+            90deg,
+            #f0f0f0 25%,
+            #e0e0e0 50%,
+            #f0f0f0 75%
+        );
+        background-size: 200% 100%;
+        animation: skeleton-loading 2s infinite;
+    }
+
+    @keyframes skeleton-loading {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+
+    .skeleton-text {
+        height: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .skeleton-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+    }
+
+    .skeleton-card {
+        padding: 1rem;
+        border-radius: 1rem;
+        margin-bottom: 1rem;
+    }
+}
+
+/* 4. LOADING BUTTON STATES */
+@media (max-width: 640px) {
+    button[disabled],
+    button.loading,
+    [role="button"][aria-disabled="true"] {
+        opacity: 0.6;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    button.loading {
+        position: relative;
+        color: transparent;
+    }
+
+    button.loading::after {
+        content: '';
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        top: 50%;
+        left: 50%;
+        margin-left: -8px;
+        margin-top: -8px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+
+    /* Primary button loading state */
+    button.btn-primary.loading {
+        background-color: #0284c7;
+    }
+
+    /* Secondary button loading state */
+    button.btn-secondary.loading {
+        background-color: #6b7280;
+    }
+}
+
+/* 5. LOADING PAGE OVERLAY */
+@media (max-width: 640px) {
+    .page-loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.95);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        backdrop-filter: blur(4px);
+    }
+
+    .page-loading::after {
+        content: '';
+        width: 40px;
+        height: 40px;
+        border: 4px solid #e5e7eb;
+        border-top-color: #0ea5e9;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+}
+
+/* 6. PROGRESS INDICATORS */
+@media (max-width: 640px) {
+    .progress-bar {
+        height: 4px;
+        background: #e5e7eb;
+        border-radius: 2px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #0ea5e9, #06b6d4);
+        animation: progress 2s ease-in-out infinite;
+    }
+
+    @keyframes progress {
+        0% { width: 0%; }
+        50% { width: 100%; }
+        100% { width: 100%; }
+    }
+
+    /* Indeterminate progress */
+    .progress-bar.indeterminate .progress-fill {
+        width: 30%;
+        transform-origin: left;
+        animation: progress-indeterminate 1.5s ease-in-out infinite;
+    }
+
+    @keyframes progress-indeterminate {
+        0% {
+            transform: translateX(-100%);
+            width: 30%;
+        }
+        50% {
+            width: 30%;
+        }
+        100% {
+            transform: translateX(400%);
+            width: 30%;
+        }
+    }
+}
+
+/* 7. REQUEST STATES */
+@media (max-width: 640px) {
+    /* Pending state */
+    .state-pending {
+        opacity: 0.7;
+        pointer-events: none;
+    }
+
+    /* Loading state */
+    .state-loading {
+        position: relative;
+    }
+
+    .state-loading::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(0, 0, 0, 0.1);
+        border-top-color: #0ea5e9;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+
+    /* Success state */
+    .state-success {
+        opacity: 1;
+    }
+
+    /* Error state */
+    .state-error {
+        color: #dc2626;
+        opacity: 1;
+    }
+}
+
+/* 8. INFINITE SCROLL LOADING */
+@media (max-width: 640px) {
+    .load-more-trigger {
+        padding: 2rem 1rem;
+        text-align: center;
+        color: #6b7280;
+    }
+
+    .load-more-spinner {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .load-more-text {
+        font-size: 0.875rem;
+    }
+}
+
+/* 9. REFRESH PULL-TO-REFRESH */
+@media (max-width: 640px) {
+    .pull-to-refresh {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .pull-to-refresh-indicator {
+        position: absolute;
+        top: -60px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .pull-to-refresh.dragging .pull-to-refresh-indicator {
+        top: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .pull-to-refresh-icon {
+        color: #6b7280;
+        font-size: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+
+    .pull-to-refresh.loading .pull-to-refresh-icon {
+        animation: spin 1s linear infinite;
+    }
+}
+
+/* 10. NETWORK STATE INDICATORS */
+@media (max-width: 640px) {
+    .offline-indicator {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: #ef4444;
+        color: white;
+        padding: 0.75rem;
+        text-align: center;
+        font-size: 0.875rem;
+        font-weight: 600;
+        z-index: 9998;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .offline-indicator::before {
+        content: '';
+        width: 12px;
+        height: 12px;
+        background: #fca5a5;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+
+    .online-indicator {
+        display: none;
+    }
+}
+
+/* 11. LAZY LOADING PLACEHOLDERS */
+@media (max-width: 640px) {
+    img[loading="lazy"] {
+        background: linear-gradient(
+            90deg,
+            #f0f0f0 25%,
+            #e0e0e0 50%,
+            #f0f0f0 75%
+        );
+        background-size: 200% 100%;
+        animation: skeleton-loading 2s infinite;
+    }
+
+    img[loading="lazy"][src] {
+        animation: fade-in 0.3s ease-out;
+    }
+
+    @keyframes fade-in {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+}
+
+/* 12. CONTENT FADE-IN ON LOAD */
+@media (max-width: 640px) {
+    .fade-in {
+        animation: fadeInContent 0.3s ease-out forwards;
+    }
+
+    @keyframes fadeInContent {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Stagger effect for multiple items */
+    .fade-in-stagger {
+        animation: fadeInContent 0.3s ease-out forwards;
+    }
+
+    .fade-in-stagger:nth-child(1) { animation-delay: 0ms; }
+    .fade-in-stagger:nth-child(2) { animation-delay: 50ms; }
+    .fade-in-stagger:nth-child(3) { animation-delay: 100ms; }
+    .fade-in-stagger:nth-child(4) { animation-delay: 150ms; }
+    .fade-in-stagger:nth-child(5) { animation-delay: 200ms; }
+}
+
+/* 13. BLUR UP IMAGE LOADING (LQIP) */
+@media (max-width: 640px) {
+    .blur-up {
+        background-size: cover;
+        background-position: center;
+        filter: blur(20px);
+    }
+
+    .blur-up.loaded {
+        animation: removeBlur 0.6s ease-out;
+        filter: blur(0);
+    }
+
+    @keyframes removeBlur {
+        from { filter: blur(20px); }
+        to { filter: blur(0); }
+    }
+}
+
+/* 14. REDUCE CSS FILE SIZE - CRITICAL ONLY */
+@media (max-width: 640px) {
+    /* Remove unused desktop styles */
+    .hidden\:md\:flex,
+    .hidden\:lg\:block,
+    .hidden\:xl\:block {
+        display: none !important;
+    }
+
+    /* Simplify shadows on mobile */
+    .shadow-lg,
+    .shadow-xl,
+    .shadow-2xl {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+    }
+}
+
+/* 15. OPTIMIZE TRANSITIONS FOR PERFORMANCE */
+@media (max-width: 640px) and (prefers-reduced-motion: no-preference) {
+    /* Use transform for better performance */
+    button,
+    a,
+    [role="button"] {
+        will-change: transform;
+    }
+
+    /* Limit transition duration */
+    * {
+        transition-duration: 0.2s;
+    }
+
+    /* Disable on low-end devices */
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+}
+
+/* 16. FONT OPTIMIZATION */
+@media (max-width: 640px) {
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", sans-serif;
+        font-feature-settings: "kern" 1;
+        letter-spacing: -0.02em;
+    }
+
+    /* Reduce font sizes slightly on very small screens */
+    @media (max-width: 360px) {
+        body { font-size: 15px; }
+        h1 { font-size: 1.5rem; }
+        h2 { font-size: 1.25rem; }
+        h3 { font-size: 1.1rem; }
+    }
+}
+
+/* 17. CONTAIN PAINT & LAYOUT THRASHING */
+@media (max-width: 640px) {
+    .list-item,
+    .card,
+    [role="region"] {
+        contain: layout style paint;
+    }
+
+    button,
+    a,
+    input,
+    textarea {
+        contain: style paint;
+    }
+}
+
+/* 18. REQUESTIDL EFRAME SUPPORT */
+@media (max-width: 640px) {
+    .defer-render {
+        opacity: 0;
+        animation: deferredFadeIn 0.3s ease-out forwards;
+        animation-delay: 500ms;
+    }
+
+    @keyframes deferredFadeIn {
+        to { opacity: 1; }
+    }
+}
+
+/* 19. MEMORY OPTIMIZATION - CSS GRID/FLEX */
+@media (max-width: 640px) {
+    .container,
+    .grid,
+    .flex-col {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Avoid expensive calc() where possible */
+    .max-w-7xl,
+    .max-w-4xl {
+        width: 100%;
+        max-width: none;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+/* 20. CRITICAL CSS INLINE */
+@media (max-width: 640px) {
+    /* Ensure critical content loads fast */
+    body {
+        background: #f9fafb;
+        margin: 0;
+        padding: 0;
+    }
+
+    main {
+        display: block;
+    }
+
+    [hidden] {
+        display: none !important;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+}

@@ -12,7 +12,7 @@
         <div class="absolute -bottom-[10%] left-[20%] w-[40%] h-[40%] bg-purple-200/30 rounded-full blur-3xl mix-blend-multiply animate-blob animation-delay-4000"></div>
     </div>
 
-    <div class="max-w-5xl w-full bg-white rounded-2xl shadow-xl overflow-hidden flex min-h-[420px] md:min-h-[480px] relative z-10 transition-all duration-300 hover:shadow-2xl">
+    <div class="max-w-5xl w-full bg-white rounded-[2rem] shadow-xl overflow-hidden flex flex-col md:flex-row min-h-[420px] md:min-h-[480px] relative z-10 transition-all duration-300 hover:shadow-2xl login-card">
         
         {{-- Left Panel --}}        <div class="hidden md:flex md:w-1/2 bg-gradient-to-br from-brand-700 via-brand-600 to-brand-800 p-6 md:p-8 flex-col justify-between relative overflow-hidden text-white">
             
@@ -57,7 +57,7 @@
         </div>
 
         {{-- Right Panel --}}
-        <div class="w-full md:w-1/2 p-5 md:p-6 lg:p-7 flex flex-col justify-center bg-white">
+        <div class="w-full md:w-1/2 p-5 md:p-6 lg:p-7 flex flex-col justify-center bg-white login-panel">
             <div class="max-w-sm mx-auto w-full space-y-4">
                 <div class="mb-6">
                     <h2 class="text-4xl font-black text-gray-900 mb-1 tracking-tight">Welcome Back! 👋</h2>
@@ -124,10 +124,10 @@
                         </div>
                     </div>
 
-                    <div class="flex items-center py-2">
+                    <div class="flex items-center gap-3 py-2">
                         <input id="remember" name="remember" type="checkbox"
-                            class="h-5 w-5 text-brand-600 focus:ring-brand-500 border-gray-300 rounded cursor-pointer transition-colors shadow-sm">
-                        <label for="remember" class="ml-3 block text-sm text-gray-500 font-bold cursor-pointer select-none uppercase tracking-widest">
+                            class="login-checkbox h-4 w-4 text-brand-600 focus:ring-brand-500 border-gray-300 rounded cursor-pointer transition-colors shadow-sm">
+                        <label for="remember" class="text-sm text-gray-500 font-bold cursor-pointer select-none uppercase tracking-widest">
                             Stay signed in
                         </label>
                     </div>

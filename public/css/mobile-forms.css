@@ -1,0 +1,473 @@
+/* ============================================================================
+   Mobile Form Optimizations
+   ============================================================================ */
+
+/* 1. INPUT FIELD STANDARDIZATION */
+@media (max-width: 640px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"],
+    input[type="number"],
+    input[type="date"],
+    input[type="time"],
+    input[type="datetime-local"],
+    input[type="search"],
+    textarea,
+    select {
+        font-size: 16px; /* Prevents iOS zoom-on-focus */
+        min-height: 44px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        transition: all 0.2s ease;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    /* Focus states */
+    input:focus,
+    textarea:focus,
+    select:focus {
+        outline: none;
+        border-color: #0ea5e9;
+        box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+        background-color: #fff;
+    }
+
+    /* Error states */
+    input.error,
+    textarea.error,
+    select.error {
+        border-color: #ef4444;
+    }
+
+    input.error:focus,
+    textarea.error:focus,
+    select.error:focus {
+        box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+    }
+
+    /* Success states */
+    input.success,
+    textarea.success,
+    select.success {
+        border-color: #10b981;
+    }
+
+    input.success:focus,
+    textarea.success:focus,
+    select.success:focus {
+        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+    }
+}
+
+/* 2. LABEL IMPROVEMENTS */
+@media (max-width: 640px) {
+    label {
+        display: block;
+        font-weight: 600;
+        font-size: 0.9375rem;
+        margin-bottom: 0.5rem;
+        color: #1f2937;
+    }
+
+    label .required {
+        color: #ef4444;
+    }
+
+    label .optional {
+        font-weight: 400;
+        color: #9ca3af;
+        font-size: 0.8125rem;
+    }
+}
+
+/* 3. SELECT DROPDOWN IMPROVEMENTS */
+@media (max-width: 640px) {
+    select {
+        background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"%3e%3cpolyline points="6 9 12 15 18 9"%3e%3c/polyline%3e%3c/svg%3e');
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 20px;
+        padding-right: 40px;
+    }
+
+    select::-ms-expand {
+        display: none;
+    }
+}
+
+/* 4. CHECKBOX & RADIO IMPROVEMENTS */
+@media (max-width: 640px) {
+    input[type="checkbox"],
+    input[type="radio"] {
+        min-width: 44px;
+        min-height: 44px;
+        cursor: pointer;
+        accent-color: #0ea5e9;
+    }
+
+    input[type="checkbox"] + label,
+    input[type="radio"] + label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 0;
+        font-size: 1rem;
+        line-height: 1.5;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    input[type="checkbox"]:focus + label,
+    input[type="radio"]:focus + label {
+        outline: 2px solid #0ea5e9;
+        outline-offset: 2px;
+    }
+}
+
+/* 5. FORM GRID LAYOUT ON MOBILE */
+@media (max-width: 640px) {
+    .form-grid,
+    .grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .form-grid.cols-2,
+    .grid.cols-2,
+    .grid.grid-cols-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid.cols-3,
+    .grid.cols-3,
+    .grid.grid-cols-3 {
+        grid-template-columns: 1fr;
+    }
+
+    /* Allow 2-column on wider phones */
+    @media (min-width: 480px) {
+        .form-grid.cols-2-mobile,
+        .grid.grid-cols-2-mobile {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+}
+
+/* 6. FORM GROUP SPACING */
+@media (max-width: 640px) {
+    .form-group,
+    .field-wrapper {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group:last-child,
+    .field-wrapper:last-child {
+        margin-bottom: 0;
+    }
+}
+
+/* 7. HELP TEXT & HINTS */
+@media (max-width: 640px) {
+    .field-hint,
+    .help-text {
+        display: block;
+        margin-top: 0.5rem;
+        font-size: 0.8125rem;
+        color: #6b7280;
+        line-height: 1.5;
+    }
+
+    .field-hint.error,
+    .help-text.error {
+        color: #dc2626;
+    }
+
+    .field-hint.success,
+    .help-text.success {
+        color: #059669;
+    }
+}
+
+/* 8. FORM BUTTONS */
+@media (max-width: 640px) {
+    button[type="submit"],
+    button[type="button"],
+    .btn {
+        min-height: 48px;
+        padding: 12px 24px;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    button[type="submit"]:active,
+    button[type="button"]:active,
+    .btn:active {
+        transform: scale(0.98);
+    }
+
+    /* Full-width buttons on mobile */
+    button[type="submit"].full-width,
+    .btn.full-width {
+        width: 100%;
+    }
+
+    /* Button groups */
+    .button-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .button-group.horizontal {
+        flex-direction: row;
+    }
+}
+
+/* 9. FORM SECTIONS */
+@media (max-width: 640px) {
+    .form-section {
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .form-section:last-child {
+        border-bottom: none;
+    }
+
+    .form-section-title {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-section-subtitle {
+        font-size: 0.9375rem;
+        color: #6b7280;
+        margin-bottom: 1rem;
+    }
+}
+
+/* 10. ERROR & VALIDATION MESSAGES */
+@media (max-width: 640px) {
+    .error-message,
+    .validation-error,
+    .alert-error {
+        background-color: #fee2e2;
+        color: #991b1b;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 0.9375rem;
+        margin-top: 0.5rem;
+        border-left: 4px solid #dc2626;
+    }
+
+    .success-message,
+    .validation-success,
+    .alert-success {
+        background-color: #dcfce7;
+        color: #166534;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 0.9375rem;
+        margin-top: 0.5rem;
+        border-left: 4px solid #22c55e;
+    }
+
+    .warning-message,
+    .validation-warning,
+    .alert-warning {
+        background-color: #fef3c7;
+        color: #92400e;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 0.9375rem;
+        margin-top: 0.5rem;
+        border-left: 4px solid #f59e0b;
+    }
+}
+
+/* 11. INPUT ICON SUPPORT */
+@media (max-width: 640px) {
+    .input-with-icon {
+        position: relative;
+    }
+
+    .input-with-icon input {
+        padding-left: 44px;
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af;
+        pointer-events: none;
+        font-size: 1.125rem;
+    }
+
+    .input-with-icon input:focus + .input-icon {
+        color: #0ea5e9;
+    }
+}
+
+/* 12. CHARACTER COUNT */
+@media (max-width: 640px) {
+    .char-count {
+        display: block;
+        text-align: right;
+        font-size: 0.75rem;
+        color: #9ca3af;
+        margin-top: 0.25rem;
+    }
+
+    .char-count.warning {
+        color: #f59e0b;
+    }
+
+    .char-count.exceeded {
+        color: #ef4444;
+    }
+}
+
+/* 13. REQUIRED FIELD INDICATOR */
+@media (max-width: 640px) {
+    .required-indicator {
+        color: #ef4444;
+        font-weight: bold;
+        margin-left: 0.25rem;
+    }
+
+    .optional-indicator {
+        color: #9ca3af;
+        font-size: 0.8125rem;
+        margin-left: 0.5rem;
+    }
+}
+
+/* 14. PREVENT DOUBLE ZOOM */
+@media (max-width: 640px) {
+    button,
+    a,
+    input[type="submit"],
+    input[type="button"],
+    [role="button"] {
+        touch-action: manipulation;
+    }
+}
+
+/* 15. DATETIME INPUT IMPROVEMENTS */
+@media (max-width: 640px) {
+    input[type="date"],
+    input[type="time"],
+    input[type="datetime-local"> {
+        cursor: pointer;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="time"]::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        opacity: 0.6;
+        width: 24px;
+        height: 24px;
+    }
+}
+
+/* 16. PLACEHOLDER TEXT FIXES */
+@media (max-width: 640px) {
+    input::placeholder,
+    textarea::placeholder {
+        color: #d1d5db;
+        opacity: 1;
+    }
+
+    input::-ms-input-placeholder,
+    textarea::-ms-input-placeholder {
+        color: #d1d5db;
+    }
+}
+
+/* 17. FOCUS VISIBLE (KEYBOARD NAVIGATION) */
+@media (max-width: 640px) {
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible,
+    button:focus-visible,
+    a:focus-visible {
+        outline: 3px solid #0ea5e9;
+        outline-offset: 2px;
+    }
+}
+
+/* 18. FORM CARD SPACING */
+@media (max-width: 640px) {
+    .form-card {
+        padding: 1.5rem;
+        border-radius: 1.5rem;
+        background: white;
+        border: 1px solid #e5e7eb;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-card:last-child {
+        margin-bottom: 0;
+    }
+}
+
+/* 19. FLOATING LABELS SUPPORT */
+@media (max-width: 640px) {
+    .form-floating > label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        padding: 1rem 0.75rem;
+        pointer-events: none;
+        border: 1px solid transparent;
+        transform-origin: 0 0;
+        transition: opacity 0.1s ease-in-out, transform 0.1s ease-in-out;
+    }
+
+    .form-floating > input:not(:placeholder-shown),
+    .form-floating > textarea:not(:placeholder-shown),
+    .form-floating > select {
+        padding-top: 1.625rem;
+        padding-bottom: 0.625rem;
+    }
+
+    .form-floating > input:not(:placeholder-shown) ~ label,
+    .form-floating > textarea:not(:placeholder-shown) ~ label,
+    .form-floating > select ~ label {
+        opacity: 0.65;
+        transform: scale(0.85) translateY(-0.5rem) translateX(-0.15em);
+    }
+}
+
+/* 20. SCROLLABLE LIST INPUTS (SELECTS WITH MANY OPTIONS) */
+@media (max-width: 640px) {
+    select {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+}

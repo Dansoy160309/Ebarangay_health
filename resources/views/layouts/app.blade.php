@@ -2,10 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5,user-scalable=yes">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta name="theme-color" content="#0ea5e9">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="E-Barangay Health">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="description" content="Modern Barangay Health Information System. Manage appointments and health records with ease.">
   <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/assets/images/LOGO (2).png">
   <title>@yield('title', 'E-Barangay Health')</title>
 
   <!-- 1. Anti-FOUC Critical Style -->
@@ -14,6 +20,36 @@
     /* Hide the body immediately to prevent unstyled flash */
     html { background-color: #f9fafb; }
     body { opacity: 0; }
+    
+    /* Mobile Safe Area Support */
+    @supports(padding: max(0px)) {
+        body {
+            padding-left: max(0, env(safe-area-inset-left));
+            padding-right: max(0, env(safe-area-inset-right));
+        }
+    }
+    
+    /* Improve text readability on mobile */
+    @media (max-width: 640px) {
+        body { 
+            font-size: 1rem;
+            line-height: 1.6; 
+        }
+        h1 { font-size: 1.75rem; }
+        h2 { font-size: 1.35rem; }
+        h3 { font-size: 1.15rem; }
+    }
+    
+    /* Smooth gesture support */
+    * {
+        -webkit-user-select: text;
+        user-select: text;
+        -webkit-touch-callout: default;
+    }
+    
+    button, a {
+        -webkit-touch-callout: none;
+    }
   </style>
 
   <!-- 2. TailwindCSS Config + Local (Must load in head) -->
@@ -43,6 +79,10 @@
 
   <!-- 3. Local CSS Assets -->
   <link href="{{ asset('css/bootstrap-icons.css') }}" rel="stylesheet">
+  <link href="{{ asset('css/mobile-optimizations.css') }}" rel="stylesheet">
+  <link href="{{ asset('css/mobile-forms.css') }}" rel="stylesheet">
+  <link href="{{ asset('css/mobile-modals.css') }}" rel="stylesheet">
+  <link href="{{ asset('css/mobile-loading-performance.css') }}" rel="stylesheet">
 
   <!-- 4. Essential JS (Non-blocking where possible) -->
   <script src="{{ asset('js/axios.js') }}"></script>
@@ -97,7 +137,7 @@
     h1, h2, h3, h4, h5, h6 { letter-spacing: -0.01em; color: #111827; }
   </style>
 </head>
-<body class="bg-gray-50 min-h-screen font-sans text-gray-900 antialiased" x-data="{ sidebarOpen: false }">
+<body class="bg-gray-50 min-h-screen font-sans text-gray-900 antialiased @if(request()->routeIs('login')) login-page @endif" x-data="{ sidebarOpen: false }">
 
     @php
         $user = auth()->user();
@@ -137,8 +177,8 @@
           @include('layouts.navbar', ['notifications' => $notifications, 'unreadCount' => $unreadCount])
 
           {{-- Main Content --}}
-          <main class="flex-1 overflow-x-hidden">
-              <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <main class="flex-1 overflow-x-hidden pb-24 md:pb-0">
+              <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
   @else
       {{-- Main Wrapper (Full width for guests) --}}
       <div class="flex flex-col min-h-screen transition-all duration-300 ease-in-out">
