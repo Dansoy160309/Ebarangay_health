@@ -381,7 +381,7 @@
 @media (max-width: 640px) {
     input[type="date"],
     input[type="time"],
-    input[type="datetime-local"> {
+    input[type="datetime-local"] {
         cursor: pointer;
     }
 

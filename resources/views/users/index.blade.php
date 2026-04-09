@@ -375,7 +375,7 @@
         </div>
 
         <!-- Pagination -->
-        <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50">
+        <div class="hidden md:block px-6 py-4 border-t border-gray-100 bg-gray-50/50">
             {{ $users->appends(request()->query())->links() }}
         </div>
     </div>
