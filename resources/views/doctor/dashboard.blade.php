@@ -8,6 +8,7 @@
     @php
         $user = auth()->user();
         $routePrefix = $user->isMidwife() ? 'midwife' : 'doctor';
+        $patientRoutePrefix = 'healthworker';  // Patients now under healthworker routes
     @endphp
 
     {{-- Welcome Section --}}
@@ -60,7 +61,7 @@
         </a>
 
         {{-- Total Patients --}}
-        <a href="{{ route($routePrefix . '.patients.index') }}" class="block bg-white rounded-lg sm:rounded-lg shadow-sm border border-gray-100 p-6 sm:p-7 relative overflow-hidden group hover:shadow-md transition hover:no-underline focus:outline-none focus:ring-2 focus:ring-brand-500">
+        <a href="{{ route($patientRoutePrefix . '.patients.index') }}" class="block bg-white rounded-lg sm:rounded-lg shadow-sm border border-gray-100 p-6 sm:p-7 relative overflow-hidden group hover:shadow-md transition hover:no-underline focus:outline-none focus:ring-2 focus:ring-brand-500">
             <p class="text-sm sm:text-base font-black text-green-600 uppercase tracking-tighter relative z-10 mb-1">Patients</p>
             <p class="text-3xl sm:text-4xl font-black text-gray-900 relative z-10">{{ $totalPatients }}</p>
             <div class="absolute right-0 top-0 p-3 opacity-5 group-hover:opacity-10 transition">
@@ -81,7 +82,7 @@
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
             {{-- High Risk Alerts --}}
-            <div onclick="window.location='{{ route($routePrefix . '.patients.index') }}'" class="bg-white rounded-lg p-5 shadow-sm border border-gray-100 relative overflow-hidden group hover:shadow-lg transition duration-200 cursor-pointer">
+            <div onclick="window.location='{{ route($patientRoutePrefix . '.patients.index') }}'" class="bg-white rounded-lg p-5 shadow-sm border border-gray-100 relative overflow-hidden group hover:shadow-lg transition duration-200 cursor-pointer">
                 <div class="absolute top-0 right-0 w-16 h-16 -mr-8 -mt-8 bg-red-50 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
                 <div class="flex justify-between items-start mb-4">
                     <h4 class="text-sm font-black text-red-600 uppercase tracking-tighter flex items-center gap-1">
@@ -93,7 +94,7 @@
                     @forelse($midwifeAlerts['high_risk'] as $risk)
                     <div class="flex items-center justify-between p-3 rounded-lg bg-gray-50/50 border border-gray-50 group-hover:border-red-100 transition-all">
                         <span class="text-base font-bold text-gray-900">{{ $risk->user->full_name }}</span>
-                        <a href="{{ route('midwife.patients.show', $risk->user_id) }}" onclick="event.stopPropagation()" class="text-sm font-black text-red-600 uppercase tracking-tighter hover:underline">View</a>
+                        <a href="{{ route('healthworker.patients.show', $risk->user_id) }}" onclick="event.stopPropagation()" class="text-sm font-black text-red-600 uppercase tracking-tighter hover:underline">View</a>
                     </div>
                     @empty
                     <p class="text-xs text-gray-400 italic">No high-risk alerts.</p>
@@ -114,7 +115,7 @@
                     @forelse($midwifeAlerts['overdue_prenatal'] as $overdue)
                     <div class="flex items-center justify-between p-3 rounded-lg bg-gray-50/50 border border-gray-50 group-hover:border-purple-100 transition-all">
                         <span class="text-base font-bold text-gray-900">{{ $overdue->user->full_name }}</span>
-                        <a href="{{ route('midwife.patients.show', $overdue->user_id) }}" onclick="event.stopPropagation()" class="text-sm font-black text-purple-600 uppercase tracking-tighter hover:underline">View</a>
+                        <a href="{{ route('healthworker.patients.show', $overdue->user_id) }}" onclick="event.stopPropagation()" class="text-sm font-black text-purple-600 uppercase tracking-tighter hover:underline">View</a>
                     </div>
                     @empty
                     <p class="text-xs text-gray-400 italic">No overdue prenatal visits.</p>
@@ -135,7 +136,7 @@
                     @forelse($midwifeAlerts['immunization_due'] as $due)
                     <div class="flex items-center justify-between p-3 rounded-lg bg-gray-50/50 border border-gray-100 group-hover:border-blue-100 transition-all">
                         <span class="text-base font-bold text-gray-900">{{ $due->user->full_name }}</span>
-                        <a href="{{ route('midwife.patients.show', $due->user_id) }}" onclick="event.stopPropagation()" class="text-sm font-black text-blue-600 uppercase tracking-tighter hover:underline">View</a>
+                        <a href="{{ route('healthworker.patients.show', $due->user_id) }}" onclick="event.stopPropagation()" class="text-sm font-black text-blue-600 uppercase tracking-tighter hover:underline">View</a>
                     </div>                    @empty
                     <p class="text-xs text-gray-400 italic">No immunization alerts.</p>
                     @endforelse

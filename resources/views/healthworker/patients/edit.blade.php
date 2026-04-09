@@ -21,7 +21,7 @@
                     <i class="bi bi-house-door-fill"></i>
                 </a>
                 <i class="bi bi-chevron-right text-[10px] text-gray-300"></i>
-                <a href="{{ route('midwife.patients.index') }}" class="px-4 py-2 rounded-xl bg-white shadow-sm border border-gray-100 font-bold text-gray-500 hover:text-brand-600 hover:shadow-md transition-all duration-300">
+                <a href="{{ route('healthworker.patients.index') }}" class="px-4 py-2 rounded-xl bg-white shadow-sm border border-gray-100 font-bold text-gray-500 hover:text-brand-600 hover:shadow-md transition-all duration-300">
                     Patients
                 </a>
                 <i class="bi bi-chevron-right text-[10px] text-gray-300"></i>
@@ -30,7 +30,7 @@
                 </span>
             </div>
             
-            <a href="{{ route('midwife.patients.show', $patient->id) }}" class="flex items-center gap-2 px-6 py-3 bg-white border border-gray-100 rounded-2xl text-sm font-black text-gray-700 hover:bg-gray-50 transition-all duration-300 shadow-sm hover:shadow-md group">
+            <a href="{{ route('healthworker.patients.show', $patient->id) }}" class="flex items-center gap-2 px-6 py-3 bg-white border border-gray-100 rounded-2xl text-sm font-black text-gray-700 hover:bg-gray-50 transition-all duration-300 shadow-sm hover:shadow-md group">
                 <i class="bi bi-arrow-left text-brand-500 group-hover:-translate-x-1 transition-transform"></i>
                 Back to Profile
             </a>
@@ -58,7 +58,7 @@
             </div>
         </div>
 
-        <form action="{{ route('midwife.patients.update', $patient->id) }}" method="POST" @submit="isSubmitting = true">
+        <form action="{{ route('healthworker.patients.update', $patient->id) }}" method="POST" @submit="isSubmitting = true">
             @csrf
             @method('PUT')
 
@@ -416,7 +416,7 @@
 
             {{-- Form Actions --}}
             <div class="mt-12 flex flex-col sm:flex-row justify-end gap-4">
-                <a href="{{ route('midwife.patients.show', $patient->id) }}"
+                <a href="{{ route('healthworker.patients.show', $patient->id) }}"
                    class="order-2 sm:order-1 px-10 py-4 rounded-[1.5rem] text-sm font-black text-gray-400 hover:bg-white hover:text-gray-600 transition-all duration-300 uppercase tracking-widest text-center border border-transparent hover:border-gray-100">
                     Cancel Changes
                 </a>

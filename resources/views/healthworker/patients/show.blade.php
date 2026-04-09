@@ -20,7 +20,7 @@
                     <i class="bi bi-house-door-fill"></i>
                 </a>
                 <i class="bi bi-chevron-right text-[10px] text-gray-300"></i>
-                <a href="{{ route('midwife.patients.index') }}" class="px-4 py-2 rounded-xl bg-white shadow-sm border border-gray-100 font-bold text-gray-500 hover:text-brand-600 hover:shadow-md transition-all duration-300">
+                <a href="{{ route('healthworker.patients.index') }}" class="px-4 py-2 rounded-xl bg-white shadow-sm border border-gray-100 font-bold text-gray-500 hover:text-brand-600 hover:shadow-md transition-all duration-300">
                     Patients
                 </a>
                 <i class="bi bi-chevron-right text-[10px] text-gray-300"></i>
@@ -29,7 +29,7 @@
                 </span>
             </div>
             
-            <a href="{{ route('midwife.patients.edit', $patient->id) }}" class="flex items-center gap-2 px-6 py-3 bg-white border border-gray-100 rounded-2xl text-sm font-black text-gray-700 hover:bg-brand-50 hover:text-brand-600 hover:border-brand-200 transition-all duration-300 shadow-sm hover:shadow-md group">
+            <a href="{{ route('healthworker.patients.edit', $patient->id) }}" class="flex items-center gap-2 px-6 py-3 bg-white border border-gray-100 rounded-2xl text-sm font-black text-gray-700 hover:bg-brand-50 hover:text-brand-600 hover:border-brand-200 transition-all duration-300 shadow-sm hover:shadow-md group">
                 <i class="bi bi-pencil-square text-brand-500 group-hover:scale-110 transition-transform"></i>
                 Edit Profile
             </a>
@@ -232,7 +232,7 @@
                     </button>
                 </div>
                 
-                <form action="{{ route('midwife.patients.dependents.store', $patient->id) }}" method="POST">
+                <form action="{{ route('healthworker.patients.dependents.store', $patient->id) }}" method="POST">
                     @csrf
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- Name Fields -->

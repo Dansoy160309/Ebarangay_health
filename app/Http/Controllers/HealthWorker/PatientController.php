@@ -110,7 +110,7 @@ class PatientController extends Controller
     public function showCredentials()
     {
         if (!session('new_patient_credentials')) {
-            return redirect()->route('midwife.patients.index');
+            return redirect()->route('healthworker.patients.index');
         }
         return view('healthworker.patients.credentials');
     }
@@ -237,7 +237,7 @@ class PatientController extends Controller
         }
 
         if ($generatedPassword) {
-            return redirect()->route('midwife.patients.credentials')
+            return redirect()->route('healthworker.patients.credentials')
                 ->with('success', 'Patient created successfully.')
                 ->with('new_patient_credentials', [
                     'email' => $email,
@@ -245,7 +245,7 @@ class PatientController extends Controller
                 ]);
         }
 
-        return redirect()->route('midwife.patients.index')
+        return redirect()->route('healthworker.patients.index')
             ->with('success', 'Patient created successfully.');
     }
 
@@ -357,8 +357,8 @@ class PatientController extends Controller
 
         $profile->evaluateRisk();
 
-        return redirect()->route('midwife.patients.index')
-            ->with('success', 'Patient updated successfully.');
+        return redirect()->route('healthworker.patients.index')
+            ->with('success', 'Patient updated successfully');
     }
 
     // ❌ Delete patient

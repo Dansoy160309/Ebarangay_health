@@ -74,7 +74,7 @@
             </div>
             
             <div class="px-8 pb-6 text-center">
-                <a href="{{ route('midwife.patients.index') }}" class="inline-flex items-center gap-2 text-[10px] font-bold text-gray-400 hover:text-gray-600 transition-colors uppercase tracking-widest">
+                <a href="{{ route('healthworker.patients.index') }}" class="inline-flex items-center gap-2 text-[10px] font-bold text-gray-400 hover:text-gray-600 transition-colors uppercase tracking-widest">
                     <i class="bi bi-arrow-left"></i> Return to Patient List
                 </a>
             </div>

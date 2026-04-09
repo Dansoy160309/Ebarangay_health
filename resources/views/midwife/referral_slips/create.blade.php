@@ -260,7 +260,7 @@
                 if (!this.patientId) return;
                 
                 try {
-                    const response = await fetch(`/midwife/patients/${this.patientId}/details`);
+                    const response = await fetch(`/healthworker/patients/${this.patientId}/details`);
                     const data = await response.json();
                     this.patientAddress = data.patient.address;
                     this.patientAge = data.patient.age;

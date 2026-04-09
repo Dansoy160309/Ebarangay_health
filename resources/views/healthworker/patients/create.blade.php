@@ -17,7 +17,7 @@
             <li>
                 <div class="flex items-center text-gray-400">
                     <i class="bi bi-chevron-right mx-2 text-[8px] opacity-50"></i>
-                    <a href="{{ route('midwife.patients.index') }}" class="hover:text-brand-600 transition-colors">Patients</a>
+                    <a href="{{ route('healthworker.patients.index') }}" class="hover:text-brand-600 transition-colors">Patients</a>
                 </div>
             </li>
             <li>
@@ -77,7 +77,7 @@
         </div>
     @endif
 
-    <form action="{{ route('midwife.patients.store') }}" method="POST" class="space-y-6" x-data="{ hasAccount: true }">
+    <form action="{{ route('healthworker.patients.store') }}" method="POST" class="space-y-6" x-data="{ hasAccount: true }">
         @csrf
 
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6 space-y-6">
@@ -284,7 +284,7 @@
             </div>
             
             <div class="flex items-center gap-4 w-full sm:w-auto">
-                <a href="{{ route('midwife.patients.index') }}" 
+                <a href="{{ route('healthworker.patients.index') }}" 
                    class="flex-1 sm:flex-none px-10 py-5 bg-white text-gray-500 rounded-[1.75rem] font-black text-xs uppercase tracking-[0.2em] border border-gray-200 hover:bg-gray-50 transition-all text-center">
                     Cancel
                 </a>

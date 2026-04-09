@@ -133,6 +133,13 @@
             <i class="bi bi-clock-history mr-3 text-xl"></i> 
             <span>Appointment Slots</span>
         </a>
+
+        <a href="{{ route('healthworker.patients.index') }}"
+           @click="sidebarOpen = false"
+           class="{{ getLinkClasses(request()->routeIs('healthworker.patients*')) }}">
+            <i class="bi bi-person-vcard-fill mr-3 text-xl"></i> 
+            <span>Patients</span>
+        </a>
     @endif
 
     {{-- Midwife --}}
@@ -165,13 +172,6 @@
            class="{{ getLinkClasses(request()->routeIs('midwife.slots.*')) }}">
             <i class="bi bi-clock-history mr-3 text-xl"></i> 
             <span>Appointment Slots</span>
-        </a>
-
-        <a href="{{ route('midwife.patients.index') }}"
-           @click="sidebarOpen = false"
-           class="{{ getLinkClasses(request()->routeIs('midwife.patients*')) }}">
-            <i class="bi bi-person-vcard-fill mr-3 text-xl"></i> 
-            <span>Patients</span>
         </a>
 
         <a href="{{ route('midwife.medicines.distribute.create') }}"
