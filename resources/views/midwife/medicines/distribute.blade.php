@@ -9,11 +9,19 @@
     })->values();
     $medicinesData = $medicines->map(function($m) {
         $label = trim($m->generic_name . ($m->brand_name ? ' (' . $m->brand_name . ')' : ''));
+        $strength = trim($m->strength ?? '');
+        $display = $label;
+        if ($strength) {
+            $display .= ' • ' . $strength;
+        }
+        $display .= ' • Stock: ' . $m->stock;
+
         return [
             'id' => $m->id,
             'stock' => $m->stock,
+            'strength' => $strength,
             'label' => $label,
-            'display' => $label . ' • Stock: ' . $m->stock,
+            'display' => $display,
         ];
     })->values();
 @endphp
@@ -228,20 +236,26 @@
             }
 
             function setFromLabel(label) {
-                const opt = list.querySelector(`option[value="${CSS.escape(label)}"]`);
-                if (opt && opt.dataset.id) {
-                    hidden.value = opt.dataset.id;
-                    if (opt.dataset.stock !== undefined) {
-                        const stock = Number(opt.dataset.stock || 0);
+                const found = items.find(it => (it.display ?? it.label) === label || it.label === label);
+                if (found) {
+                    hidden.value = found.id;
+                    if (found.stock !== undefined) {
+                        const stock = Number(found.stock || 0);
                         const stockBadge = document.getElementById('stockBadge');
                         const meta = document.getElementById('medicine_meta');
                         const qty = document.getElementById('quantity');
                         const qtyMax = document.getElementById('qtyMax');
                         if (meta && stockBadge && qty && qtyMax) {
                             meta.classList.remove('hidden');
-                            stockBadge.textContent = `In Stock: ${stock}`;
+                            stockBadge.textContent = found.strength ? `${found.strength} • In Stock: ${stock}` : `In Stock: ${stock}`;
                             qty.max = stock > 0 ? stock : 1;
                             qtyMax.textContent = stock > 0 ? stock : '—';
+                        }
+                    }
+                    const dosageInput = document.querySelector('input[name="dosage"]');
+                    if (dosageInput && found.strength) {
+                        if (!dosageInput.value.trim()) {
+                            dosageInput.value = found.strength;
                         }
                     }
                 } else {
@@ -267,10 +281,11 @@
                     const stockBadge = document.getElementById('stockBadge');
                     const meta = document.getElementById('medicine_meta');
                     if (found.stock !== undefined && qty && qtyMax && stockBadge && meta) {
+                        const stock = Number(found.stock || 0);
                         meta.classList.remove('hidden');
-                        stockBadge.textContent = `In Stock: ${found.stock}`;
-                        qty.max = found.stock > 0 ? found.stock : 1;
-                        qtyMax.textContent = found.stock > 0 ? found.stock : '—';
+                        stockBadge.textContent = found.strength ? `${found.strength} • In Stock: ${stock}` : `In Stock: ${stock}`;
+                        qty.max = stock > 0 ? stock : 1;
+                        qtyMax.textContent = stock > 0 ? stock : '—';
                     }
                 }
             }
