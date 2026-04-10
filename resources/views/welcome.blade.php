@@ -63,7 +63,6 @@
             <div class="hidden md:flex items-center gap-10 text-base font-medium text-gray-600">
                 <a href="#features" class="hover:text-brand-600 transition-colors">Features</a>
                 <a href="#about" class="hover:text-brand-600 transition-colors">About Us</a>
-                <a href="#contact" class="hover:text-brand-600 transition-colors">Contact</a>
             </div>
 
             <div class="hidden md:flex items-center gap-4">
@@ -101,7 +100,6 @@
             <div class="px-6 py-4 space-y-4">
                 <a href="#features" @click="mobileMenuOpen = false" class="block text-sm font-medium text-gray-600 hover:text-brand-600 hover:bg-gray-50 px-4 py-2 rounded-lg transition-colors">Features</a>
                 <a href="#about" @click="mobileMenuOpen = false" class="block text-sm font-medium text-gray-600 hover:text-brand-600 hover:bg-gray-50 px-4 py-2 rounded-lg transition-colors">About Us</a>
-                <a href="#contact" @click="mobileMenuOpen = false" class="block text-sm font-medium text-gray-600 hover:text-brand-600 hover:bg-gray-50 px-4 py-2 rounded-lg transition-colors">Contact</a>
                 
                 <div class="pt-4 border-t border-gray-100 flex flex-col gap-3">
                     @if (Route::has('login'))
@@ -407,81 +405,6 @@
         </div>
     </section>
 
-    <!-- Contact Section -->
-    <section id="contact" class="py-24 bg-white">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="bg-gray-900 rounded-[3rem] p-8 md:p-16 overflow-hidden relative">
-                {{-- Decorative blobs --}}
-                <div class="absolute top-0 right-0 w-96 h-96 bg-brand-600 rounded-full blur-[120px] opacity-20 -mr-48 -mt-48"></div>
-                <div class="absolute bottom-0 left-0 w-96 h-96 bg-indigo-600 rounded-full blur-[120px] opacity-20 -ml-48 -mb-48"></div>
-
-                <div class="relative z-10 flex flex-col lg:flex-row gap-16">
-                    <div class="lg:w-1/2">
-                        <span class="text-brand-400 font-black text-[10px] uppercase tracking-[0.2em] mb-3 block">Get in touch</span>
-                        <h2 class="text-4xl font-black text-white mb-8">We're here to help you <br> stay healthy</h2>
-                        
-                        <div class="space-y-8">
-                            <div class="flex items-center gap-6 group">
-                                <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center text-brand-400 text-2xl group-hover:bg-brand-600 group-hover:text-white transition-all">
-                                    <i class="bi bi-geo-alt-fill"></i>
-                                </div>
-                                <div>
-                                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Visit Us</p>
-                                    <p class="text-white font-bold">Barangay Hall, Health Center Section <br> Quezon City, Metro Manila</p>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center gap-6 group">
-                                <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center text-brand-400 text-2xl group-hover:bg-brand-600 group-hover:text-white transition-all">
-                                    <i class="bi bi-envelope-fill"></i>
-                                </div>
-                                <div>
-                                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Email Us</p>
-                                    <p class="text-white font-bold text-lg">support@e-barangayhealth.com</p>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center gap-6 group">
-                                <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center text-brand-400 text-2xl group-hover:bg-brand-600 group-hover:text-white transition-all">
-                                    <i class="bi bi-telephone-fill"></i>
-                                </div>
-                                <div>
-                                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Call Us</p>
-                                    <p class="text-white font-bold text-lg">+63 (02) 8123-4567</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="lg:w-1/2">
-                        <div class="bg-white/5 backdrop-blur-md p-8 rounded-[2.5rem] border border-white/10">
-                            <h4 class="text-xl font-black text-white mb-8">Send us a message</h4>
-                            <form action="#" class="space-y-6">
-                                <div class="grid grid-cols-2 gap-6">
-                                    <div>
-                                        <input type="text" placeholder="Your Name" class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-white text-sm font-bold focus:ring-2 focus:ring-brand-500/50 outline-none placeholder-gray-500 transition-all">
-                                    </div>
-                                    <div>
-                                        <input type="email" placeholder="Your Email" class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-white text-sm font-bold focus:ring-2 focus:ring-brand-500/50 outline-none placeholder-gray-500 transition-all">
-                                    </div>
-                                </div>
-                                <div>
-                                    <input type="text" placeholder="Subject" class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-white text-sm font-bold focus:ring-2 focus:ring-brand-500/50 outline-none placeholder-gray-500 transition-all">
-                                </div>
-                                <div>
-                                    <textarea placeholder="How can we help?" rows="4" class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-white text-sm font-bold focus:ring-2 focus:ring-brand-500/50 outline-none placeholder-gray-500 transition-all"></textarea>
-                                </div>
-                                <button type="submit" class="w-full py-4 bg-brand-600 text-white font-black rounded-xl hover:bg-brand-700 transition-all shadow-lg shadow-brand-500/20 uppercase tracking-widest text-xs">
-                                    Send Message
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Footer -->
     <footer class="bg-gray-900 border-t border-white/5 pt-20 pb-12 overflow-hidden relative">
         <div class="max-w-7xl mx-auto px-6 relative z-10">
@@ -508,7 +431,6 @@
                     <ul class="space-y-4">
                         <li><a href="#features" class="text-gray-400 hover:text-brand-400 transition-colors font-bold text-sm">Features</a></li>
                         <li><a href="#about" class="text-gray-400 hover:text-brand-400 transition-colors font-bold text-sm">About Us</a></li>
-                        <li><a href="#contact" class="text-gray-400 hover:text-brand-400 transition-colors font-bold text-sm">Contact</a></li>
                     </ul>
                 </div>
 
@@ -525,8 +447,6 @@
             <div class="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-gray-500 text-xs font-black uppercase tracking-widest">
                 <p>&copy; {{ date('Y') }} E-Barangay Health System. All rights reserved.</p>
                 <div class="flex items-center gap-8">
-                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
-                    <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
                 </div>
             </div>
         </div>

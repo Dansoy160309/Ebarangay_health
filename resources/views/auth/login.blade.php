@@ -3,6 +3,16 @@
 @section('title', 'Login')
 
 @section('content')
+<style>
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+        box-shadow: 0 0 0px 1000px #ffffff inset !important;
+        -webkit-text-fill-color: #111827 !important;
+    }
+</style>
 <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50 relative overflow-hidden">
     
     {{-- Decorative Background Blobs --}}
@@ -98,7 +108,7 @@
                                 <i class="bi bi-envelope-fill text-xl"></i>
                             </div>
                             <input type="email" name="email" id="email" value="{{ old('email') }}" required autofocus
-                                class="block w-full pl-12 pr-4 py-4 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-brand-100 focus:border-brand-500 text-lg text-gray-900 placeholder-gray-400 transition-all shadow-sm hover:border-gray-300 font-bold bg-gray-50 focus:bg-white"
+                                class="block w-full pl-12 pr-4 py-4 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-brand-100 focus:border-brand-500 text-lg text-gray-900 placeholder-gray-400 transition-all shadow-sm hover:border-gray-300 font-bold bg-white focus:bg-white"
                                 placeholder="you@example.com">
                         </div>
                     </div>
@@ -115,7 +125,7 @@
                                 <i class="bi bi-lock-fill text-xl"></i>
                             </div>
                             <input type="password" name="password" id="password" required
-                                class="block w-full !pl-12 !pr-14 py-4 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-brand-100 focus:border-brand-500 text-lg text-gray-900 placeholder-gray-400 transition-all shadow-sm hover:border-gray-300 font-bold bg-gray-50 focus:bg-white"
+                                class="block w-full !pl-12 !pr-14 py-4 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-brand-100 focus:border-brand-500 text-lg text-gray-900 placeholder-gray-400 transition-all shadow-sm hover:border-gray-300 font-bold bg-white focus:bg-white"
                                 placeholder="••••••••">
                             <button type="button" id="togglePassword" 
                                 class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-brand-600 cursor-pointer focus:outline-none transition-colors">

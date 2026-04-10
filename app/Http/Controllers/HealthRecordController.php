@@ -321,7 +321,7 @@ class HealthRecordController extends Controller
 
     public function show($id)
     {
-        $record = HealthRecord::with(['patient', 'creator', 'verifier'])->findOrFail($id);
+        $record = HealthRecord::with(['patient', 'creator', 'verifier', 'appointment.slot.doctor', 'service'])->findOrFail($id);
         
         // Authorization check
         /** @var \App\Models\User $user */

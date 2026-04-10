@@ -2,6 +2,26 @@
 
 @section('title', 'Vaccine Inventory Management')
 
+<style>
+.date-picker-input {
+    -webkit-appearance: none !important;
+    -moz-appearance: textfield !important;
+    appearance: none !important;
+    background-image: none !important;
+    padding-right: 3rem !important;
+}
+
+.date-picker-input::-webkit-calendar-picker-indicator,
+.date-picker-input::-moz-calendar-picker-indicator,
+.date-picker-input::-webkit-clear-button,
+.date-picker-input::-webkit-inner-spin-button {
+    display: none !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+</style>
+
 @section('content')
 <div class="flex flex-col gap-4 sm:gap-5" x-data="{ showBatchModal: false }">
     
@@ -101,17 +121,17 @@
                 <input type="hidden" name="search" value="{{ request('search') }}" />
                 <div>
                     <label class="block text-[10px] font-black text-gray-500 uppercase tracking-wide mb-1" for="admin_search">Search</label>
-                    <input id="admin_search" name="admin_search" value="{{ request('admin_search') }}" type="text" placeholder="Vaccine, batch, patient, staff" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:ring-brand-500 focus:border-brand-500" />
+                    <input id="admin_search" name="admin_search" value="{{ request('admin_search') }}" type="text" placeholder="Vaccine, batch, patient, staff" class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:ring-brand-500 focus:border-brand-500" />
                 </div>
 
                 <div>
                     <label class="block text-[10px] font-black text-gray-500 uppercase tracking-wide mb-1" for="admin_from">From</label>
-                    <input id="admin_from" name="admin_from" value="{{ request('admin_from') }}" type="date" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:ring-brand-500 focus:border-brand-500" />
+                    <input id="admin_from" name="admin_from" value="{{ request('admin_from') }}" type="date" class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:ring-brand-500 focus:border-brand-500" />
                 </div>
 
                 <div>
                     <label class="block text-[10px] font-black text-gray-500 uppercase tracking-wide mb-1" for="admin_to">To</label>
-                    <input id="admin_to" name="admin_to" value="{{ request('admin_to') }}" type="date" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:ring-brand-500 focus:border-brand-500" />
+                    <input id="admin_to" name="admin_to" value="{{ request('admin_to') }}" type="date" class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:ring-brand-500 focus:border-brand-500" />
                 </div>
 
                 <div class="flex items-center gap-2">
@@ -253,7 +273,29 @@
     <div x-show="showBatchModal" class="fixed inset-0 z-[100] overflow-y-auto" style="display: none;">
         <div class="flex items-center justify-center min-h-screen px-4">
             <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" @click="showBatchModal = false"></div>
-            <div class="relative bg-white rounded-[2.5rem] shadow-2xl w-full max-w-lg p-10">
+            <div x-data="{
+                    batchNumber: '',
+                    generateBatchNumber() {
+                        const vaccineName = this.$refs.vaccine?.selectedOptions?.[0]?.text || 'VACCINE';
+                        const code = (vaccineName.match(/\b\w/g) || []).join('').slice(0, 4).toUpperCase() || 'VACC';
+                        const now = new Date();
+                        const year = String(now.getFullYear()).slice(-2);
+                        const month = String(now.getMonth() + 1).padStart(2, '0');
+                        const day = String(now.getDate()).padStart(2, '0');
+                        const random = Math.floor(Math.random() * 900 + 100);
+                        return `LOT-${code}-${year}${month}${day}-${random}`;
+                    },
+                    initBatchNumber() {
+                        if (!this.batchNumber) {
+                            this.batchNumber = this.generateBatchNumber();
+                        }
+                    },
+                    updateBatchNumber() {
+                        if (!this.batchNumber || this.batchNumber.startsWith('LOT-')) {
+                            this.batchNumber = this.generateBatchNumber();
+                        }
+                    }
+                }" x-init="initBatchNumber()" class="relative bg-white rounded-[2.5rem] shadow-2xl w-full max-w-lg p-10">
                 <div class="flex items-center gap-4 mb-8">
                     <div class="w-12 h-12 rounded-2xl bg-brand-600 flex items-center justify-center text-white shadow-lg shadow-brand-500/20">
                         <i class="bi bi-box-seam text-2xl"></i>
@@ -268,7 +310,7 @@
                     @csrf
                     <div>
                         <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2 mb-2">Select Vaccine</label>
-                        <select name="vaccine_id" required class="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl text-sm font-bold focus:ring-brand-500 transition-all">
+                        <select x-ref="vaccine" name="vaccine_id" required @change="updateBatchNumber()" class="w-full px-5 py-4 bg-white border border-gray-200 rounded-2xl text-sm font-bold text-gray-700 focus:ring-brand-500 focus:border-brand-500 transition-all">
                             @foreach($vaccines as $v)
                                 <option value="{{ $v->id }}">{{ $v->name }}</option>
                             @endforeach
@@ -277,26 +319,36 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2 mb-2">Batch Number</label>
-                            <input type="text" name="batch_number" required placeholder="LOT-123" class="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl text-sm font-bold focus:ring-brand-500 transition-all">
+                            <input x-model="batchNumber" type="text" name="batch_number" required placeholder="LOT-123" class="w-full px-5 py-4 bg-slate-50 border border-gray-200 rounded-2xl shadow-sm text-sm font-bold text-gray-700 placeholder:text-gray-400 focus:ring-brand-500 focus:border-brand-500 transition-all">
                         </div>
                         <div>
                             <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2 mb-2">Expiry Date</label>
-                            <input type="date" name="expiry_date" required class="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl text-sm font-bold focus:ring-brand-500 transition-all">
+                            <div class="relative">
+                                <input x-ref="expiryDate" type="date" name="expiry_date" required class="w-full px-5 py-4 pr-12 bg-slate-50 border border-gray-200 rounded-2xl shadow-sm text-sm font-bold text-gray-700 placeholder:text-gray-400 focus:ring-brand-500 focus:border-brand-500 transition-all date-picker-input">
+                                <span @click="$refs.expiryDate?.showPicker?.() ?? $refs.expiryDate?.focus()" class="absolute inset-y-0 right-4 flex items-center text-brand-500 cursor-pointer">
+                                    <i class="bi bi-calendar-event text-lg"></i>
+                                </span>
+                            </div>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2 mb-2">Quantity (Doses)</label>
-                            <input type="number" name="quantity_received" required class="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl text-sm font-bold focus:ring-brand-500 transition-all">
+                            <input type="number" name="quantity_received" required class="w-full px-5 py-4 bg-slate-50 border border-gray-200 rounded-2xl shadow-sm text-sm font-bold text-gray-700 placeholder:text-gray-400 focus:ring-brand-500 focus:border-brand-500 transition-all">
                         </div>
                         <div>
                             <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2 mb-2">Date Received</label>
-                            <input type="date" name="received_at" value="{{ date('Y-m-d') }}" class="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl text-sm font-bold focus:ring-brand-500 transition-all">
+                            <div class="relative">
+                                <input x-ref="receivedDate" type="date" name="received_at" value="{{ date('Y-m-d') }}" class="w-full px-5 py-4 pr-12 bg-slate-50 border border-gray-200 rounded-2xl shadow-sm text-sm font-bold text-gray-700 placeholder:text-gray-400 focus:ring-brand-500 focus:border-brand-500 transition-all date-picker-input">
+                                <span @click="$refs.receivedDate?.showPicker?.() ?? $refs.receivedDate?.focus()" class="absolute inset-y-0 right-4 flex items-center text-brand-500 cursor-pointer">
+                                    <i class="bi bi-calendar-event text-lg"></i>
+                                </span>
+                            </div>
                         </div>
                     </div>
                     <div>
                         <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2 mb-2">Supplier / Source Office</label>
-                        <input type="text" name="supplier" placeholder="e.g. Municipal Health Office (MHO)" class="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl text-sm font-bold focus:ring-brand-500 transition-all">
+                        <input type="text" name="supplier" placeholder="e.g. Municipal Health Office (MHO)" class="w-full px-5 py-4 bg-slate-50 border border-gray-200 rounded-2xl shadow-sm text-sm font-bold text-gray-700 placeholder:text-gray-400 focus:ring-brand-500 focus:border-brand-500 transition-all">
                     </div>
                     <div class="pt-4 flex gap-3">
                         <button type="button" @click="showBatchModal = false" class="flex-1 py-4 bg-gray-100 rounded-2xl text-xs font-black uppercase text-gray-500 tracking-widest hover:bg-gray-200 transition-all">Cancel</button>

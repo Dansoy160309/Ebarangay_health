@@ -80,13 +80,7 @@
                         <div>
                             <p class="text-[7px] font-black text-gray-400 uppercase tracking-[0.1em] mb-0.5">Attending Clinician</p>
                             <p class="text-sm font-black text-gray-900 tracking-tight">
-                                @if($record->verifier)
-                                    Dr. {{ $record->verifier->last_name }}
-                                @elseif($record->creator)
-                                    {{ $record->creator->full_name }}
-                                @else
-                                    Medical Staff
-                                @endif
+                                {{ $record->provider_name ?? 'Medical Staff' }}
                             </p>
                         </div>
                     </div>
@@ -311,16 +305,9 @@
                         <div class="space-y-1">
                             <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] leading-none">Electronic Signature</p>
                             <p class="text-sm font-black text-gray-900 leading-none tracking-tight">
-                                Digitally signed by 
-                                @if($record->verifier)
-                                    Dr. {{ $record->verifier->last_name }}
-                                @elseif($record->creator)
-                                    {{ $record->creator->full_name }}
-                                @else
-                                    Medical Staff
-                                @endif
+                                {{ $record->provider_name ?? 'Medical Staff' }}
+                                • {{ $record->verified_at ? $record->verified_at->format('M d, Y H:i') : $record->created_at->format('M d, Y H:i') }}
                             </p>
-                            <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-1">Hash: {{ substr(md5($record->id . $record->created_at), 0, 12) }}</p>
                         </div>
                     </div>
                 </div>

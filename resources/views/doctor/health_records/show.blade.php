@@ -209,7 +209,7 @@
                         </div>
                         <div class="text-left">
                             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Electronic Signature</p>
-                            <p class="text-xs font-bold text-slate-600">{{ $record->creator->full_name }} • {{ $record->created_at->format('M d, Y H:i') }}</p>
+                            <p class="text-xs font-bold text-slate-600">{{ $record->provider_name ?? $record->creator->full_name ?? 'Medical Staff' }} • {{ $record->verified_at ? $record->verified_at->format('M d, Y H:i') : $record->created_at->format('M d, Y H:i') }}</p>
                         </div>
                     </div>
                     <div class="text-[9px] font-mono text-slate-300 uppercase tracking-widest">
