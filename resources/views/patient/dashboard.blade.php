@@ -555,7 +555,7 @@
 
                     <div class="pt-4 border-t border-gray-50 mt-auto flex items-center justify-between mb-4">
                         <span class="text-[7px] sm:text-[8px] font-black text-gray-400 uppercase tracking-widest">Remaining</span>
-                        <span class="text-[10px] sm:text-xs font-black text-gray-900 bg-gray-50 px-2 py-0.5 rounded-lg border border-gray-100">{{ $slot->available }} Spots</span>
+                        <span class="text-[10px] sm:text-xs font-black text-gray-900 bg-gray-50 px-2 py-0.5 rounded-lg border border-gray-100">{{ $slot->available }} {{ $slot->available == 1 ? 'Slot' : 'Slots' }}</span>
                     </div>
 
                     <button type="button"
@@ -664,7 +664,7 @@
 
                         <div class="pt-4 border-t border-gray-50 mt-auto flex items-center justify-between mb-4">
                             <span class="text-[7px] sm:text-[8px] font-black text-gray-400 uppercase tracking-widest">Remaining</span>
-                            <span class="text-[10px] sm:text-xs font-black text-gray-900 bg-gray-50 px-2 py-0.5 rounded-lg border border-gray-100">{{ $slot->available }} Spots</span>
+                            <span class="text-[10px] sm:text-xs font-black text-gray-900 bg-gray-50 px-2 py-0.5 rounded-lg border border-gray-100">{{ $slot->available }} {{ $slot->available == 1 ? 'Slot' : 'Slots' }}</span>
                         </div>
 
                         <button type="button"

@@ -227,16 +227,20 @@
 
 <script>
     function referralForm() {
+        const patients = [
+            @foreach($patients as $patient)
+                {
+                    id: {{ $patient->id }},
+                    full_name: {!! json_encode($patient->full_name) !!},
+                    address: {!! json_encode($patient->address . ', ' . $patient->purok) !!},
+                    age: {!! json_encode($patient->age) !!},
+                    family_no: {!! json_encode($patient->family_no) !!},
+                },
+            @endforeach
+        ];
+
         return {
-            patients: @json($patients->map(function($patient) {
-                return [
-                    'id' => $patient->id,
-                    'full_name' => $patient->full_name,
-                    'address' => $patient->address . ', ' . $patient->purok,
-                    'age' => $patient->age,
-                    'family_no' => $patient->family_no,
-                ];
-            })),
+            patients,
             patientId: '{{ old("patient_id", $selectedPatient ? $selectedPatient->id : "") }}',
             patientSearch: '{{ old("patient_name_search", $selectedPatient ? $selectedPatient->full_name : "") }}',
             patientAddress: '{{ old("patient_address", $selectedPatient ? $selectedPatient->address . ", " . $selectedPatient->purok : "") }}',
@@ -250,8 +254,8 @@
                 if (matchedPatient) {
                     this.patientId = matchedPatient.id;
                     this.patientAddress = matchedPatient.address;
-                    this.patientAge = matchedPatient.age ?? '';
-                    this.familyNo = matchedPatient.family_no ?? '';
+                    this.patientAge = matchedPatient.age !== undefined ? matchedPatient.age : '';
+                    this.familyNo = matchedPatient.family_no !== undefined ? matchedPatient.family_no : '';
                 } else {
                     this.patientId = '';
                     this.patientAddress = '';
