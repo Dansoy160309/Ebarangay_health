@@ -228,6 +228,15 @@
 <script>
     function referralForm() {
         return {
+            patients: @json($patients->map(function($patient) {
+                return [
+                    'id' => $patient->id,
+                    'full_name' => $patient->full_name,
+                    'address' => $patient->address . ', ' . $patient->purok,
+                    'age' => $patient->age,
+                    'family_no' => $patient->family_no,
+                ];
+            })),
             patientId: '{{ old("patient_id", $selectedPatient ? $selectedPatient->id : "") }}',
             patientSearch: '{{ old("patient_name_search", $selectedPatient ? $selectedPatient->full_name : "") }}',
             patientAddress: '{{ old("patient_address", $selectedPatient ? $selectedPatient->address . ", " . $selectedPatient->purok : "") }}',
@@ -237,38 +246,19 @@
             toOthers: '{{ (old("referred_to") && in_array("Others", (array)old("referred_to"))) ? "true" : "false" }}' === 'true',
             
             handlePatientSearch() {
-                const list = document.getElementById('patients_list');
-                const options = list.options;
-                let found = false;
-                for (let i = 0; i < options.length; i++) {
-                    if (options[i].value === this.patientSearch) {
-                        this.patientId = options[i].getAttribute('data-id');
-                        this.updatePatientInfo();
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
+                const matchedPatient = this.patients.find(patient => patient.full_name === this.patientSearch);
+                if (matchedPatient) {
+                    this.patientId = matchedPatient.id;
+                    this.patientAddress = matchedPatient.address;
+                    this.patientAge = matchedPatient.age ?? '';
+                    this.familyNo = matchedPatient.family_no ?? '';
+                } else {
                     this.patientId = '';
                     this.patientAddress = '';
                     this.patientAge = '';
                     this.familyNo = '';
                 }
             },
-            
-            async updatePatientInfo() {
-                if (!this.patientId) return;
-                
-                try {
-                    const response = await fetch(`/healthworker/patients/${this.patientId}/details`);
-                    const data = await response.json();
-                    this.patientAddress = data.patient.address;
-                    this.patientAge = data.patient.age;
-                    this.familyNo = data.patient.family_no || '';
-                } catch (error) {
-                    console.error('Error fetching patient details:', error);
-                }
-            }
         };
     }
 </script>
