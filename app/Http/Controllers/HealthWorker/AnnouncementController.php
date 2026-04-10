@@ -13,7 +13,13 @@ class AnnouncementController extends Controller
 {
     public function index()
     {
-        $announcements = Announcement::orderBy('created_at', 'desc')->paginate(10);
+        $announcements = Announcement::where('status', 'active')
+            ->where(function ($query) {
+                $query->whereNull('expires_at')
+                    ->orWhere('expires_at', '>', now());
+            })
+            ->latest()
+            ->paginate(10);
         return view('healthworker.announcements.index', compact('announcements'));
     }
 
@@ -56,6 +62,9 @@ class AnnouncementController extends Controller
     public function show($id)
     {
         $announcement = Announcement::findOrFail($id);
+        if ($announcement->status !== 'active' || ($announcement->expires_at && $announcement->expires_at->isPast())) {
+            abort(404);
+        }
         return view('healthworker.announcements.show', compact('announcement'));
     }
 }

@@ -230,70 +230,70 @@
 
 {{-- Modern Clinical Modal --}}
 <div id="slotModal" class="hidden fixed inset-0 bg-gray-900/60 backdrop-blur-md flex items-center justify-center z-50 p-4 transition-all duration-300">
-    <div class="bg-white rounded-[3rem] shadow-2xl w-full max-w-lg overflow-hidden transform transition-all scale-95 opacity-0 duration-300" id="modalContent">
+    <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-95 opacity-0 duration-300" id="modalContent">
         {{-- Modal Header --}}
-        <div class="bg-gradient-to-br from-brand-600 to-brand-500 p-8 text-white relative overflow-hidden">
+        <div class="bg-gradient-to-br from-brand-600 to-brand-500 p-6 text-white relative overflow-hidden">
             <div class="absolute inset-0 bg-white/10 opacity-20" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 15px 15px;"></div>
             <div class="relative z-10">
-                <div class="flex items-center justify-between mb-6">
-                    <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
-                        <i class="bi bi-info-circle-fill text-2xl"></i>
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
+                        <i class="bi bi-info-circle-fill text-lg"></i>
                     </div>
-                    <button onclick="closeSlotModal()" class="w-10 h-10 rounded-full bg-black/10 flex items-center justify-center hover:bg-black/20 transition-colors">
+                    <button onclick="closeSlotModal()" class="w-9 h-9 rounded-full bg-black/10 flex items-center justify-center hover:bg-black/20 transition-colors">
                         <i class="bi bi-x-lg"></i>
                     </button>
                 </div>
-                <h2 class="text-3xl font-black tracking-tight mb-1">Clinical Slot Details</h2>
-                <p class="text-brand-100 text-sm font-medium opacity-80 uppercase tracking-widest">Medical Scheduling Information</p>
+                <h2 class="text-2xl font-black tracking-tight mb-1">Clinical Slot Details</h2>
+                <p class="text-brand-100 text-xs font-medium opacity-80 uppercase tracking-wider">Medical Scheduling Information</p>
             </div>
         </div>
 
         {{-- Modal Body --}}
-        <div class="p-10 space-y-8">
-            <div class="flex items-center gap-5 p-6 bg-gray-50 rounded-[2rem] border border-gray-100 shadow-inner">
-                <div class="w-16 h-16 rounded-2xl bg-brand-100 text-brand-600 flex items-center justify-center text-2xl border border-white shadow-sm">
+        <div class="p-6 space-y-4">
+            <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100 shadow-inner">
+                <div class="w-12 h-12 rounded-xl bg-brand-100 text-brand-600 flex items-center justify-center text-xl border border-white shadow-sm">
                     <i class="bi bi-bandaid-fill"></i>
                 </div>
                 <div>
-                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Assigned Service</p>
-                    <p id="modalService" class="text-xl font-black text-gray-900 leading-tight"></p>
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.18em] mb-1">Assigned Service</p>
+                    <p id="modalService" class="text-lg font-black text-gray-900 leading-tight"></p>
                     <p id="modalDoctor" class="text-xs font-bold text-brand-500 mt-1"></p>
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-6">
-                <div class="p-5 bg-gray-50 rounded-[1.5rem] border border-gray-100">
-                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+            <div class="grid grid-cols-2 gap-3">
+                <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 flex items-center gap-2">
                         <i class="bi bi-calendar3 text-brand-500"></i> Date
                     </p>
                     <p id="modalDate" class="text-sm font-black text-gray-900"></p>
                 </div>
-                <div class="p-5 bg-gray-50 rounded-[1.5rem] border border-gray-100">
-                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 flex items-center gap-2">
                         <i class="bi bi-people-fill text-brand-500"></i> Capacity
                     </p>
                     <p class="text-sm font-black text-gray-900"><span id="modalBooked"></span> / <span id="modalCapacity"></span> <span class="text-xs text-gray-400 font-bold ml-1">Patients</span></p>
                 </div>
             </div>
 
-            <div class="p-5 bg-gray-50 rounded-[1.5rem] border border-gray-100">
-                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+            <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 flex items-center gap-2">
                     <i class="bi bi-clock-fill text-brand-500"></i> Consultation Window
                 </p>
                 <p id="modalTime" class="text-sm font-black text-gray-900"></p>
             </div>
 
-            <div class="p-5 bg-gray-50 rounded-[1.5rem] border border-gray-100 flex items-center justify-between">
+            <div class="p-4 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-between">
                 <div>
-                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Status</p>
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Status</p>
                     <p id="modalStatus" class="text-sm font-black text-gray-900"></p>
                 </div>
                 <div id="modalStatusBadge"></div>
             </div>
         </div>
 
-        <div class="p-8 bg-gray-50/50 border-t border-gray-100">
-            <button onclick="closeSlotModal()" class="w-full py-4 bg-brand-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-brand-700 transition-all shadow-xl shadow-brand-600/20 active:scale-[0.98]">
+        <div class="p-5 bg-gray-50/50 border-t border-gray-100">
+            <button onclick="closeSlotModal()" class="w-full py-3 bg-brand-600 text-white rounded-xl text-[11px] font-black uppercase tracking-wider hover:bg-brand-700 transition-all shadow-xl shadow-brand-600/20 active:scale-[0.98]">
                 Close Clinical View
             </button>
         </div>

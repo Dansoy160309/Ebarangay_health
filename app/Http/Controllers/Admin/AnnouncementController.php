@@ -13,8 +13,26 @@ class AnnouncementController extends Controller
 {
     public function index()
     {
-        $announcements = Announcement::orderBy('created_at','desc')->paginate(10);
-        return view('admin.announcements.index', compact('announcements'));
+        $activeAnnouncements = Announcement::where('status', 'active')
+            ->where(function ($query) {
+                $query->whereNull('expires_at')
+                    ->orWhere('expires_at', '>', now());
+            })
+            ->latest()
+            ->paginate(9, ['*'], 'active_page');
+
+        $archivedAnnouncements = Announcement::where(function ($query) {
+                $query->where('status', 'archived')
+                    ->orWhere(function ($expiredQuery) {
+                        $expiredQuery->where('status', 'active')
+                            ->whereNotNull('expires_at')
+                            ->where('expires_at', '<=', now());
+                    });
+            })
+            ->latest()
+            ->paginate(6, ['*'], 'archive_page');
+
+        return view('admin.announcements.index', compact('activeAnnouncements', 'archivedAnnouncements'));
     }
 
     public function create()

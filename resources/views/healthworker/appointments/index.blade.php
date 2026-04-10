@@ -35,19 +35,35 @@
     </div>
 
     <!-- Main Navigation Tabs -->
-    <div class="bg-white p-1 rounded-lg shadow-sm border border-gray-100 flex flex-wrap gap-1 overflow-hidden">
-        <a href="{{ route('healthworker.appointments.index', ['type' => 'scheduled', 'date' => request('date')]) }}"
-           class="flex-1 min-w-[120px] text-center px-3 sm:px-5 py-2 rounded-md text-[8px] sm:text-xs font-black uppercase tracking-tighter transition-all {{ request('type') == 'scheduled' && !request('vitals_only') ? 'bg-brand-600 text-white shadow-md' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50' }}">
-            Online <span class="hidden sm:inline">Booking</span> <span class="ml-1 opacity-50">{{ $counts['scheduled'] }}</span>
-        </a>
-        <a href="{{ route('healthworker.appointments.index', ['type' => 'walk-in', 'date' => request('date')]) }}"
-           class="flex-1 min-w-[120px] text-center px-3 sm:px-5 py-2 rounded-md text-[8px] sm:text-xs font-black uppercase tracking-tighter transition-all {{ request('type') == 'walk-in' ? 'bg-brand-600 text-white shadow-md' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50' }}">
-            Walk-In <span class="ml-1 opacity-50">{{ $counts['walkin'] }}</span>
-        </a>
-        <a href="{{ route('healthworker.appointments.index', ['vitals_only' => 1, 'date' => request('date')]) }}"
-           class="flex-1 min-w-[120px] text-center px-3 sm:px-5 py-2 rounded-md text-[8px] sm:text-xs font-black uppercase tracking-tighter transition-all {{ request('vitals_only') ? 'bg-orange-500 text-white shadow-md' : 'text-gray-400 hover:text-orange-500 hover:bg-orange-50' }}">
-            Vitals <span class="hidden sm:inline">Needed</span> <span class="ml-1 opacity-50">{{ $counts['needing_vitals'] }}</span>
-        </a>
+    <div class="bg-white/95 backdrop-blur-sm p-2 rounded-2xl shadow-sm border border-gray-100">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <a href="{{ route('healthworker.appointments.index', ['type' => 'scheduled', 'date' => request('date')]) }}"
+               class="group relative flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-wider border transition-all {{ request('type') == 'scheduled' && !request('vitals_only') ? 'bg-gradient-to-r from-brand-600 to-brand-500 text-white border-brand-600 shadow-lg shadow-brand-200/70' : 'bg-gray-50 text-gray-500 border-gray-100 hover:bg-brand-50 hover:text-brand-600 hover:border-brand-100' }}">
+                <i class="bi bi-laptop"></i>
+                <span>Online <span class="hidden sm:inline">Booking</span></span>
+                <span class="inline-flex items-center justify-center min-w-6 h-6 px-2 rounded-full text-[10px] {{ request('type') == 'scheduled' && !request('vitals_only') ? 'bg-white/20 text-white' : 'bg-white text-gray-500 border border-gray-200 group-hover:text-brand-600' }}">
+                    {{ $counts['scheduled'] }}
+                </span>
+            </a>
+
+            <a href="{{ route('healthworker.appointments.index', ['type' => 'walk-in', 'date' => request('date')]) }}"
+               class="group relative flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-wider border transition-all {{ request('type') == 'walk-in' ? 'bg-gradient-to-r from-sky-600 to-cyan-500 text-white border-sky-600 shadow-lg shadow-cyan-200/70' : 'bg-gray-50 text-gray-500 border-gray-100 hover:bg-sky-50 hover:text-sky-600 hover:border-sky-100' }}">
+                <i class="bi bi-person-walking"></i>
+                <span>Walk-In</span>
+                <span class="inline-flex items-center justify-center min-w-6 h-6 px-2 rounded-full text-[10px] {{ request('type') == 'walk-in' ? 'bg-white/20 text-white' : 'bg-white text-gray-500 border border-gray-200 group-hover:text-sky-600' }}">
+                    {{ $counts['walkin'] }}
+                </span>
+            </a>
+
+            <a href="{{ route('healthworker.appointments.index', ['vitals_only' => 1, 'date' => request('date')]) }}"
+               class="group relative flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-wider border transition-all {{ request('vitals_only') ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white border-orange-500 shadow-lg shadow-orange-200/70' : 'bg-gray-50 text-gray-500 border-gray-100 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-100' }}">
+                <i class="bi bi-heart-pulse"></i>
+                <span>Vitals <span class="hidden sm:inline">Needed</span></span>
+                <span class="inline-flex items-center justify-center min-w-6 h-6 px-2 rounded-full text-[10px] {{ request('vitals_only') ? 'bg-white/20 text-white' : 'bg-white text-gray-500 border border-gray-200 group-hover:text-orange-600' }}">
+                    {{ $counts['needing_vitals'] }}
+                </span>
+            </a>
+        </div>
     </div>
 
     <!-- Filters Section -->

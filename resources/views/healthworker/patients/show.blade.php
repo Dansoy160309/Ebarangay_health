@@ -2,6 +2,21 @@
 
 @section('title', 'Patient Details')
 
+<style>
+.dependent-date-input {
+    -webkit-appearance: auto;
+    appearance: auto;
+    color-scheme: light;
+}
+
+.dependent-date-input::-webkit-calendar-picker-indicator {
+    display: block;
+    opacity: 1;
+    cursor: pointer;
+    filter: invert(38%) sepia(6%) saturate(945%) hue-rotate(175deg) brightness(93%) contrast(88%);
+}
+</style>
+
 @section('content')
 <div 
     class="relative min-h-screen bg-[#f8fafc] overflow-hidden" 
@@ -187,6 +202,43 @@
                                 </div>
                             </div>
                         </button>
+
+                        <div class="mt-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Registered Dependents</p>
+                                <span class="px-2.5 py-1 rounded-full bg-purple-50 text-purple-600 text-[10px] font-black uppercase tracking-widest border border-purple-100">
+                                    {{ $patient->dependents->count() }} Total
+                                </span>
+                            </div>
+
+                            @if($patient->dependents->isNotEmpty())
+                                <div class="space-y-3">
+                                    @foreach($patient->dependents as $dependent)
+                                        <div class="p-4 rounded-2xl bg-gray-50/70 border border-gray-100 flex items-center justify-between gap-4">
+                                            <div class="flex items-center gap-3 min-w-0">
+                                                <div class="w-10 h-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-brand-600 font-black text-sm shrink-0">
+                                                    {{ substr($dependent->first_name, 0, 1) }}{{ substr($dependent->last_name, 0, 1) }}
+                                                </div>
+                                                <div class="min-w-0">
+                                                    <p class="text-sm font-black text-gray-900 truncate">{{ $dependent->full_name }}</p>
+                                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest truncate">
+                                                        {{ $dependent->age ?? 'N/A' }} yrs • {{ $dependent->gender }} • {{ $dependent->relationship ?? 'Dependent' }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <a href="{{ route('healthworker.patients.show', $dependent->id) }}"
+                                               class="px-3 py-2 rounded-xl bg-white border border-gray-200 text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-brand-600 hover:border-brand-200 transition-all shrink-0">
+                                                View
+                                            </a>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <div class="p-5 rounded-2xl bg-gray-50 border border-dashed border-gray-200 text-center">
+                                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">No dependents added yet</p>
+                                </div>
+                            @endif
+                        </div>
                     </div>
                 </div>
                 @endif
@@ -264,7 +316,7 @@
                                 <i class="bi bi-calendar-event-fill text-blue-400"></i> Date of Birth
                             </label>
                             <input type="date" name="dob" required max="{{ date('Y-m-d') }}" 
-                                   class="block w-full px-4 py-2.5 border-2 border-gray-50 rounded-xl bg-gray-50/50 focus:outline-none focus:bg-white focus:ring-4 focus:ring-blue-50 focus:border-blue-500 transition-all duration-300 font-bold text-xs">
+                                   class="dependent-date-input block w-full px-4 py-2.5 border-2 border-gray-50 rounded-xl bg-gray-50/50 focus:outline-none focus:bg-white focus:ring-4 focus:ring-blue-50 focus:border-blue-500 transition-all duration-300 font-bold text-xs">
                         </div>
                         <div class="space-y-1.5">
                             <label class="flex items-center gap-2 text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">

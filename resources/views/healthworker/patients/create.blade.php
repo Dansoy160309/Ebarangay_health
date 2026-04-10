@@ -2,6 +2,21 @@
 
 @section('title', 'Add Patient')
 
+<style>
+.health-date-input {
+    -webkit-appearance: auto;
+    appearance: auto;
+    color-scheme: light;
+}
+
+.health-date-input::-webkit-calendar-picker-indicator {
+    display: block;
+    opacity: 1;
+    cursor: pointer;
+    filter: invert(38%) sepia(6%) saturate(945%) hue-rotate(175deg) brightness(93%) contrast(88%);
+}
+</style>
+
 @section('content')
 <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
@@ -94,8 +109,8 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="space-y-2">
-                        <label class="block text-[8px] font-black text-gray-400 uppercase tracking-tighter ml-1">First Name</label>
+                    <div class="space-y-3">
+                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">First Name</label>
                         <input type="text" name="first_name" value="{{ old('first_name') }}"
                                class="block w-full px-4 py-2.5 bg-gray-50 border-none rounded-lg focus:ring-3 focus:ring-brand-50 focus:bg-white text-sm font-bold text-gray-900 shadow-inner transition-all" required>
                     </div>
@@ -115,7 +130,7 @@
                     <div class="space-y-3">
                         <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Date of Birth</label>
                         <input type="date" name="dob" value="{{ old('dob') }}"
-                               class="block w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 shadow-inner transition-all" required>
+                               class="health-date-input block w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 shadow-inner transition-all" required>
                     </div>
 
                     <div class="space-y-3">

@@ -6,6 +6,10 @@
 @php
     $user = auth()->user();
     $prefix = $user->isMidwife() ? 'midwife' : ($user->isDoctor() ? 'doctor' : 'healthworker');
+    $backParams = array_filter([
+        'search_patient' => request('search_patient'),
+        'subject_id' => request('subject_id'),
+    ]);
 @endphp
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8 bg-[#f8fafc]">
@@ -36,7 +40,7 @@
             <button onclick="window.print()" class="px-6 py-3 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
                 <i class="bi bi-printer text-lg"></i> Print
             </button>
-            <a href="{{ route($prefix . '.health-records.index') }}" class="px-6 py-3 bg-brand-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-brand-700 transition-all flex items-center gap-2 shadow-lg shadow-brand-500/20">
+            <a href="{{ route($prefix . '.health-records.index', $backParams) }}" class="px-6 py-3 bg-brand-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-brand-700 transition-all flex items-center gap-2 shadow-lg shadow-brand-500/20">
                 <i class="bi bi-arrow-left text-lg"></i> Back
             </a>
         </div>

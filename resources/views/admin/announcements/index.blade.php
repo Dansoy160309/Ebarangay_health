@@ -30,10 +30,17 @@
 
     {{-- Session alerts are handled globally in the app layout --}}
 
-    {{-- Content Grid --}}
-    @if($announcements->count())
+    {{-- Active Announcements --}}
+    <div class="flex items-center justify-between">
+        <h2 class="text-sm font-black text-gray-500 uppercase tracking-[0.2em]">Active Announcements</h2>
+        <span class="text-[10px] font-black text-brand-600 uppercase tracking-widest">
+            {{ $activeAnnouncements->total() }} Visible
+        </span>
+    </div>
+
+    @if($activeAnnouncements->count())
         <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            @foreach($announcements as $announcement)
+            @foreach($activeAnnouncements as $announcement)
                 <article class="flex flex-col bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg hover:border-brand-100 transition-all duration-300 group relative hover:-translate-y-0.5">
                     {{-- Status Badge --}}
                     <div class="absolute top-3 right-3 z-10">
@@ -41,11 +48,6 @@
                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[8px] font-bold bg-green-100 text-green-800 border border-green-200 shadow-sm">
                                 <span class="w-1 h-1 rounded-full bg-green-500 mr-1 animate-pulse"></span>
                                 Active
-                            </span>
-                        @else
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[8px] font-bold bg-gray-100 text-gray-800 border border-gray-200 shadow-sm">
-                                <i class="bi bi-archive-fill mr-1 text-gray-500 text-[7px]"></i>
-                                Archived
                             </span>
                         @endif
                     </div>
@@ -101,7 +103,7 @@
             @endforeach
         </div>
         <div class="mt-8">
-            {{ $announcements->links() }}
+            {{ $activeAnnouncements->links() }}
         </div>
     @else
         <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-12 text-center">
@@ -116,6 +118,84 @@
             </a>
         </div>
     @endif
+
+    {{-- Archive Area --}}
+    <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+            <div>
+                <h2 class="text-lg font-black text-gray-900 flex items-center gap-3">
+                    <i class="bi bi-archive-fill text-gray-400"></i>
+                    Archive
+                </h2>
+                <p class="text-xs text-gray-500 mt-1">Expired and manually archived announcements</p>
+            </div>
+            <span class="px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-[10px] font-black uppercase tracking-widest">
+                {{ $archivedAnnouncements->total() }} Items
+            </span>
+        </div>
+
+        <div class="p-6">
+            @if($archivedAnnouncements->count())
+                <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    @foreach($archivedAnnouncements as $announcement)
+                        <article class="flex flex-col bg-gray-50 rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-300 group relative">
+                            <div class="absolute top-3 right-3 z-10">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[8px] font-bold bg-gray-100 text-gray-800 border border-gray-200 shadow-sm">
+                                    <i class="bi bi-archive-fill mr-1 text-gray-500 text-[7px]"></i>
+                                    {{ $announcement->isExpired() ? 'Expired' : 'Archived' }}
+                                </span>
+                            </div>
+
+                            <div class="p-4 flex-1 flex flex-col">
+                                <div class="text-gray-400 text-[8px] font-bold uppercase tracking-tighter mb-1.5 flex items-center gap-0.5">
+                                    <i class="bi bi-calendar3 text-brand-400 text-[7px]"></i>
+                                    {{ $announcement->created_at->format('M d, Y') }}
+                                </div>
+
+                                <h3 class="font-bold text-sm text-gray-900 mb-2 line-clamp-2">
+                                    {{ $announcement->title }}
+                                </h3>
+
+                                <p class="text-gray-500 text-xs leading-relaxed line-clamp-2 mb-2.5 flex-1">
+                                    {{ \Illuminate\Support\Str::limit($announcement->message, 120) }}
+                                </p>
+
+                                @if($announcement->expires_at)
+                                    <div class="mt-auto pt-3 border-t border-gray-100">
+                                        <p class="text-xs text-orange-500 flex items-center font-medium bg-orange-50 px-2 py-1 rounded-lg w-fit">
+                                            <i class="bi bi-clock-history mr-1.5"></i> Expires: {{ $announcement->expires_at->format('M d, Y') }}
+                                        </p>
+                                    </div>
+                                @endif
+                            </div>
+
+                            <div class="px-6 py-4 bg-white/70 border-t border-gray-100 flex justify-between items-center">
+                                <a href="{{ route('admin.announcements.show', $announcement->id) }}" 
+                                   class="text-brand-600 font-bold text-sm hover:text-brand-700 flex items-center group/link transition-colors">
+                                    Read Details <i class="bi bi-arrow-right ml-1 transition-transform group-hover/link:translate-x-1"></i>
+                                </a>
+                                <div class="flex gap-2">
+                                     <a href="{{ route('admin.announcements.edit', $announcement->id) }}" 
+                                        class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-brand-600 hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-200 transition-all"
+                                        title="Edit Announcement">
+                                        <i class="bi bi-pencil-fill text-sm"></i>
+                                     </a>
+                                </div>
+                            </div>
+                        </article>
+                    @endforeach
+                </div>
+                <div class="mt-8">
+                    {{ $archivedAnnouncements->links() }}
+                </div>
+            @else
+                <div class="bg-gray-50 rounded-[2rem] p-10 text-center border border-dashed border-gray-200">
+                    <i class="bi bi-archive text-4xl text-gray-300 block mb-3"></i>
+                    <p class="text-sm font-bold text-gray-400 uppercase tracking-widest">No archived announcements</p>
+                </div>
+            @endif
+        </div>
+    </div>
 
 </div>
 @endsection

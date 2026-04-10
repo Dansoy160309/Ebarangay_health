@@ -146,6 +146,10 @@ class DashboardController extends Controller
 
             // 📢 HEALTH ADVISORIES
             $healthAdvisories = Announcement::where('status', 'active')
+                ->where(function($query) {
+                    $query->whereNull('expires_at')
+                          ->orWhere('expires_at', '>', now());
+                })
                 ->latest()
                 ->limit(3)
                 ->get();

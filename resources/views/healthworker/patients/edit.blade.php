@@ -360,7 +360,7 @@
                                 <label class="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
                                     <i class="bi bi-person-badge-fill text-orange-400"></i> Contact Name
                                 </label>
-                                <input type="text" name="emergency_contact_name" value="{{ old('emergency_contact_name', $patient->emergency_contact_name) }}"
+                                    <input type="text" name="emergency_contact_name" value="{{ old('emergency_contact_name', optional($patient->patientProfile)->emergency_contact_name ?? $patient->emergency_contact_name) }}"
                                        class="block w-full px-5 py-3.5 border-2 border-gray-50 rounded-2xl bg-gray-50/50 placeholder-gray-300 focus:outline-none focus:bg-white focus:ring-4 focus:ring-orange-50 focus:border-orange-500 transition-all duration-300 font-bold text-sm">
                             </div>
 
@@ -369,7 +369,7 @@
                                     <label class="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
                                         <i class="bi bi-people-fill text-orange-400"></i> Relation
                                     </label>
-                                    <input type="text" name="emergency_contact_relationship" value="{{ old('emergency_contact_relationship', $patient->emergency_contact_relationship) }}"
+                                     <input type="text" name="emergency_contact_relationship" value="{{ old('emergency_contact_relationship', optional($patient->patientProfile)->emergency_contact_relationship ?? $patient->emergency_contact_relationship) }}"
                                            class="block w-full px-4 py-3.5 border-2 border-gray-50 rounded-2xl bg-gray-50/50 placeholder-gray-300 focus:outline-none focus:bg-white focus:ring-4 focus:ring-orange-50 focus:border-orange-500 transition-all duration-300 font-bold text-sm">
                                 </div>
                                 <div class="space-y-2">
@@ -379,34 +379,6 @@
                                     <input type="text" name="emergency_no" value="{{ old('emergency_no', $patient->emergency_no) }}"
                                            class="block w-full px-4 py-3.5 border-2 border-gray-50 rounded-2xl bg-gray-50/50 placeholder-gray-300 focus:outline-none focus:bg-white focus:ring-4 focus:ring-orange-50 focus:border-orange-500 transition-all duration-300 font-bold text-sm">
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Account Settings Section --}}
-                    <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 p-8 sm:p-10">
-                        <h3 class="text-sm font-black text-gray-900 uppercase tracking-widest flex items-center gap-4 mb-10">
-                            <span class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-sm shadow-inner">
-                                <i class="bi bi-shield-lock-fill"></i>
-                            </span>
-                            Account Security
-                        </h3>
-                        
-                        <div class="grid grid-cols-1 gap-6 bg-amber-50/30 p-6 rounded-3xl border border-amber-50">
-                            <div class="space-y-2">
-                                <label class="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
-                                    <i class="bi bi-key-fill text-amber-400"></i> New Password
-                                </label>
-                                <input type="password" name="password" placeholder="Leave blank to keep current"
-                                       class="block w-full px-5 py-3.5 border-2 border-white rounded-2xl bg-white/50 placeholder-gray-300 focus:outline-none focus:bg-white focus:ring-4 focus:ring-amber-50 focus:border-amber-500 transition-all duration-300 font-bold text-sm">
-                            </div>
-
-                            <div class="space-y-2">
-                                <label class="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
-                                    <i class="bi bi-shield-check text-amber-400"></i> Confirm New Password
-                                </label>
-                                <input type="password" name="password_confirmation"
-                                       class="block w-full px-5 py-3.5 border-2 border-white rounded-2xl bg-white/50 placeholder-gray-300 focus:outline-none focus:bg-white focus:ring-4 focus:ring-amber-50 focus:border-amber-500 transition-all duration-300 font-bold text-sm">
                             </div>
                         </div>
                     </div>

@@ -210,13 +210,12 @@ class HealthRecordController extends Controller
             abort(403, 'Admins have read-only access to health records.');
         }
 
-        if ($user->isDoctor() || $user->isMidwife()) {
+        if ($user->isDoctor() || $user->isMidwife() || $user->isHealthWorker()) {
             $patients = Patient::all();
             $services = Service::all();
             return view('doctor.health_records.create', compact('patients', 'selectedPatient', 'services'));
         }
-        
-        // For Health Workers, we enforce selecting a patient first, so we don't pass the full list.
+
         $services = Service::all();
         $doctors = Doctor::all();
         return view('healthworker.health_records.create', compact('selectedPatient', 'services', 'doctors'));
@@ -243,6 +242,22 @@ class HealthRecordController extends Controller
             'created_at' => 'nullable|date',
         ]);
 
+        $patient = User::where('role', 'patient')->find($request->patient_id);
+        $service = $request->filled('service_id') ? Service::find($request->service_id) : null;
+
+        if ($patient && $service && strtolower($patient->gender) === 'male') {
+            $serviceName = strtolower($service->name);
+            $isPrenatalService = str_contains($serviceName, 'prenatal')
+                || str_contains($serviceName, 'antenatal')
+                || str_contains($serviceName, 'obstetric');
+
+            if ($isPrenatalService) {
+                return back()
+                    ->withErrors(['service_id' => 'Prenatal services are only allowed for female patients.'])
+                    ->withInput();
+            }
+        }
+
         $createdAt = $request->filled('created_at') ? Carbon::parse($request->created_at) : now();
 
         $record = HealthRecord::create([
@@ -263,7 +278,7 @@ class HealthRecordController extends Controller
 
         // 🤰 Sync Prenatal Metadata to Patient Profile if applicable
         if ($request->has('metadata.lmp') || $request->has('metadata.gravida')) {
-            $patient = User::find($request->patient_id);
+            $patient = $patient ?? User::find($request->patient_id);
             if ($patient && $patient->patientProfile) {
                 $patient->patientProfile->update([
                     'lmp' => $request->input('metadata.lmp'),
@@ -342,11 +357,8 @@ class HealthRecordController extends Controller
         if ($user->isAdmin()) {
             return view('admin.health_records.show', compact('record'));
         }
-        if ($user->isDoctor() || $user->isMidwife()) {
+        if ($user->isDoctor() || $user->isMidwife() || $user->isHealthWorker()) {
             return view('doctor.health_records.show', compact('record'));
-        }
-        if ($user->isHealthWorker()) {
-            return view('healthworker.health_records.show', compact('record'));
         }
 
         return view('health_records.show', compact('record'));
@@ -373,9 +385,10 @@ class HealthRecordController extends Controller
         if ($user->isAdmin()) {
             return view('admin.health_records.edit', compact('record', 'patients', 'services'));
         }
-        if ($user->isDoctor() || $user->isMidwife()) {
+        if ($user->isDoctor() || $user->isMidwife() || $user->isHealthWorker()) {
             return view('doctor.health_records.edit', compact('record', 'patients', 'services'));
         }
+
         return view('healthworker.health_records.edit', compact('record', 'patients', 'services'));
     }
 

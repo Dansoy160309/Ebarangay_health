@@ -2,10 +2,16 @@
 
 @section('title', 'Create Health Record')
 
+@php
+    $user = auth()->user();
+    $routePrefix = $user->isMidwife() ? 'midwife' : ($user->isDoctor() ? 'doctor' : 'healthworker');
+@endphp
+
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
      x-data="{ 
         patientId: '{{ $selectedPatient?->id ?? '' }}',
+        selectedPatientGender: '{{ $selectedPatient?->gender ?? '' }}',
         serviceId: '{{ old('service_id') ?? '' }}',
         serviceName: '',
         loading: false,
@@ -14,8 +20,43 @@
         weight: '',
         height: '',
         bmi: '',
+        get currentGender() {
+            return String(this.patientInfo?.gender || this.selectedPatientGender || '').toLowerCase();
+        },
+        isPrenatalServiceName(name) {
+            const serviceName = String(name || '').toLowerCase();
+            return serviceName.includes('prenatal') || serviceName.includes('antenatal') || serviceName.includes('obstetric');
+        },
+        isServiceAllowed(name) {
+            if (!name) return true;
+            if (this.currentGender === 'male' && this.isPrenatalServiceName(name)) {
+                return false;
+            }
+            return true;
+        },
+        filterServiceOptions() {
+            const select = this.$refs.serviceSelect;
+            if (!select) return;
+
+            Array.from(select.options).forEach((option) => {
+                const optionServiceName = option.dataset.serviceName || '';
+                if (!optionServiceName) return;
+                const allowed = this.isServiceAllowed(optionServiceName);
+                option.hidden = !allowed;
+                option.disabled = !allowed;
+            });
+
+            const selectedOption = select.options[select.selectedIndex];
+            if (selectedOption && selectedOption.disabled) {
+                this.serviceId = '';
+                this.serviceName = '';
+                select.value = '';
+            }
+        },
         updateServiceName(el) {
-            this.serviceName = el.options[el.selectedIndex].text.toUpperCase();
+            const selectedOption = el.options[el.selectedIndex];
+            this.serviceName = selectedOption ? selectedOption.text.toUpperCase() : '';
+            this.filterServiceOptions();
         },
         calculateBMI() {
             if(this.weight && this.height) {
@@ -34,6 +75,7 @@
                 .then(data => {
                     this.patientInfo = data.patient;
                     this.history = data.history;
+                    this.filterServiceOptions();
                     this.loading = false;
                 })
                 .catch(err => {
@@ -45,6 +87,7 @@
             if(this.patientId) this.fetchDetails();
             this.$nextTick(() => {
                 let select = this.$refs.serviceSelect;
+                this.filterServiceOptions();
                 if(select && select.value) this.updateServiceName(select);
             });
         }
@@ -53,7 +96,7 @@
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
         <div class="flex items-center gap-4">
-            <a href="{{ route(auth()->user()->role . '.health-records.index') }}" 
+            <a href="{{ route($routePrefix . '.health-records.index') }}" 
                class="bg-white p-2.5 rounded-xl shadow-sm text-gray-500 hover:text-brand-600 transition border border-gray-100">
                 <i class="bi bi-arrow-left text-xl"></i>
             </a>
@@ -64,7 +107,7 @@
         </div>
     </div>
 
-    <form action="{{ route(auth()->user()->role . '.health-records.store') }}" method="POST">
+    <form action="{{ route($routePrefix . '.health-records.store') }}" method="POST">
         @csrf
         <input type="hidden" name="patient_id" :value="patientId">
 
@@ -140,7 +183,7 @@
                                         class="rounded-xl border-gray-100 bg-gray-50 p-2 text-xs font-black uppercase tracking-wider focus:ring-brand-500 focus:border-brand-500 transition shadow-sm">
                                     <option value="">Select Service</option>
                                     @foreach($services as $service)
-                                        <option value="{{ $service->id }}">{{ $service->name }}</option>
+                                        <option value="{{ $service->id }}" data-service-name="{{ $service->name }}">{{ $service->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -357,7 +400,7 @@
                         <i class="bi bi-check2-circle text-lg"></i>
                         Save Medical Record
                     </button>
-                    <a href="{{ route(auth()->user()->role . '.health-records.index') }}" 
+                    <a href="{{ route($routePrefix . '.health-records.index') }}" 
                        class="w-full bg-white border border-gray-100 text-gray-400 hover:text-gray-600 font-black py-4 rounded-2xl text-center transition block uppercase tracking-widest text-[10px]">
                         Discard Entry
                     </a>

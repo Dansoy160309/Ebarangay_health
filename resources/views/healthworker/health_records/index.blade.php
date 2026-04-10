@@ -132,7 +132,7 @@
                             <div class="text-[9px] font-black text-gray-400 uppercase tracking-widest">
                                 By: {{ $record->creator->first_name ?? 'Unknown' }}
                             </div>
-                            <a href="{{ route($routePrefix . '.health-records.show', $record->id) }}" class="px-6 py-3 rounded-xl bg-brand-600 text-white text-[10px] font-black uppercase tracking-widest shadow-lg shadow-brand-500/10 hover:bg-brand-700 transition-all flex items-center gap-2">
+                            <a href="{{ route($routePrefix . '.health-records.show', ['health_record' => $record->id, 'search_patient' => request('search_patient'), 'subject_id' => request('subject_id') ?? $selectedSubject?->id]) }}" class="px-6 py-3 rounded-xl bg-brand-600 text-white text-[10px] font-black uppercase tracking-widest shadow-lg shadow-brand-500/10 hover:bg-brand-700 transition-all flex items-center gap-2">
                                 View File <i class="bi bi-arrow-right"></i>
                             </a>
                         </div>
@@ -178,7 +178,7 @@
                                     </div>
                                 </td>
                                 <td class="px-10 py-6 text-right">
-                                    <a href="{{ route($routePrefix . '.health-records.show', $record->id) }}" 
+                                    <a href="{{ route($routePrefix . '.health-records.show', ['health_record' => $record->id, 'search_patient' => request('search_patient'), 'subject_id' => request('subject_id') ?? $selectedSubject?->id]) }}" 
                                        class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:text-brand-600 hover:bg-brand-50 transition-all border border-transparent hover:border-brand-100 shadow-sm active:scale-95">
                                         <i class="bi bi-arrow-right text-lg"></i>
                                     </a>

@@ -140,6 +140,13 @@
             <i class="bi bi-person-vcard-fill mr-3 text-xl"></i> 
             <span>Patients</span>
         </a>
+
+        <a href="{{ $routes['health_records'] }}"
+           @click="sidebarOpen = false"
+           class="{{ getLinkClasses(request()->routeIs('healthworker.health-records*')) }}">
+            <i class="bi bi-file-medical-fill mr-3 text-xl"></i>
+            <span>Health Records</span>
+        </a>
     @endif
 
     {{-- Midwife --}}

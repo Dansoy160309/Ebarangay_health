@@ -2,6 +2,11 @@
 
 @section('title', 'Edit Health Record')
 
+@php
+    $user = auth()->user();
+    $routePrefix = $user->isMidwife() ? 'midwife' : ($user->isDoctor() ? 'doctor' : 'healthworker');
+@endphp
+
 @section('content')
 <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10"
      x-data="{ 
@@ -31,7 +36,7 @@
             <li>
                 <div class="flex items-center text-gray-400">
                     <i class="bi bi-chevron-right mx-2 text-[8px] opacity-50"></i>
-                    <a href="{{ route('doctor.health-records.index') }}" class="hover:text-brand-600 transition-colors">Health Records</a>
+                    <a href="{{ route($routePrefix . '.health-records.index') }}" class="hover:text-brand-600 transition-colors">Health Records</a>
                 </div>
             </li>
             <li>
@@ -76,7 +81,7 @@
         </div>
     </div>
 
-    <form action="{{ route('doctor.health-records.update', $record->id) }}" method="POST" class="space-y-10">
+    <form action="{{ route($routePrefix . '.health-records.update', $record->id) }}" method="POST" class="space-y-10">
         @csrf
         @method('PUT')
         
@@ -210,7 +215,7 @@
                         </div>
                         
                         <div class="flex items-center gap-4 w-full sm:w-auto">
-                            <a href="{{ route('doctor.health-records.show', $record->id) }}" 
+                            <a href="{{ route($routePrefix . '.health-records.show', $record->id) }}" 
                                class="flex-1 sm:flex-none px-10 py-5 bg-white text-gray-500 rounded-[1.75rem] font-black text-xs uppercase tracking-[0.2em] border border-gray-200 hover:bg-gray-50 transition-all text-center">
                                 Cancel
                             </a>

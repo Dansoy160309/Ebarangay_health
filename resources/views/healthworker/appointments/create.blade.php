@@ -130,15 +130,15 @@
                      x-show="show" x-transition:enter="transition ease-out duration-1000" x-transition:enter-start="opacity-0 scale-y-0 origin-top" x-transition:enter-end="opacity-100 scale-y-100"></div>
 
                 <!-- Step 1: Patient Selection -->
-                <div class="relative pl-0 md:pl-24 py-6 group" x-show="show" x-transition:enter="transition ease-out duration-500 delay-100" x-transition:enter-start="opacity-0 translate-y-10" x-transition:enter-end="opacity-100 translate-y-0">
+                <div class="relative pl-0 md:pl-24 py-6 group z-20" x-show="show" x-transition:enter="transition ease-out duration-500 delay-100" x-transition:enter-start="opacity-0 translate-y-10" x-transition:enter-end="opacity-100 translate-y-0">
                     <!-- Timeline Dot -->
                     <div class="absolute left-4 top-10 w-8 h-8 rounded-full bg-brand-600 border-4 border-white shadow-md z-10 hidden md:flex items-center justify-center transform transition-transform hover:scale-110">
                         <span class="text-white text-xs font-bold">1</span>
                     </div>
 
-                    <div class="bg-white rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-gray-100 overflow-hidden">
+                    <div class="bg-white rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-gray-100 overflow-visible">
                         <div class="p-5 md:p-8">
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
                                 <h3 class="text-lg font-bold text-gray-900 flex items-center gap-3">
                                     <div class="w-10 h-10 rounded-lg bg-blue-50 text-brand-600 flex items-center justify-center md:hidden shrink-0">
                                         <span class="font-bold">1</span>
@@ -146,10 +146,6 @@
                                     <i class="bi bi-person text-brand-500 text-xl hidden md:block"></i>
                                     <span class="truncate">Select Patient</span>
                                 </h3>
-                                <button type="button" @click="showModal = true"
-                                        class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-3 sm:py-2 bg-brand-50 text-brand-700 text-sm font-bold rounded-xl hover:bg-brand-100 transition-colors border border-brand-100">
-                                    <i class="bi bi-person-plus-fill mr-2"></i> Add New Patient
-                                </button>
                             </div>
                             
                             <div class="max-w-xl">

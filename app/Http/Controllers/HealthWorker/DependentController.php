@@ -44,6 +44,7 @@ class DependentController extends Controller
             'address' => $patient->address, // Inherit address from guardian
             'purok' => $patient->purok,     // Inherit purok from guardian
             'contact_no' => $patient->contact_no, // Inherit contact from guardian
+            'emergency_no' => $patient->contact_no, // Guardian is the emergency contact
             'email' => $dummyEmail,
             'password' => Hash::make(Str::random(32)), // Random password to prevent login
             'role' => 'patient', // They are patients effectively
@@ -51,12 +52,15 @@ class DependentController extends Controller
         ]);
 
         $dependent->patientProfile()->create([
+            'emergency_contact_name' => $patient->full_name,
+            'emergency_contact_relationship' => 'Guardian',
             'blood_type' => $validated['blood_type'] ?? null,
             'allergies' => $validated['allergies'] ?? null,
             'medical_history' => $validated['existing_conditions'] ?? null,
         ]);
 
-        return redirect()->back()->with('success', 'Dependent added successfully.');
+        return redirect()->route('healthworker.patients.show', $patient->id)
+            ->with('success', 'Dependent added successfully.');
     }
 
     /**

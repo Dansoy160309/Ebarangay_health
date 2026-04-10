@@ -61,7 +61,7 @@
                                 <i class="bi bi-type-h1"></i>
                             </div>
                             <input type="text" name="title" id="title" value="{{ old('title', $announcement->title) }}" required maxlength="120"
-                                   class="block w-full pl-10 pr-4 py-3 border-gray-300 rounded-xl shadow-sm focus:ring-brand-500 focus:border-brand-500 sm:text-sm"
+                                class="block w-full pl-10 pr-4 py-3 bg-white text-gray-900 border-gray-200 rounded-xl shadow-sm focus:ring-brand-500 focus:border-brand-500 sm:text-sm"
                                    placeholder="Short, clear announcement title">
                         </div>
                         <div class="mt-1 flex items-center justify-between text-xs text-gray-500">
@@ -74,7 +74,7 @@
                         <label for="message" class="block text-sm font-bold text-gray-700 mb-2">Message</label>
                         <div class="relative">
                             <textarea name="message" id="message" rows="7" required
-                                      class="block w-full p-4 border-gray-300 rounded-xl shadow-sm focus:ring-brand-500 focus:border-brand-500 sm:text-sm"
+                                      class="block w-full p-4 bg-white text-gray-900 border-gray-200 rounded-xl shadow-sm focus:ring-brand-500 focus:border-brand-500 sm:text-sm"
                                       placeholder="Write the full content of your announcement here...">{{ old('message', $announcement->message) }}</textarea>
                         </div>
                         <div class="mt-2 flex items-center justify-between text-xs text-gray-500">
@@ -115,8 +115,8 @@
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                                     <i class="bi bi-calendar-event"></i>
                                 </div>
-                                <input type="date" name="expires_at" id="expires_at" value="{{ old('expires_at', $announcement->expires_at ? $announcement->expires_at->format('Y-m-d') : '') }}"
-                                       class="block w-full pl-10 pr-4 py-3 border-gray-300 rounded-xl shadow-sm focus:ring-brand-500 focus:border-brand-500 sm:text-sm">
+                                    <input type="date" name="expires_at" id="expires_at" value="{{ old('expires_at', $announcement->expires_at ? $announcement->expires_at->format('Y-m-d') : '') }}"
+                                        class="block w-full pl-10 pr-4 py-3 bg-white text-gray-900 border-gray-200 rounded-xl shadow-sm focus:ring-brand-500 focus:border-brand-500 sm:text-sm">
                             </div>
                             <p class="mt-2 text-xs text-gray-500">
                                 <i class="bi bi-info-circle mr-1"></i> Announcement will be archived automatically after this date.
