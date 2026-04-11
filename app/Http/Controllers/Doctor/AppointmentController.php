@@ -142,12 +142,18 @@ class AppointmentController extends Controller
                 ->whereDoesntHave('healthRecord')->count(),
         ];
 
+        // Get list of appointment IDs that need completion
+        $readyAppointmentIds = (clone $appointments)->where('status', 'approved')
+            ->whereHas('healthRecord', function($q) {
+                $q->whereNotNull('vital_signs');
+            })->pluck('id')->toArray();
+
         $appointments = $appointments
             ->latest('scheduled_at')
             ->paginate(15)
             ->appends($request->query());
 
-        return view('doctor.appointments.index', compact('appointments', 'stats'));
+        return view('doctor.appointments.index', compact('appointments', 'stats', 'readyAppointmentIds'));
     }
 
     public function show(Appointment $appointment)

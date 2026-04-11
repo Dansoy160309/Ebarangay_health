@@ -37,8 +37,8 @@
                     <p class="text-lg sm:text-xl font-black tracking-tighter">{{ $stats['today_total'] }}</p>
                 </div>
                 <div class="bg-white/10 backdrop-blur-md px-3.5 py-2 rounded-lg border border-white/20 flex flex-col items-center justify-center min-w-[90px] shadow-lg group-hover:bg-white/20 transition-all duration-300">
-                    <p class="text-[7px] font-black uppercase tracking-tighter opacity-70 mb-0.5 text-green-200">Ready</p>
-                    <p class="text-lg sm:text-xl font-black tracking-tighter text-green-300">{{ $stats['ready'] }}</p>
+                    <p class="text-[7px] font-black uppercase tracking-tighter opacity-70 mb-0.5 text-red-200">Needs Completion</p>
+                    <p class="text-lg sm:text-xl font-black tracking-tighter text-red-300">{{ $stats['ready'] }}</p>
                 </div>
                 <div class="bg-white/10 backdrop-blur-md px-3.5 py-2 rounded-lg border border-white/20 flex flex-col items-center justify-center min-w-[90px] shadow-lg group-hover:bg-white/20 transition-all duration-300">
                     <p class="text-[7px] font-black uppercase tracking-tighter opacity-70 mb-0.5 text-orange-200">Wait</p>
@@ -145,13 +145,42 @@
         </div>
     @endif
 
+    {{-- ACTION REQUIRED ALERT --}}
+    @if($stats['ready'] > 0)
+        <div class="mb-4 rounded-xl border-2 border-red-300 bg-gradient-to-r from-red-50 to-red-50/50 px-4 py-4 text-sm text-red-900 font-black flex items-center justify-between gap-4 shadow-lg shadow-red-200/50">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-red-500 text-white flex items-center justify-center flex-shrink-0 animate-pulse">
+                    <i class="bi bi-exclamation-circle-fill text-lg"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-black uppercase tracking-widest">⚠️ Action Required</p>
+                    <p class="text-xs font-bold text-red-700 mt-0.5">{{ $stats['ready'] }} appointment(s) ready for {{ $providerLabel }}</p>
+                    <p class="text-[10px] font-medium text-red-600 mt-1">Vitals captured - patient waiting for consultation</p>
+                </div>
+            </div>
+            <a href="{{ route($routePrefix . '.appointments.index', ['status' => 'active']) }}" class="px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-lg hover:shadow-red-500/50 active:scale-95 flex-shrink-0 whitespace-nowrap">
+                View All
+            </a>
+        </div>
+    @endif
+
     {{-- Main List Container --}}
     <div class="space-y-6">
         
         {{-- Mobile Card View --}}
         <div class="md:hidden space-y-6">
             @forelse($appointments as $appt)
-                <div class="bg-white rounded-[2.5rem] p-6 shadow-xl shadow-gray-200/50 border border-gray-100 relative overflow-hidden transition transform active:scale-[0.98]">
+                @php
+                    $needsCompletion = in_array($appt->id, $readyAppointmentIds);
+                @endphp
+                <div class="bg-white rounded-[2.5rem] p-6 shadow-xl shadow-gray-200/50 border border-gray-100 relative overflow-hidden transition transform active:scale-[0.98] {{ $needsCompletion ? 'ring-2 ring-red-400 ring-offset-0' : '' }}">
+                    {{-- Alert Badge if Needs Completion --}}
+                    @if($needsCompletion)
+                        <div class="absolute top-3 right-3 bg-red-500 text-white px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest animate-pulse shadow-lg flex items-center gap-1.5 z-10">
+                            <i class="bi bi-exclamation-lg"></i> Action
+                        </div>
+                    @endif
+
                     {{-- Status Indicator --}}
                     @php
                         $status = $appt->status;
@@ -274,6 +303,7 @@
                             @php
                                 $status = $appt->status;
                                 $hasVitals = $appt->healthRecord && $appt->healthRecord->vital_signs;
+                                $needsCompletion = in_array($appt->id, $readyAppointmentIds);
                                 
                                 $isPastAppt = false;
                                 if ($appt->scheduled_at) {
@@ -298,9 +328,16 @@
                                     $label = ucfirst($status); $statusClass = 'bg-gray-50 text-gray-600 border-gray-100'; $icon = 'bi-info-circle-fill';
                                 }
                             @endphp
-                            <tr class="hover:bg-gray-50/80 transition-all group">
+                            <tr class="hover:bg-gray-50/80 transition-all group {{ $needsCompletion ? 'border-l-4 border-l-red-500 bg-red-50/30' : '' }}">
                                 <td class="px-8 py-6">
                                     <div class="flex items-center gap-4">
+                                        @if($needsCompletion)
+                                            <div class="text-red-500 font-black text-lg" title="Needs completion">
+                                                <i class="bi bi-exclamation-circle-fill"></i>
+                                            </div>
+                                        @else
+                                            <div></div>
+                                        @endif
                                         <div class="h-12 w-12 rounded-2xl bg-brand-50 flex items-center justify-center text-brand-600 font-black text-lg border border-brand-100 shadow-sm transition-transform group-hover:scale-110">
                                             {{ substr($appt->user->first_name, 0, 1) }}
                                         </div>
