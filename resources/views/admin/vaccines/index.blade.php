@@ -179,24 +179,31 @@
     @endif
 
     <!-- Inventory Table -->
-    <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-gray-50/50">
-                        <th class="px-8 py-6 text-sm font-black text-gray-400 uppercase tracking-[0.2em]">Vaccine Details</th>
-                        <th class="px-8 py-6 text-sm font-black text-gray-400 uppercase tracking-[0.2em]">Stock Level</th>
-                        <th class="px-8 py-6 text-sm font-black text-gray-400 uppercase tracking-[0.2em]">Storage & Safety</th>
-                        <th class="px-8 py-6 text-sm font-black text-gray-400 uppercase tracking-[0.2em]">Batches</th>
-                        <th class="px-8 py-6 text-sm font-black text-gray-400 uppercase tracking-[0.2em]">Actions</th>
+                        <th class="px-5 py-4 text-[10px] font-black text-gray-400 uppercase tracking-[0.16em]">Vaccine Details</th>
+                        <th class="px-5 py-4 text-[10px] font-black text-gray-400 uppercase tracking-[0.16em]">Stock</th>
+                        <th class="px-5 py-4 text-[10px] font-black text-gray-400 uppercase tracking-[0.16em]">Storage</th>
+                        <th class="px-5 py-4 text-[10px] font-black text-gray-400 uppercase tracking-[0.16em]">Batches</th>
+                        <th class="px-5 py-4 text-[10px] font-black text-gray-400 uppercase tracking-[0.16em]">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
                     @foreach($vaccines as $vaccine)
+                    @php
+                        $activeBatches = $vaccine->batches->where('quantity_remaining', '>', 0);
+                        $expiringSoonBatches = $activeBatches
+                            ->filter(fn($batch) => $batch->expiry_date && !$batch->expiry_date->isPast() && $batch->expiry_date->lte(now()->addMonths(3)))
+                            ->sortBy('expiry_date')
+                            ->values();
+                    @endphp
                     <tr class="hover:bg-gray-50/50 transition-colors group">
-                        <td class="px-8 py-6">
+                        <td class="px-5 py-4">
                             <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-2xl bg-brand-50 flex items-center justify-center text-brand-600 font-black shadow-inner">
+                                <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600 font-black shadow-inner text-sm">
                                     {{ substr($vaccine->name, 0, 1) }}
                                 </div>
                                 <div>
@@ -205,7 +212,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="px-8 py-6">
+                        <td class="px-5 py-4">
                             <div class="space-y-1">
                                 <span class="inline-flex items-center gap-2 px-3 py-1 rounded-lg {{ $vaccine->in_stock_quantity <= $vaccine->min_stock_level ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700' }} text-xs font-black uppercase">
                                     {{ $vaccine->in_stock_quantity }} doses
@@ -213,18 +220,17 @@
                                 <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest ml-1">Min: {{ $vaccine->min_stock_level }}</p>
                             </div>
                         </td>
-                        <td class="px-8 py-6">
+                        <td class="px-5 py-4">
                             <div class="space-y-1">
                                 <p class="text-xs font-bold text-gray-700"><i class="bi bi-thermometer-half text-brand-500 mr-1"></i> {{ $vaccine->storage_temp_range ?? 'Not set' }}</p>
-                                <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-gray-100 text-gray-500 tracking-widest">Active</span>
+                                <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-gray-100 text-gray-500 tracking-widest">Monitored</span>
                             </div>
                         </td>
-                        <td class="px-8 py-6">
-                            @php $activeBatches = $vaccine->batches->where('quantity_remaining', '>', 0); @endphp
+                        <td class="px-5 py-4">
                             <div class="flex flex-col items-start gap-3">
                                 <div class="flex -space-x-2">
                                     @foreach($activeBatches->take(3) as $batch)
-                                        <a href="{{ route('admin.vaccines.show', $vaccine->id) }}" class="w-8 h-8 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center text-[10px] font-black text-gray-600 shadow-sm hover:bg-brand-50 hover:text-brand-600 transition-colors" title="Batch {{ $batch->batch_number }}">
+                                        <a href="{{ route('admin.vaccines.show', $vaccine->id) }}" class="w-8 h-8 rounded-full border-2 border-white {{ $batch->expiry_date && $batch->expiry_date->isPast() ? 'bg-red-100 text-red-700' : ($batch->expiry_date && $batch->expiry_date->lte(now()->addMonths(3)) ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-600') }} flex items-center justify-center text-[10px] font-black shadow-sm hover:bg-brand-50 hover:text-brand-600 transition-colors" title="Batch {{ $batch->batch_number }} • Expires {{ $batch->expiry_date ? $batch->expiry_date->format('M d, Y') : 'N/A' }}">
                                             {{ $loop->iteration }}
                                         </a>
                                     @endforeach
@@ -241,9 +247,18 @@
                                     <i class="bi bi-eye"></i>
                                     View Batch History
                                 </a>
+                                @if($expiringSoonBatches->count() > 0)
+                                    <div class="text-[9px] font-black uppercase tracking-widest text-amber-700">
+                                        Expiring Soon:
+                                        {{ $expiringSoonBatches->take(2)->pluck('batch_number')->join(', ') }}
+                                        @if($expiringSoonBatches->count() > 2)
+                                            +{{ $expiringSoonBatches->count() - 2 }}
+                                        @endif
+                                    </div>
+                                @endif
                             </div>
                         </td>
-                        <td class="px-8 py-6 text-right whitespace-nowrap">
+                        <td class="px-5 py-4 text-right whitespace-nowrap">
                             <div class="flex items-center justify-end gap-3 transition-opacity">
                                 <a href="{{ route('admin.vaccines.edit', $vaccine->id) }}" 
                                    class="inline-flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-600 hover:text-brand-600 hover:border-brand-300 hover:bg-brand-50 transition-all shadow-sm group/btn"
@@ -270,7 +285,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="px-8 py-6 border-t border-gray-50 bg-gray-50/30">
+        <div class="px-5 py-4 border-t border-gray-50 bg-gray-50/30">
             {{ $vaccines->links() }}
         </div>
     </div>

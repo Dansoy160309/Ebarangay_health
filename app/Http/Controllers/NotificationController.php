@@ -45,6 +45,10 @@ class NotificationController extends Controller
             return redirect()->route($prefix . '.appointments.show', $notification->data['appointment_id']);
         }
 
+        if (isset($notification->data['route'])) {
+            return redirect($notification->data['route']);
+        }
+
         return redirect()->back();
     }
 

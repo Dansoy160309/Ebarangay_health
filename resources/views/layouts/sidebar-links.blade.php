@@ -2,6 +2,9 @@
 
 @php
     use Illuminate\Support\Facades\Route;
+    use App\Models\Medicine;
+    use App\Models\Vaccine;
+    use App\Models\VaccineBatch;
 
     $user = auth()->user();
     $role = $user ? $user->role : null;
@@ -62,6 +65,23 @@
                 ? 'flex items-center px-3 py-3 rounded-lg bg-brand-50 text-brand-700 font-semibold text-base shadow-sm transition-all duration-200 ring-1 ring-brand-200 border-l-4 border-brand-600'
                 : 'flex items-center px-3 py-3 rounded-lg text-gray-700 font-medium text-base hover:bg-gray-100 hover:text-gray-900 transition-all duration-200 hover:shadow-sm';
         }
+    }
+
+    $vaccineIssueCount = 0;
+    $medicineIssueCount = 0;
+    if ($role === 'admin') {
+        $medicineLowStockCount = Medicine::whereColumn('stock', '<=', 'reorder_level')->count();
+        $medicineExpiringCount = Medicine::whereNotNull('expiration_date')
+            ->whereDate('expiration_date', '<=', now()->addDays(30))
+            ->where('stock', '>', 0)
+            ->count();
+        $medicineIssueCount = $medicineLowStockCount + $medicineExpiringCount;
+
+        $lowStockCount = Vaccine::all()->filter(fn($v) => $v->in_stock_quantity <= $v->min_stock_level)->count();
+        $expiringBatchCount = VaccineBatch::where('expiry_date', '<=', now()->addMonths(3))
+            ->where('quantity_remaining', '>', 0)
+            ->count();
+        $vaccineIssueCount = $lowStockCount + $expiringBatchCount;
     }
 @endphp
 
@@ -246,7 +266,12 @@
            @click="sidebarOpen = false"
            class="{{ getLinkClasses(request()->routeIs('admin.medicines.*')) }}">
             <i class="bi bi-capsule-pill mr-3 text-xl"></i> 
-            <span>Medicines</span>
+            <span class="flex-1">Medicines</span>
+            @if($medicineIssueCount > 0)
+                <span class="bg-red-100 text-red-600 py-0.5 px-2 rounded-full text-[10px] font-black">
+                    {{ $medicineIssueCount }}
+                </span>
+            @endif
         </a>
 
         @if($routes['vaccine_inventory'])
@@ -254,7 +279,12 @@
            @click="sidebarOpen = false"
            class="{{ getLinkClasses(request()->routeIs('admin.vaccines*')) }}">
             <i class="bi bi-box-seam-fill mr-3 text-xl text-indigo-600"></i> 
-            <span>Vaccine Inventory</span>
+            <span class="flex-1">Vaccine Inventory</span>
+            @if($vaccineIssueCount > 0)
+                <span class="bg-red-100 text-red-600 py-0.5 px-2 rounded-full text-[10px] font-black">
+                    {{ $vaccineIssueCount }}
+                </span>
+            @endif
         </a>
         @endif
 

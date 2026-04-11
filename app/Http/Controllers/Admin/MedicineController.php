@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Medicine;
 use App\Models\MedicineDistribution;
 use App\Models\MedicineSupply;
+use App\Models\User;
+use App\Notifications\MedicineExpiryAlertNotification;
+use App\Notifications\MedicineLowStockAlertNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -27,11 +30,18 @@ class MedicineController extends Controller
         $medicines = $query->orderBy('generic_name')->paginate(15)->appends($request->query());
 
         $today = Carbon::today();
-        $lowStockIds = Medicine::whereColumn('stock', '<=', 'reorder_level')->pluck('id')->all();
-        $expiringSoonIds = Medicine::whereNotNull('expiration_date')
+        $lowStockMedicines = Medicine::whereColumn('stock', '<=', 'reorder_level')->get();
+        $expiringSoonMedicines = Medicine::whereNotNull('expiration_date')
             ->whereDate('expiration_date', '<=', $today->copy()->addDays(30))
-            ->pluck('id')
-            ->all();
+            ->where('stock', '>', 0)
+            ->get();
+
+        $lowStockIds = $lowStockMedicines->pluck('id')->all();
+        $expiringSoonIds = $expiringSoonMedicines->pluck('id')->all();
+
+        // Send deduplicated in-app notifications for medicine alerts.
+        $this->notifyAdminsForLowStockMedicines($lowStockMedicines);
+        $this->notifyAdminsForExpiringMedicines($expiringSoonMedicines);
 
         return view('admin.medicines.index', compact('medicines', 'lowStockIds', 'expiringSoonIds'));
     }
@@ -52,6 +62,14 @@ class MedicineController extends Controller
             'reorder_level' => 'required|integer|min:0',
             'expiration_date' => 'nullable|date',
         ]);
+
+        if ($this->hasDuplicateMedicine($data['generic_name'], $data['strength'] ?? null)) {
+            return back()
+                ->withErrors([
+                    'generic_name' => 'This medicine already exists with the same dosage/strength. Use a different dosage or update the existing record.',
+                ])
+                ->withInput();
+        }
 
         $initialStock = $data['stock'] ?? 0;
         unset($data['stock']);
@@ -92,6 +110,14 @@ class MedicineController extends Controller
             'reorder_level' => 'required|integer|min:0',
             'expiration_date' => 'nullable|date',
         ]);
+
+        if ($this->hasDuplicateMedicine($data['generic_name'], $data['strength'] ?? null, $medicine->id)) {
+            return back()
+                ->withErrors([
+                    'generic_name' => 'Another medicine already uses this name and dosage/strength. Please change the dosage or edit that existing entry instead.',
+                ])
+                ->withInput();
+        }
 
         $medicine->update($data);
 
@@ -418,5 +444,86 @@ class MedicineController extends Controller
 
         return redirect()->route('admin.medicines.supplies')
             ->with('success', 'Supply recorded and stock updated.');
+    }
+
+    private function notifyAdminsForLowStockMedicines($medicines): void
+    {
+        if ($medicines->isEmpty()) {
+            return;
+        }
+
+        $admins = User::where('role', 'admin')->get();
+
+        foreach ($medicines as $medicine) {
+            foreach ($admins as $admin) {
+                $alreadyNotifiedToday = $admin->notifications()
+                    ->where('type', MedicineLowStockAlertNotification::class)
+                    ->where('data->medicine_id', $medicine->id)
+                    ->whereDate('created_at', now()->toDateString())
+                    ->exists();
+
+                if (!$alreadyNotifiedToday) {
+                    $admin->notify(new MedicineLowStockAlertNotification($medicine));
+                }
+            }
+        }
+    }
+
+    private function notifyAdminsForExpiringMedicines($medicines): void
+    {
+        if ($medicines->isEmpty()) {
+            return;
+        }
+
+        $admins = User::where('role', 'admin')->get();
+
+        foreach ($medicines as $medicine) {
+            if (!$medicine->expiration_date) {
+                continue;
+            }
+
+            $status = $medicine->expiration_date->isPast() ? 'expired' : 'expiring_soon';
+
+            foreach ($admins as $admin) {
+                $alreadyNotifiedToday = $admin->notifications()
+                    ->where('type', MedicineExpiryAlertNotification::class)
+                    ->where('data->medicine_id', $medicine->id)
+                    ->where('data->status', $status)
+                    ->whereDate('created_at', now()->toDateString())
+                    ->exists();
+
+                if (!$alreadyNotifiedToday) {
+                    $admin->notify(new MedicineExpiryAlertNotification($medicine, $status));
+                }
+            }
+        }
+    }
+
+    private function hasDuplicateMedicine(string $genericName, ?string $strength, ?int $ignoreId = null): bool
+    {
+        $normalizedName = $this->normalizeMedicineName($genericName);
+        $normalizedStrength = $this->normalizeMedicineStrength($strength);
+
+        $query = Medicine::query()
+            ->select(['id', 'generic_name', 'strength'])
+            ->whereRaw('LOWER(TRIM(generic_name)) = ?', [$normalizedName]);
+
+        if ($ignoreId) {
+            $query->where('id', '!=', $ignoreId);
+        }
+
+        return $query->get()->contains(function (Medicine $medicine) use ($normalizedStrength) {
+            return $this->normalizeMedicineStrength($medicine->strength) === $normalizedStrength;
+        });
+    }
+
+    private function normalizeMedicineName(string $value): string
+    {
+        return preg_replace('/\s+/', ' ', strtolower(trim($value))) ?? '';
+    }
+
+    private function normalizeMedicineStrength(?string $value): string
+    {
+        return preg_replace('/\s+/', '', strtolower(trim((string) $value))) ?? '';
     }
 }

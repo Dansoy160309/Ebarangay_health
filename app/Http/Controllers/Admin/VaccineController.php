@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\Vaccine;
 use App\Models\VaccineBatch;
 use App\Models\VaccineAdministration;
+use App\Models\User;
+use App\Notifications\VaccineExpiryAlertNotification;
+use App\Notifications\VaccineLowStockAlertNotification;
 
 class VaccineController extends Controller
 {
@@ -29,6 +32,11 @@ class VaccineController extends Controller
             ->where('expiry_date', '<=', now()->addMonths(3))
             ->where('quantity_remaining', '>', 0)
             ->get();
+
+        // Send deduplicated in-app notifications for expiring/expired vaccine batches.
+        $this->notifyAdminsForExpiringBatches($nearExpiryBatches);
+        // Send deduplicated in-app notifications for low stock vaccines.
+        $this->notifyAdminsForLowStockVaccines($lowStockVaccines);
 
         $administrationQuery = VaccineAdministration::with(['vaccine', 'batch', 'patient', 'administeredBy']);
 
@@ -56,6 +64,59 @@ class VaccineController extends Controller
             ->withQueryString();
 
         return view('admin.vaccines.index', compact('vaccines', 'lowStockVaccines', 'nearExpiryBatches', 'recentAdministrations'));
+    }
+
+    private function notifyAdminsForExpiringBatches($batches): void
+    {
+        if ($batches->isEmpty()) {
+            return;
+        }
+
+        $admins = User::where('role', 'admin')->get();
+
+        foreach ($batches as $batch) {
+            if (!$batch->expiry_date) {
+                continue;
+            }
+
+            $status = $batch->expiry_date->isPast() ? 'expired' : 'expiring_soon';
+            $batchId = $batch->id;
+
+            foreach ($admins as $admin) {
+                $alreadyNotifiedToday = $admin->notifications()
+                    ->where('type', VaccineExpiryAlertNotification::class)
+                    ->where('data->vaccine_batch_id', $batchId)
+                    ->whereDate('created_at', now()->toDateString())
+                    ->exists();
+
+                if (!$alreadyNotifiedToday) {
+                    $admin->notify(new VaccineExpiryAlertNotification($batch, $status));
+                }
+            }
+        }
+    }
+
+    private function notifyAdminsForLowStockVaccines($vaccines): void
+    {
+        if ($vaccines->isEmpty()) {
+            return;
+        }
+
+        $admins = User::where('role', 'admin')->get();
+
+        foreach ($vaccines as $vaccine) {
+            foreach ($admins as $admin) {
+                $alreadyNotifiedToday = $admin->notifications()
+                    ->where('type', VaccineLowStockAlertNotification::class)
+                    ->where('data->vaccine_id', $vaccine->id)
+                    ->whereDate('created_at', now()->toDateString())
+                    ->exists();
+
+                if (!$alreadyNotifiedToday) {
+                    $admin->notify(new VaccineLowStockAlertNotification($vaccine));
+                }
+            }
+        }
     }
 
     public function create()
