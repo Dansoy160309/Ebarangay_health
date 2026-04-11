@@ -66,7 +66,7 @@
 
     @php
         $lowStockCount = count($lowStockIds ?? []);
-        $expiringSoonCount = count($expiringSoonIds ?? []);
+        $expiringSoonCount = count($expiringSoonIds ?? []) + count($expiringTodayIds ?? []);
         $totalAlertCount = $lowStockCount + $expiringSoonCount;
     @endphp
 
@@ -95,6 +95,28 @@
                 <h4 class="text-xs font-black text-orange-900 uppercase tracking-widest">Expiring Soon Alert</h4>
                 <p class="text-xs font-bold text-orange-700 mt-1">{{ $expiringSoonCount }} medicines are near expiry.</p>
                 <p class="text-[10px] font-black text-orange-600 uppercase tracking-wider mt-1">This means prioritize use or replace stocks.</p>
+
+                @if(isset($expiringSupplyBatches) && $expiringSupplyBatches->count() > 0)
+                    <div class="mt-3 space-y-1.5">
+                        <p class="text-[10px] font-black text-orange-800 uppercase tracking-wider">Batches At Risk</p>
+                        @foreach($expiringSupplyBatches as $batch)
+                            @php
+                                $batchExpiresToday = $batch->expiration_date && $batch->expiration_date->isSameDay(today());
+                            @endphp
+                            <div class="flex items-center justify-between gap-3 text-[11px] font-bold text-orange-800 bg-orange-100/60 border border-orange-200 rounded-lg px-2.5 py-1.5">
+                                <span>
+                                    {{ $batch->batch_number ?: 'NO-BATCH' }}
+                                    •
+                                    {{ $batch->medicine?->generic_name ?? 'Unknown medicine' }}
+                                </span>
+                                <span class="whitespace-nowrap {{ $batchExpiresToday ? 'text-amber-700' : 'text-orange-700' }}">
+                                    {{ $batch->expiration_date?->format('M d, Y') }}
+                                    ({{ $batchExpiresToday ? 'Today' : 'Soon' }})
+                                </span>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
             </div>
         </div>
         @endif
@@ -118,6 +140,8 @@
                     @forelse($medicines as $medicine)
                         @php
                             $isLow = in_array($medicine->id, $lowStockIds, true);
+                            $isExpired = in_array($medicine->id, $expiredIds ?? [], true);
+                            $isExpiringToday = in_array($medicine->id, $expiringTodayIds ?? [], true);
                             $isExpiring = in_array($medicine->id, $expiringSoonIds, true);
                         @endphp
                         <tr class="hover:bg-gray-50/50 transition-colors group">
@@ -164,11 +188,19 @@
                                     <div class="flex flex-col gap-1">
                                         <div class="flex items-center gap-2">
                                             <i class="bi bi-calendar3 text-gray-400 text-xs"></i>
-                                            <span class="text-sm font-bold {{ $isExpiring ? 'text-orange-600' : 'text-gray-700' }}">
+                                            <span class="text-sm font-bold {{ $isExpired ? 'text-red-600' : ($isExpiringToday ? 'text-amber-600' : ($isExpiring ? 'text-orange-600' : 'text-gray-700')) }}">
                                                 {{ $medicine->expiration_date->format('M d, Y') }}
                                             </span>
                                         </div>
-                                        @if($isExpiring)
+                                        @if($isExpired)
+                                            <span class="text-[10px] font-black uppercase tracking-widest text-red-500">
+                                                Expired
+                                            </span>
+                                        @elseif($isExpiringToday)
+                                            <span class="text-[10px] font-black uppercase tracking-widest text-amber-500">
+                                                Expires Today
+                                            </span>
+                                        @elseif($isExpiring)
                                             <span class="text-[10px] font-black uppercase tracking-widest text-orange-500">
                                                 Expiring Soon
                                             </span>
@@ -179,11 +211,23 @@
                                 @endif
                             </td>
                             <td class="px-8 py-6 text-right">
-                                <a href="{{ route('admin.medicines.edit', $medicine) }}"
-                                   class="inline-flex items-center px-5 py-2 rounded-xl bg-white border border-gray-200 text-xs font-bold text-gray-700 hover:bg-gray-50 hover:border-gray-300 hover:text-brand-600 transition-all active:scale-95 shadow-sm">
-                                    <i class="bi bi-pencil-square me-2"></i>
-                                    Edit
-                                </a>
+                                <div class="inline-flex items-center gap-2 whitespace-nowrap">
+                                    <a href="{{ route('admin.medicines.edit', $medicine) }}"
+                                       class="inline-flex items-center px-5 py-2 rounded-xl bg-white border border-gray-200 text-xs font-bold text-gray-700 hover:bg-gray-50 hover:border-gray-300 hover:text-brand-600 transition-all active:scale-95 shadow-sm">
+                                        <i class="bi bi-pencil-square me-2"></i>
+                                        Edit
+                                    </a>
+
+                                    <form action="{{ route('admin.medicines.destroy', $medicine) }}" method="POST" onsubmit="return confirm('Delete this medicine? This action cannot be undone.');" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                                class="inline-flex items-center px-5 py-2 rounded-xl bg-white border border-red-200 text-xs font-bold text-red-600 hover:bg-red-50 hover:border-red-300 transition-all active:scale-95 shadow-sm">
+                                            <i class="bi bi-trash me-2"></i>
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty

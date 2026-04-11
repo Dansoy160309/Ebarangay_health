@@ -65,7 +65,7 @@ Route::prefix('admin')
         // ===============================
         // Medicines
         // ===============================
-        Route::resource('medicines', AdminMedicineController::class)->except(['show', 'destroy']);
+        Route::resource('medicines', AdminMedicineController::class)->except(['show']);
         Route::get('medicines-distributions', [AdminMedicineController::class, 'distributions'])->name('medicines.distributions');
         Route::get('medicines-reports', [AdminMedicineController::class, 'reports'])->name('medicines.reports');
         Route::get('medicines-reports/export', [AdminMedicineController::class, 'exportExcel'])->name('medicines.reports.export');

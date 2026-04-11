@@ -31,20 +31,55 @@ class MedicineController extends Controller
         $medicines = $query->orderBy('generic_name')->paginate(15)->appends($request->query());
 
         $today = Carbon::today();
+        $expiringSoonThreshold = $today->copy()->addDays(30);
+
         $lowStockMedicines = Medicine::whereColumn('stock', '<=', 'reorder_level')->get();
-        $expiringSoonMedicines = Medicine::whereNotNull('expiration_date')
-            ->whereDate('expiration_date', '<=', $today->copy()->addDays(30))
+
+        $expiredMedicines = Medicine::whereNotNull('expiration_date')
+            ->whereDate('expiration_date', '<', $today)
             ->where('stock', '>', 0)
             ->get();
 
+        $expiringTodayMedicines = Medicine::whereNotNull('expiration_date')
+            ->whereDate('expiration_date', '=', $today)
+            ->where('stock', '>', 0)
+            ->get();
+
+        $expiringSoonMedicines = Medicine::whereNotNull('expiration_date')
+            ->whereDate('expiration_date', '>', $today)
+            ->whereDate('expiration_date', '<=', $expiringSoonThreshold)
+            ->where('stock', '>', 0)
+            ->get();
+
+        $expiringSupplyBatches = MedicineSupply::with('medicine')
+            ->whereNotNull('expiration_date')
+            ->whereDate('expiration_date', '>=', $today)
+            ->whereDate('expiration_date', '<=', $expiringSoonThreshold)
+            ->orderBy('expiration_date')
+            ->limit(5)
+            ->get();
+
         $lowStockIds = $lowStockMedicines->pluck('id')->all();
+        $expiredIds = $expiredMedicines->pluck('id')->all();
+        $expiringTodayIds = $expiringTodayMedicines->pluck('id')->all();
         $expiringSoonIds = $expiringSoonMedicines->pluck('id')->all();
 
         // Send deduplicated in-app notifications for medicine alerts.
         $this->notifyAdminsForLowStockMedicines($lowStockMedicines);
-        $this->notifyAdminsForExpiringMedicines($expiringSoonMedicines);
+        $this->notifyAdminsForExpiringMedicines($expiredMedicines, 'expired');
+        $this->notifyAdminsForExpiringMedicines(
+            $expiringTodayMedicines->merge($expiringSoonMedicines)->unique('id')->values(),
+            'expiring_soon'
+        );
 
-        return view('admin.medicines.index', compact('medicines', 'lowStockIds', 'expiringSoonIds'));
+        return view('admin.medicines.index', compact(
+            'medicines',
+            'lowStockIds',
+            'expiredIds',
+            'expiringTodayIds',
+            'expiringSoonIds',
+            'expiringSupplyBatches'
+        ));
     }
 
     public function create()
@@ -123,6 +158,20 @@ class MedicineController extends Controller
         $medicine->update($data);
 
         return redirect()->route('admin.medicines.index')->with('success', 'Medicine updated.');
+    }
+
+    public function destroy(Medicine $medicine)
+    {
+        $hasDistributionHistory = MedicineDistribution::where('medicine_id', $medicine->id)->exists();
+        $hasSupplyHistory = MedicineSupply::where('medicine_id', $medicine->id)->exists();
+
+        if ($hasDistributionHistory || $hasSupplyHistory) {
+            return redirect()->back()->with('error', 'Cannot delete medicine with stock/supply/distribution history.');
+        }
+
+        $medicine->delete();
+
+        return redirect()->route('admin.medicines.index')->with('success', 'Medicine deleted successfully.');
     }
 
     public function distributions(Request $request)
@@ -470,7 +519,7 @@ class MedicineController extends Controller
         }
     }
 
-    private function notifyAdminsForExpiringMedicines($medicines): void
+    private function notifyAdminsForExpiringMedicines($medicines, string $status): void
     {
         if ($medicines->isEmpty()) {
             return;
@@ -482,8 +531,6 @@ class MedicineController extends Controller
             if (!$medicine->expiration_date) {
                 continue;
             }
-
-            $status = $medicine->expiration_date->isPast() ? 'expired' : 'expiring_soon';
 
             foreach ($admins as $admin) {
                 $alreadyNotifiedToday = $admin->notifications()
