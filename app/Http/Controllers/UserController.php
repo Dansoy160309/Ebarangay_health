@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MedicineDistribution;
+use App\Models\MedicineSupply;
+use App\Models\VaccineAdministration;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -264,7 +267,40 @@ class UserController extends Controller
             return redirect()->back()->with('error', 'You cannot delete your own account.');
         }
 
-        $user->delete();
+        $blockingDependencies = [];
+
+        $dependencyCounts = [
+            'appointments' => $user->appointments()->count(),
+            'health records' => $user->healthRecords()->count(),
+            'created health records' => $user->createdHealthRecords()->count(),
+            'patient profile' => $user->patientProfile()->exists() ? 1 : 0,
+            'dependents' => $user->dependents()->count(),
+            'medicine distributions (patient)' => MedicineDistribution::where('patient_id', $user->id)->count(),
+            'medicine distributions (midwife)' => MedicineDistribution::where('midwife_id', $user->id)->count(),
+            'vaccine administrations (patient)' => VaccineAdministration::where('patient_id', $user->id)->count(),
+            'vaccine administrations (staff)' => VaccineAdministration::where('administered_by', $user->id)->count(),
+            'medicine supplies received' => MedicineSupply::where('received_by', $user->id)->count(),
+        ];
+
+        foreach ($dependencyCounts as $label => $count) {
+            if ($count > 0) {
+                $blockingDependencies[] = $label . ': ' . $count;
+            }
+        }
+
+        if (!empty($blockingDependencies)) {
+            return redirect()->back()->with(
+                'error',
+                'This user cannot be deleted because related medical records exist. Please deactivate the account instead. ' .
+                'Blocked records: ' . implode(', ', $blockingDependencies) . '.'
+            );
+        }
+
+        try {
+            $user->delete();
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'This user cannot be deleted because related records still exist. Please deactivate the account instead.');
+        }
 
         return redirect()->back()->with('success', 'User deleted successfully.');
     }
