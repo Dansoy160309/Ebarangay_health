@@ -124,10 +124,26 @@
 
     @include('components.status-legend')
 
-    <div class="mb-4 rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 text-xs text-amber-800 font-semibold flex items-center gap-2">
-        <i class="bi bi-hand-index-thumb text-amber-600"></i>
-        Manual reminders: click <span class="font-black">Reminder SMS</span> or <span class="font-black">Reminder Email</span> in each row to send.
-    </div>
+    @php
+        $hasManualReminderTargets = $appointments->getCollection()->contains(function ($appt) {
+            $isPastAppt = false;
+
+            if ($appt->scheduled_at) {
+                $isPastAppt = $appt->scheduled_at->isPast();
+            } elseif ($appt->slot) {
+                $isPastAppt = $appt->slot->isExpired();
+            }
+
+            return in_array($appt->status, ['pending', 'approved', 'rescheduled']) && !$isPastAppt;
+        });
+    @endphp
+
+    @if($hasManualReminderTargets)
+        <div class="mb-4 rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 text-xs text-amber-800 font-semibold flex items-center gap-2">
+            <i class="bi bi-hand-index-thumb text-amber-600"></i>
+            Click <span class="font-black">SMS</span> or <span class="font-black">Email</span> in the action column to send a manual reminder.
+        </div>
+    @endif
 
     {{-- Main List Container --}}
     <div class="space-y-6">
@@ -205,14 +221,14 @@
                         <div class="grid grid-cols-2 gap-2">
                             <form action="{{ route($routePrefix . '.appointments.send-reminder-sms', $appt->id) }}" method="POST">
                                 @csrf
-                                <button type="submit" class="w-full inline-flex items-center justify-center gap-1 bg-blue-50 text-blue-700 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border border-blue-100 hover:bg-blue-600 hover:text-white transition-all">
-                                    <i class="bi bi-chat-dots-fill"></i> Reminder SMS
+                                <button type="submit" title="Manual send reminder SMS" aria-label="Manual send reminder SMS" class="w-full inline-flex items-center justify-center gap-1 bg-blue-50 text-blue-700 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border border-blue-100 hover:bg-blue-600 hover:text-white transition-all">
+                                    <i class="bi bi-chat-dots-fill"></i> SMS
                                 </button>
                             </form>
                             <form action="{{ route($routePrefix . '.appointments.send-reminder-email', $appt->id) }}" method="POST">
                                 @csrf
-                                <button type="submit" class="w-full inline-flex items-center justify-center gap-1 bg-emerald-50 text-emerald-700 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all">
-                                    <i class="bi bi-envelope-fill"></i> Reminder Email
+                                <button type="submit" title="Manual send reminder Email" aria-label="Manual send reminder Email" class="w-full inline-flex items-center justify-center gap-1 bg-emerald-50 text-emerald-700 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all">
+                                    <i class="bi bi-envelope-fill"></i> Email
                                 </button>
                             </form>
                         </div>
@@ -323,13 +339,13 @@
                                             <div class="flex items-center gap-2">
                                                 <form action="{{ route($routePrefix . '.appointments.send-reminder-sms', $appt->id) }}" method="POST">
                                                     @csrf
-                                                    <button type="submit" class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border border-blue-100 hover:bg-blue-600 hover:text-white transition-all">
+                                                    <button type="submit" title="Manual send reminder SMS" aria-label="Manual send reminder SMS" class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border border-blue-100 hover:bg-blue-600 hover:text-white transition-all">
                                                         <i class="bi bi-chat-dots-fill"></i> SMS
                                                     </button>
                                                 </form>
                                                 <form action="{{ route($routePrefix . '.appointments.send-reminder-email', $appt->id) }}" method="POST">
                                                     @csrf
-                                                    <button type="submit" class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all">
+                                                    <button type="submit" title="Manual send reminder Email" aria-label="Manual send reminder Email" class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all">
                                                         <i class="bi bi-envelope-fill"></i> Email
                                                     </button>
                                                 </form>
