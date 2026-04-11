@@ -46,6 +46,12 @@ Route::prefix('midwife')
         Route::get('appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');
         Route::post('appointments/{appointment}/consult', [AppointmentController::class, 'consult'])->name('appointments.consult');
 
+        // Patient info access for dashboard alerts (view-only in UI)
+        Route::prefix('patients')->name('patients.')->group(function () {
+            Route::get('/', [HealthWorkerPatientController::class, 'index'])->name('index');
+            Route::get('{patient}', [HealthWorkerPatientController::class, 'show'])->name('show');
+        });
+
         Route::resource('health-records', HealthRecordController::class);
 
         Route::resource('slots', SlotController::class);

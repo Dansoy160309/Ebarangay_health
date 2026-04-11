@@ -22,6 +22,15 @@
     class="relative min-h-screen bg-[#f8fafc] overflow-hidden" 
     x-data="{ showDependentModal: {{ request()->boolean('add_dependent') ? 'true' : 'false' }} }"
 >
+    @php
+        $isMidwifeView = auth()->user()->isMidwife();
+        $dashboardRoute = $isMidwifeView ? 'midwife.dashboard' : 'healthworker.dashboard';
+        $patientRoutePrefix = $isMidwifeView ? 'midwife' : 'healthworker';
+        $isDependent = $patient->guardian_id && $patient->guardian;
+        $displayContactNo = $isDependent ? ($patient->guardian->contact_no ?? $patient->contact_no) : $patient->contact_no;
+        $displayEmail = $isDependent ? ($patient->guardian->email ?? $patient->email) : $patient->email;
+    @endphp
+
     {{-- Decorative Background Elements --}}
     <div class="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-brand-50/50 to-transparent -z-10"></div>
     <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand-200/20 rounded-full blur-[120px] -z-10 animate-pulse"></div>
@@ -31,11 +40,11 @@
         {{-- Breadcrumb / Header Navigation --}}
         <nav class="mb-10 flex items-center justify-between">
             <div class="flex items-center gap-3 text-sm">
-                <a href="{{ route('midwife.dashboard') }}" class="w-10 h-10 rounded-xl bg-white shadow-sm border border-gray-100 flex items-center justify-center text-gray-500 hover:text-brand-600 hover:shadow-md transition-all duration-300">
+                <a href="{{ route($dashboardRoute) }}" class="w-10 h-10 rounded-xl bg-white shadow-sm border border-gray-100 flex items-center justify-center text-gray-500 hover:text-brand-600 hover:shadow-md transition-all duration-300">
                     <i class="bi bi-house-door-fill"></i>
                 </a>
                 <i class="bi bi-chevron-right text-[10px] text-gray-300"></i>
-                <a href="{{ route('healthworker.patients.index') }}" class="px-4 py-2 rounded-xl bg-white shadow-sm border border-gray-100 font-bold text-gray-500 hover:text-brand-600 hover:shadow-md transition-all duration-300">
+                <a href="{{ route($patientRoutePrefix . '.patients.index') }}" class="px-4 py-2 rounded-xl bg-white shadow-sm border border-gray-100 font-bold text-gray-500 hover:text-brand-600 hover:shadow-md transition-all duration-300">
                     Patients
                 </a>
                 <i class="bi bi-chevron-right text-[10px] text-gray-300"></i>
@@ -44,10 +53,17 @@
                 </span>
             </div>
             
+            @if(!$isMidwifeView)
             <a href="{{ route('healthworker.patients.edit', $patient->id) }}" class="flex items-center gap-2 px-6 py-3 bg-white border border-gray-100 rounded-2xl text-sm font-black text-gray-700 hover:bg-brand-50 hover:text-brand-600 hover:border-brand-200 transition-all duration-300 shadow-sm hover:shadow-md group">
                 <i class="bi bi-pencil-square text-brand-500 group-hover:scale-110 transition-transform"></i>
                 Edit Profile
             </a>
+            @else
+            <span class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-50 text-blue-700 border border-blue-100 text-[10px] font-black uppercase tracking-widest">
+                <i class="bi bi-eye-fill"></i>
+                View Only
+            </span>
+            @endif
         </nav>
 
         {{-- Main Content Grid --}}
@@ -96,14 +112,19 @@
                         </span>
                         Contact Details
                     </h3>
+                    @if($isDependent)
+                        <div class="rounded-2xl border border-amber-100 bg-amber-50/70 px-4 py-3 text-[10px] font-bold text-amber-700 uppercase tracking-widest">
+                            Inherited from account holder: {{ $patient->guardian->full_name }}
+                        </div>
+                    @endif
                     <div class="space-y-4">
                         <div class="p-4 rounded-2xl bg-gray-50/50 border border-gray-50 group hover:border-brand-100 transition-all duration-300">
                             <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Phone Number</p>
-                            <p class="text-sm font-bold text-gray-900">{{ $patient->contact_no }}</p>
+                            <p class="text-sm font-bold text-gray-900">{{ $displayContactNo }}</p>
                         </div>
                         <div class="p-4 rounded-2xl bg-gray-50/50 border border-gray-50 group hover:border-brand-100 transition-all duration-300">
                             <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Email Address</p>
-                            <p class="text-sm font-bold text-gray-900 truncate">{{ $patient->email }}</p>
+                            <p class="text-sm font-bold text-gray-900 truncate">{{ $displayEmail }}</p>
                         </div>
                         <div class="p-4 rounded-2xl bg-gray-50/50 border border-gray-50 group hover:border-brand-100 transition-all duration-300">
                             <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Residence</p>
@@ -182,6 +203,7 @@
                             <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Optional</span>
                         </div>
 
+                        @if(!$isMidwifeView)
                         <button
                             type="button"
                             @click="showDependentModal = true"
@@ -202,6 +224,7 @@
                                 </div>
                             </div>
                         </button>
+                        @endif
 
                         <div class="mt-6">
                             <div class="flex items-center justify-between mb-4">
@@ -226,7 +249,7 @@
                                                     </p>
                                                 </div>
                                             </div>
-                                            <a href="{{ route('healthworker.patients.show', $dependent->id) }}"
+                                            <a href="{{ route($patientRoutePrefix . '.patients.show', $dependent->id) }}"
                                                class="px-3 py-2 rounded-xl bg-white border border-gray-200 text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-brand-600 hover:border-brand-200 transition-all shrink-0">
                                                 View
                                             </a>
@@ -248,7 +271,7 @@
     </div>
 
     <!-- Add Dependent Modal -->
-    @if(!$patient->guardian_id)
+    @if(!$patient->guardian_id && !$isMidwifeView)
     <div 
         x-show="showDependentModal" 
         x-cloak 

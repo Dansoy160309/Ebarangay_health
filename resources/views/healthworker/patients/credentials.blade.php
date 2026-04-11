@@ -130,8 +130,60 @@
 
     async function downloadCredentials(format) {
         const html2canvas = await loadHtml2Canvas();
-        const element = document.getElementById('printableCredentials');
-        const canvas = await html2canvas(element, { backgroundColor: '#ffffff', scale: 2 });
+        const email = document.getElementById('credentialEmail').value;
+        const password = document.getElementById('credentialPassword').value;
+
+        // Build a dedicated export card so the downloaded PNG is clean and presentation-ready.
+        const exportWrapper = document.createElement('div');
+        exportWrapper.style.position = 'fixed';
+        exportWrapper.style.left = '-99999px';
+        exportWrapper.style.top = '0';
+        exportWrapper.style.width = '960px';
+        exportWrapper.style.padding = '36px';
+        exportWrapper.style.background = '#f8fafc';
+        exportWrapper.style.fontFamily = 'Segoe UI, Arial, sans-serif';
+
+        exportWrapper.innerHTML = `
+            <div style="background:#ffffff;border:1px solid #e5e7eb;border-radius:26px;box-shadow:0 20px 35px rgba(15,23,42,.08);overflow:hidden;">
+                <div style="padding:28px 34px 18px;background:linear-gradient(180deg, rgba(14,165,233,.08), rgba(255,255,255,0));border-bottom:1px solid #f1f5f9;">
+                    <div style="font-size:30px;font-weight:800;color:#0f172a;letter-spacing:-.02em;">E-Barangay Health</div>
+                    <div style="font-size:17px;font-weight:700;color:#1e293b;margin-top:2px;">New Patient Credentials</div>
+                    <div style="font-size:12px;color:#64748b;margin-top:6px;">Give this securely to the patient and advise password change after first login.</div>
+                </div>
+
+                <div style="padding:24px 34px 20px;">
+                    <div style="display:flex;gap:10px;margin-bottom:16px;">
+                        <span style="padding:6px 12px;border-radius:999px;background:#eff6ff;border:1px solid #dbeafe;color:#2563eb;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;">Privacy Protected</span>
+                        <span style="padding:6px 12px;border-radius:999px;background:#ecfdf5;border:1px solid #d1fae5;color:#059669;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;">HIPAA Compliant</span>
+                    </div>
+
+                    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:20px;padding:20px;">
+                        <div style="margin-bottom:14px;">
+                            <div style="font-size:11px;font-weight:800;color:#94a3b8;letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px;">Email Address</div>
+                            <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:14px 16px;font-size:22px;font-weight:800;color:#0f172a;word-break:break-all;line-height:1.2;">${email}</div>
+                        </div>
+                        <div>
+                            <div style="font-size:11px;font-weight:800;color:#94a3b8;letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px;">Generated Password</div>
+                            <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:14px 16px;font-size:28px;font-weight:900;color:#0ea5e9;letter-spacing:.08em;font-family:Consolas, Menlo, Monaco, monospace;">${password}</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:14px;padding:12px 14px;font-size:13px;color:#9a3412;line-height:1.45;">
+                        <strong style="text-transform:uppercase;letter-spacing:.06em;">Security Notice:</strong>
+                        Ask the patient to change this password after first login.
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(exportWrapper);
+
+        const canvas = await html2canvas(exportWrapper, {
+            backgroundColor: '#f8fafc',
+            scale: 2,
+            useCORS: true,
+            logging: false,
+        });
         const mimeType = format === 'jpg' ? 'image/jpeg' : 'image/png';
         const fileName = `patient-credentials.${format}`;
         const link = document.createElement('a');
@@ -140,6 +192,7 @@
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        document.body.removeChild(exportWrapper);
     }
 </script>
 @endsection

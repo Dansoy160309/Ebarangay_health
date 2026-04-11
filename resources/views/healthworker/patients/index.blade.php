@@ -4,6 +4,15 @@
 @section('title', 'Patients Management')
 
 @section('content')
+@php
+    $isMidwifeView = auth()->user()->isMidwife();
+    $patientRoutePrefix = $isMidwifeView ? 'midwife' : 'healthworker';
+    $alertLabels = [
+        'high_risk' => 'High-Risk Pregnancies',
+        'overdue_prenatal' => 'Overdue Prenatal',
+        'immunization_due' => 'Immunization Due',
+    ];
+@endphp
 <div class="flex flex-col gap-4 sm:gap-5">
     
     {{-- Top-Aligned Compact Header --}}
@@ -25,37 +34,53 @@
             </div>
 
             <div class="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto">
+                @if(!$isMidwifeView)
                 <a href="{{ route('healthworker.patients.create') }}" 
                    class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-brand-600 text-white font-black text-[9px] sm:text-xs uppercase tracking-tighter shadow-lg shadow-brand-500/15 hover:bg-brand-700 hover:scale-105 transition-all transform group shrink-0">
                     <i class="bi bi-person-plus-fill mr-1.5 group-hover:rotate-12 transition-transform text-xs"></i>
                     Add New Patient
                 </a>
+                @endif
             </div>
         </div>
     </div>
+
+    @if(!empty($alert) && isset($alertLabels[$alert]))
+    <div class="bg-blue-50 border border-blue-100 rounded-2xl px-4 py-3 flex items-center justify-between gap-3">
+        <p class="text-xs font-black text-blue-700 uppercase tracking-widest">
+            Showing: {{ $alertLabels[$alert] }}
+        </p>
+        <a href="{{ route($patientRoutePrefix . '.patients.index', ['type' => $type, 'search' => $search]) }}" class="text-[10px] font-black uppercase tracking-widest text-blue-600 hover:underline">
+            Clear Filter
+        </a>
+    </div>
+    @endif
 
     {{-- Filter & Search Section (More Compact) --}}
     <div class="bg-white rounded-2xl shadow-md shadow-gray-200/30 border border-gray-100 p-4 sm:p-5">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             {{-- Filter Tabs --}}
             <div class="flex items-center p-1 bg-gray-50 rounded-lg border border-gray-100 overflow-x-auto no-scrollbar">
-                <a href="{{ route('healthworker.patients.index', ['type' => 'all']) }}"
+                <a href="{{ route($patientRoutePrefix . '.patients.index', ['type' => 'all', 'alert' => $alert]) }}"
                    class="px-3.5 py-1.5 rounded-md text-xs font-black uppercase tracking-tighter transition-all whitespace-nowrap {{ $type === 'all' ? 'bg-brand-600 text-white shadow-md' : 'text-gray-400 hover:text-gray-600' }}">
                    All
                 </a>
-                <a href="{{ route('healthworker.patients.index', ['type' => 'account_holder']) }}"
+                <a href="{{ route($patientRoutePrefix . '.patients.index', ['type' => 'account_holder', 'alert' => $alert]) }}"
                    class="px-3.5 py-1.5 rounded-md text-[9px] font-black uppercase tracking-tighter transition-all whitespace-nowrap {{ $type === 'account_holder' ? 'bg-brand-600 text-white shadow-md' : 'text-gray-400 hover:text-gray-600' }}">
                    Account Holders
                 </a>
-                <a href="{{ route('healthworker.patients.index', ['type' => 'dependent']) }}"
+                <a href="{{ route($patientRoutePrefix . '.patients.index', ['type' => 'dependent', 'alert' => $alert]) }}"
                    class="px-3.5 py-1.5 rounded-md text-[9px] font-black uppercase tracking-tighter transition-all whitespace-nowrap {{ $type === 'dependent' ? 'bg-brand-600 text-white shadow-md' : 'text-gray-400 hover:text-gray-600' }}">
                    Dependents
                 </a>
             </div>
 
             {{-- Search Input --}}
-            <form action="{{ route('healthworker.patients.index') }}" method="GET" class="relative w-full lg:max-w-md group">
+            <form action="{{ route($patientRoutePrefix . '.patients.index') }}" method="GET" class="relative w-full lg:max-w-md group">
                 <input type="hidden" name="type" value="{{ $type }}">
+                @if(!empty($alert))
+                <input type="hidden" name="alert" value="{{ $alert }}">
+                @endif
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
                     <i class="bi bi-search text-[10px]"></i>
                 </div>
@@ -122,21 +147,23 @@
                 </div>
 
                 <div class="flex gap-2">
-                    @if(!$patient->isDependent())
+                    @if(!$isMidwifeView && !$patient->isDependent())
                         <a href="{{ route('healthworker.patients.show', ['patient' => $patient->id, 'add_dependent' => 1]) }}" 
                            class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center hover:bg-purple-600 hover:text-white transition-colors border border-purple-100"
                            title="Add Dependent">
                             <i class="bi bi-person-plus-fill"></i>
                         </a>
                     @endif
-                    <a href="{{ route('healthworker.patients.show', $patient->id) }}" 
+                    <a href="{{ route($patientRoutePrefix . '.patients.show', $patient->id) }}" 
                        class="flex-1 px-5 py-3 rounded-xl bg-brand-600 text-white text-sm font-bold shadow-lg shadow-brand-600/20 hover:bg-brand-700 transition-all flex items-center justify-center gap-2">
                         <i class="bi bi-person-lines-fill"></i> View Profile
                     </a>
+                    @if(!$isMidwifeView)
                     <a href="{{ route('healthworker.patients.edit', $patient->id) }}" 
                        class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center hover:bg-amber-100 transition-colors border border-amber-100">
                         <i class="bi bi-pencil-fill"></i>
                     </a>
+                    @endif
                 </div>
             </div>
         @empty
@@ -238,23 +265,25 @@
 
                             <td class="px-8 py-5 whitespace-nowrap text-right">
                                 <div class="flex items-center justify-end gap-2">
-                                    @if(!$patient->isDependent())
+                                    @if(!$isMidwifeView && !$patient->isDependent())
                                         <a href="{{ route('healthworker.patients.show', ['patient' => $patient->id, 'add_dependent' => 1]) }}"
                                            class="p-2.5 bg-purple-50 text-purple-600 rounded-xl hover:bg-purple-600 hover:text-white transition-all duration-300"
                                            title="Add Dependent">
                                             <i class="bi bi-person-plus-fill"></i>
                                         </a>
                                     @endif
-                                    <a href="{{ route('healthworker.patients.show', $patient->id) }}"
+                                    <a href="{{ route($patientRoutePrefix . '.patients.show', $patient->id) }}"
                                        class="p-2.5 bg-brand-50 text-brand-600 rounded-xl hover:bg-brand-600 hover:text-white transition-all duration-300"
                                        title="View Profile">
                                         <i class="bi bi-eye-fill"></i>
                                     </a>
+                                    @if(!$isMidwifeView)
                                     <a href="{{ route('healthworker.patients.edit', $patient->id) }}"
                                        class="p-2.5 bg-amber-50 text-amber-600 rounded-xl hover:bg-amber-600 hover:text-white transition-all duration-300"
                                        title="Edit Details">
                                         <i class="bi bi-pencil-fill"></i>
                                     </a>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

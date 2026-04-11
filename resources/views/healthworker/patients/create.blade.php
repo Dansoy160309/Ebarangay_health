@@ -15,6 +15,17 @@
     cursor: pointer;
     filter: invert(38%) sepia(6%) saturate(945%) hue-rotate(175deg) brightness(93%) contrast(88%);
 }
+
+/* Keep autofilled fields visually consistent with white input backgrounds */
+.patient-form input:-webkit-autofill,
+.patient-form input:-webkit-autofill:hover,
+.patient-form input:-webkit-autofill:focus,
+.patient-form textarea:-webkit-autofill,
+.patient-form select:-webkit-autofill {
+    -webkit-text-fill-color: #111827;
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
 </style>
 
 @section('content')
@@ -92,7 +103,7 @@
         </div>
     @endif
 
-    <form action="{{ route('healthworker.patients.store') }}" method="POST" class="space-y-6" x-data="{ hasAccount: true }">
+    <form action="{{ route('healthworker.patients.store') }}" method="POST" class="space-y-6 patient-form" x-data="{ hasAccount: true }">
         @csrf
 
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6 space-y-6">
@@ -174,49 +185,49 @@
                     <div class="space-y-3 lg:col-span-2">
                         <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Home Address</label>
                         <input type="text" name="address" value="{{ old('address') }}"
-                               class="block w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 shadow-inner transition-all" required>
+                               class="block w-full px-6 py-4 bg-white border border-gray-200 rounded-2xl focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 shadow-inner transition-all" required>
                     </div>
 
                     <div class="space-y-3">
                         <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Purok</label>
                         <input type="text" name="purok" value="{{ old('purok') }}"
-                               class="block w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 shadow-inner transition-all" required>
+                               class="block w-full px-6 py-4 bg-white border border-gray-200 rounded-2xl focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 shadow-inner transition-all" required>
                     </div>
 
                     <div class="space-y-3">
                         <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Family Number <span class="text-gray-300">(Optional)</span></label>
                         <input type="text" name="family_no" value="{{ old('family_no') }}"
-                               class="block w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 shadow-inner transition-all">
+                               class="block w-full px-6 py-4 bg-white border border-gray-200 rounded-2xl focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 shadow-inner transition-all">
                     </div>
 
                     <div class="space-y-3">
                         <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Primary Contact Number</label>
                         <input type="text" name="contact_no" value="{{ old('contact_no') }}"
-                               class="block w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 shadow-inner transition-all" required>
+                               class="block w-full px-6 py-4 bg-white border border-gray-200 rounded-2xl focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 shadow-inner transition-all" required>
                     </div>
 
                     <div class="space-y-3">
                         <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Emergency Contact Name</label>
                         <input type="text" name="emergency_contact_name" value="{{ old('emergency_contact_name') }}" placeholder="Full Name"
-                               class="block w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 shadow-inner transition-all">
+                               class="block w-full px-6 py-4 bg-white border border-gray-200 rounded-2xl focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 shadow-inner transition-all">
                     </div>
 
                     <div class="space-y-3">
                         <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Relationship</label>
                         <input type="text" name="emergency_contact_relationship" value="{{ old('emergency_contact_relationship') }}" placeholder="e.g. Spouse, Parent"
-                               class="block w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 shadow-inner transition-all">
+                               class="block w-full px-6 py-4 bg-white border border-gray-200 rounded-2xl focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 shadow-inner transition-all">
                     </div>
 
                     <div class="space-y-3">
                         <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Emergency Phone Number</label>
                         <input type="text" name="emergency_no" value="{{ old('emergency_no') }}" placeholder="e.g. 0912..."
-                               class="block w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 shadow-inner transition-all">
+                               class="block w-full px-6 py-4 bg-white border border-gray-200 rounded-2xl focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 shadow-inner transition-all">
                     </div>
 
                     <div class="space-y-3 lg:col-span-2" x-show="hasAccount">
                         <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Email Address</label>
                         <input type="email" name="email" value="{{ old('email') }}" placeholder="patient@example.com"
-                               class="block w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 shadow-inner transition-all">
+                               class="block w-full px-6 py-4 bg-white border border-gray-200 rounded-2xl focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 shadow-inner transition-all">
                         <p class="text-[9px] font-bold text-brand-500 uppercase tracking-widest ml-4 mt-2">
                             <i class="bi bi-info-circle mr-1"></i> A secure password will be automatically generated upon creation.
                         </p>

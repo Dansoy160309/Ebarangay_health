@@ -22,6 +22,7 @@ class PatientController extends Controller
     {
         $type = $request->query('type', 'all');
         $search = $request->query('search');
+        $alert = $request->query('alert');
 
         $query = Patient::with('guardian');
 
@@ -41,9 +42,32 @@ class PatientController extends Controller
             });
         }
 
-        $patients = $query->latest()->paginate(10)->appends(['type' => $type, 'search' => $search]);
+        // Optional dashboard alert filters for focused midwife monitoring views.
+        if ($alert === 'high_risk') {
+            $query->whereHas('patientProfile', function ($q) {
+                $q->where('is_high_risk', true)
+                  ->where(function ($sq) {
+                      $sq->where(function ($x) {
+                          $x->whereNotNull('edd')->where('edd', '>=', now());
+                      })->orWhere(function ($x) {
+                          $x->whereNotNull('lmp')->where('lmp', '>=', now()->subWeeks(42));
+                      });
+                  });
+            })->where('gender', 'Female');
+        } elseif ($alert === 'overdue_prenatal') {
+            $query->whereHas('patientProfile', function ($q) {
+                $q->whereNotNull('edd')
+                  ->where('edd', '>=', now());
+            })->where('gender', 'Female');
+        } elseif ($alert === 'immunization_due') {
+            $query->whereHas('patientProfile', function ($q) {
+                $q->where('is_fully_immunized', false);
+            })->whereDate('dob', '>=', now()->subYears(5));
+        }
+
+        $patients = $query->latest()->paginate(10)->appends(['type' => $type, 'search' => $search, 'alert' => $alert]);
         
-        return view('healthworker.patients.index', compact('patients', 'type', 'search'));
+        return view('healthworker.patients.index', compact('patients', 'type', 'search', 'alert'));
     }
 
     // 📄 View patient details
