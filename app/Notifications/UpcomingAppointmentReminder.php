@@ -5,6 +5,7 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use App\Models\Appointment;
+use App\Services\TemplateService;
 
 use App\Channels\PhilSmsChannel;
 
@@ -34,9 +35,22 @@ class UpcomingAppointmentReminder extends Notification
             return [];
         }
 
+        $body = null;
+        try {
+            $this->appointment->loadMissing(['user.guardian', 'slot']);
+            $rendered = TemplateService::render('appointment_reminder_sms', $this->appointment);
+            $body = $rendered['body'] ?? null;
+        } catch (\Throwable $e) {
+            $body = null;
+        }
+
+        if (!$body) {
+            $body = 'Reminder: You have an appointment for ' . $this->appointment->service . ' on ' . $this->appointment->formatted_date . ' at ' . $this->appointment->formatted_time . '. Please arrive 15 mins early.';
+        }
+
         return [
             'recipient' => $notifiable->contact_no,
-            'body'      => 'Reminder: You have an appointment for ' . $this->appointment->service . ' on ' . $this->appointment->formatted_date . ' at ' . $this->appointment->formatted_time . '. Please arrive 15 mins early.',
+            'body'      => $body,
         ];
     }
 

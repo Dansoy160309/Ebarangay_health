@@ -11,6 +11,7 @@ class MessageTemplate extends Model
 
     protected $fillable = [
         'type',
+        'template_key',
         'name',
         'subject',
         'body',
@@ -58,10 +59,26 @@ class MessageTemplate extends Model
     }
 
     /**
+     * Scope: get by template key
+     */
+    public function scopeByTemplateKey($query, $templateKey)
+    {
+        return $query->where('template_key', $templateKey);
+    }
+
+    /**
      * Get the latest active template for a given type
      */
     public static function getActiveTemplate($type)
     {
         return self::byType($type)->active()->latest()->first();
+    }
+
+    /**
+     * Get the active template for a given template key
+     */
+    public static function getActiveTemplateByKey(string $templateKey)
+    {
+        return self::byTemplateKey($templateKey)->active()->latest()->first();
     }
 }

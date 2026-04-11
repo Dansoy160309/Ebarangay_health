@@ -22,6 +22,8 @@ Route::prefix('doctor')
 
         // Appointments
         Route::get('appointments', [AppointmentController::class, 'index'])->name('appointments.index');
+        Route::post('appointments/{appointment}/send-reminder-sms', [AppointmentController::class, 'sendReminderSms'])->name('appointments.send-reminder-sms');
+        Route::post('appointments/{appointment}/send-reminder-email', [AppointmentController::class, 'sendReminderEmail'])->name('appointments.send-reminder-email');
         Route::get('appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');
         Route::post('appointments/{appointment}/consult', [AppointmentController::class, 'consult'])->name('appointments.consult');
 

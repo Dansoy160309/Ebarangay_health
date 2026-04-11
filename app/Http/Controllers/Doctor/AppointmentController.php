@@ -5,9 +5,15 @@ namespace App\Http\Controllers\Doctor;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Appointment;
+use App\Models\MessageDispatchLog;
+use App\Models\MessageTemplate;
 use App\Models\HealthRecord;
 use App\Models\Service;
+use App\Mail\DefaulterRecallMail;
+use App\Notifications\UpcomingAppointmentReminder;
+use App\Services\TemplateService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class AppointmentController extends Controller
 {
@@ -307,5 +313,153 @@ class AppointmentController extends Controller
         $user = auth()->user();
         $routePrefix = $user->isMidwife() ? 'midwife' : 'doctor';
         return redirect()->route($routePrefix . '.appointments.index')->with('success', 'Consultation completed successfully.');
+    }
+
+    /**
+     * Manual send: appointment reminder SMS (staff-triggered)
+     */
+    public function sendReminderSms(Appointment $appointment)
+    {
+        try {
+            $appointment->load(['user.guardian', 'slot']);
+
+            $patient = $appointment->user;
+            $target = ($patient && $patient->isDependent() && $patient->guardian)
+                ? $patient->guardian
+                : $patient;
+
+            if (!$target || empty($target->contact_no)) {
+                MessageDispatchLog::create([
+                    'appointment_id' => $appointment->id,
+                    'patient_user_id' => $patient?->id,
+                    'sender_user_id' => auth()->id(),
+                    'template_id' => null,
+                    'category' => 'appointment_reminder',
+                    'channel' => 'sms',
+                    'stage' => 1,
+                    'trigger_mode' => 'manual',
+                    'status' => 'skipped',
+                    'reason' => 'missing_contact_number',
+                    'sent_at' => now(),
+                ]);
+
+                return redirect()->back()->with('error', 'No contact number found for reminder SMS.');
+            }
+
+            // Uses appointment_reminder_sms template via notification class
+            $target->notify(new UpcomingAppointmentReminder($appointment));
+
+            $templateId = MessageTemplate::query()
+                ->where('template_key', 'appointment_reminder_sms')
+                ->where('is_active', true)
+                ->value('id');
+
+            MessageDispatchLog::create([
+                'appointment_id' => $appointment->id,
+                'patient_user_id' => $patient?->id,
+                'sender_user_id' => auth()->id(),
+                'template_id' => $templateId,
+                'category' => 'appointment_reminder',
+                'channel' => 'sms',
+                'stage' => 1,
+                'trigger_mode' => 'manual',
+                'status' => 'sent',
+                'recipient' => $target->contact_no,
+                'sent_at' => now(),
+            ]);
+
+            return redirect()->back()->with('success', 'Reminder SMS sent successfully.');
+        } catch (\Throwable $e) {
+            MessageDispatchLog::create([
+                'appointment_id' => $appointment->id,
+                'patient_user_id' => $appointment->user_id,
+                'sender_user_id' => auth()->id(),
+                'template_id' => null,
+                'category' => 'appointment_reminder',
+                'channel' => 'sms',
+                'stage' => 1,
+                'trigger_mode' => 'manual',
+                'status' => 'failed',
+                'reason' => 'send_exception',
+                'provider_response' => $e->getMessage(),
+                'sent_at' => now(),
+            ]);
+
+            return redirect()->back()->with('error', 'Failed to send reminder SMS.');
+        }
+    }
+
+    /**
+     * Manual send: appointment reminder email (staff-triggered)
+     */
+    public function sendReminderEmail(Appointment $appointment)
+    {
+        try {
+            $appointment->load(['user.guardian', 'slot']);
+
+            $patient = $appointment->user;
+            $recipient = ($patient && $patient->isDependent() && $patient->guardian)
+                ? $patient->guardian->email
+                : $patient->email;
+
+            if (empty($recipient)) {
+                MessageDispatchLog::create([
+                    'appointment_id' => $appointment->id,
+                    'patient_user_id' => $patient?->id,
+                    'sender_user_id' => auth()->id(),
+                    'template_id' => null,
+                    'category' => 'appointment_reminder',
+                    'channel' => 'email',
+                    'stage' => 1,
+                    'trigger_mode' => 'manual',
+                    'status' => 'skipped',
+                    'reason' => 'missing_email',
+                    'sent_at' => now(),
+                ]);
+
+                return redirect()->back()->with('error', 'No email found for reminder email.');
+            }
+
+            $rendered = TemplateService::render('appointment_reminder_email', $appointment);
+
+            Mail::to($recipient)->send(new DefaulterRecallMail(
+                $rendered['subject'] ?? 'Appointment Reminder',
+                $rendered['body'],
+                $recipient
+            ));
+
+            MessageDispatchLog::create([
+                'appointment_id' => $appointment->id,
+                'patient_user_id' => $patient?->id,
+                'sender_user_id' => auth()->id(),
+                'template_id' => $rendered['template_id'] ?? null,
+                'category' => 'appointment_reminder',
+                'channel' => 'email',
+                'stage' => 1,
+                'trigger_mode' => 'manual',
+                'status' => 'sent',
+                'recipient' => $recipient,
+                'sent_at' => now(),
+            ]);
+
+            return redirect()->back()->with('success', 'Reminder email sent successfully.');
+        } catch (\Throwable $e) {
+            MessageDispatchLog::create([
+                'appointment_id' => $appointment->id,
+                'patient_user_id' => $appointment->user_id,
+                'sender_user_id' => auth()->id(),
+                'template_id' => null,
+                'category' => 'appointment_reminder',
+                'channel' => 'email',
+                'stage' => 1,
+                'trigger_mode' => 'manual',
+                'status' => 'failed',
+                'reason' => 'send_exception',
+                'provider_response' => $e->getMessage(),
+                'sent_at' => now(),
+            ]);
+
+            return redirect()->back()->with('error', 'Failed to send reminder email.');
+        }
     }
 }

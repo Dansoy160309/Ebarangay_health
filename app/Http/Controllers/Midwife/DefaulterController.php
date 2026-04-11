@@ -112,7 +112,7 @@ class DefaulterController extends Controller
             }
 
             // Render template with fresh appointment data
-            $rendered = TemplateService::render('email', $appointment);
+            $rendered = TemplateService::render('defaulter_recall_email', $appointment);
 
             // Send email via Hostinger SMTP
             Mail::to($contactEmail)->send(new DefaulterRecallMail(
@@ -214,7 +214,7 @@ class DefaulterController extends Controller
             }
 
             // Render SMS template with fresh data
-            $rendered = TemplateService::render('sms', $appointment);
+            $rendered = TemplateService::render('defaulter_recall_sms', $appointment);
 
             // Send via notification (which uses PhilSMS channel)
             $patient->notify(new DefaulterRecallNotification($appointment, $rendered['body']));

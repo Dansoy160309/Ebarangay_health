@@ -124,6 +124,11 @@
 
     @include('components.status-legend')
 
+    <div class="mb-4 rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 text-xs text-amber-800 font-semibold flex items-center gap-2">
+        <i class="bi bi-hand-index-thumb text-amber-600"></i>
+        Manual reminders: click <span class="font-black">Reminder SMS</span> or <span class="font-black">Reminder Email</span> in each row to send.
+    </div>
+
     {{-- Main List Container --}}
     <div class="space-y-6">
         
@@ -192,15 +197,36 @@
                     </div>
 
                     {{-- Footer Actions --}}
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2 text-gray-400 text-[10px] font-black uppercase tracking-widest">
+                    @php
+                        $canManualReminder = in_array($appt->status, ['pending', 'approved', 'rescheduled']) && !$isPastAppt;
+                    @endphp
+                    <div class="flex flex-col gap-3">
+                        @if($canManualReminder)
+                        <div class="grid grid-cols-2 gap-2">
+                            <form action="{{ route($routePrefix . '.appointments.send-reminder-sms', $appt->id) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="w-full inline-flex items-center justify-center gap-1 bg-blue-50 text-blue-700 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border border-blue-100 hover:bg-blue-600 hover:text-white transition-all">
+                                    <i class="bi bi-chat-dots-fill"></i> Reminder SMS
+                                </button>
+                            </form>
+                            <form action="{{ route($routePrefix . '.appointments.send-reminder-email', $appt->id) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="w-full inline-flex items-center justify-center gap-1 bg-emerald-50 text-emerald-700 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all">
+                                    <i class="bi bi-envelope-fill"></i> Reminder Email
+                                </button>
+                            </form>
+                        </div>
+                        @endif
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2 text-gray-400 text-[10px] font-black uppercase tracking-widest">
                             <i class="bi bi-calendar4-week text-sm"></i>
                             {{ $appt->scheduled_at ? $appt->scheduled_at->format('M d, Y') : '-' }}
+                            </div>
+                            <a href="{{ route($routePrefix . '.appointments.show', $appt->id) }}" 
+                               class="inline-flex items-center gap-2 bg-brand-600 text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.15em] hover:bg-brand-700 shadow-lg shadow-brand-600/20 transition-all">
+                                Review <i class="bi bi-arrow-right text-lg"></i>
+                            </a>
                         </div>
-                        <a href="{{ route($routePrefix . '.appointments.show', $appt->id) }}" 
-                           class="inline-flex items-center gap-2 bg-brand-600 text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.15em] hover:bg-brand-700 shadow-lg shadow-brand-600/20 transition-all">
-                            Review <i class="bi bi-arrow-right text-lg"></i>
-                        </a>
                     </div>
                 </div>
             @empty
@@ -289,10 +315,31 @@
                                     </span>
                                 </td>
                                 <td class="px-8 py-6 text-right">
-                                    <a href="{{ route($routePrefix . '.appointments.show', $appt->id) }}" 
-                                       class="inline-flex items-center gap-2 bg-gray-50 text-gray-400 px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-600 hover:text-white transition-all shadow-sm hover:shadow-brand-600/20 active:scale-[0.98]">
-                                        Review <i class="bi bi-chevron-right text-lg"></i>
-                                    </a>
+                                    @php
+                                        $canManualReminder = in_array($appt->status, ['pending', 'approved', 'rescheduled']) && !$isPastAppt;
+                                    @endphp
+                                    <div class="inline-flex flex-col items-end gap-2">
+                                        @if($canManualReminder)
+                                            <div class="flex items-center gap-2">
+                                                <form action="{{ route($routePrefix . '.appointments.send-reminder-sms', $appt->id) }}" method="POST">
+                                                    @csrf
+                                                    <button type="submit" class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border border-blue-100 hover:bg-blue-600 hover:text-white transition-all">
+                                                        <i class="bi bi-chat-dots-fill"></i> SMS
+                                                    </button>
+                                                </form>
+                                                <form action="{{ route($routePrefix . '.appointments.send-reminder-email', $appt->id) }}" method="POST">
+                                                    @csrf
+                                                    <button type="submit" class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all">
+                                                        <i class="bi bi-envelope-fill"></i> Email
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        @endif
+                                        <a href="{{ route($routePrefix . '.appointments.show', $appt->id) }}" 
+                                           class="inline-flex items-center gap-2 bg-gray-50 text-gray-400 px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-600 hover:text-white transition-all shadow-sm hover:shadow-brand-600/20 active:scale-[0.98]">
+                                            Review <i class="bi bi-chevron-right text-lg"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         @empty

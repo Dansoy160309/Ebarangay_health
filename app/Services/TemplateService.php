@@ -34,17 +34,22 @@ class TemplateService
      * Render a template with appointment data
      * Returns array with 'subject' and 'body' keys
      */
-    public static function render($templateType, Appointment $appointment)
+    public static function render(string $templateTypeOrKey, Appointment $appointment)
     {
-        $template = MessageTemplate::getActiveTemplate($templateType);
+        $template = MessageTemplate::getActiveTemplateByKey($templateTypeOrKey);
+
+        // Backward compatibility: if a key is not found, treat input as type (email|sms)
+        if (!$template) {
+            $template = MessageTemplate::getActiveTemplate($templateTypeOrKey);
+        }
 
         if (!$template) {
-            throw new \Exception("No active {$templateType} template found");
+            throw new \Exception("No active template found for {$templateTypeOrKey}");
         }
 
         $data = self::prepareData($appointment);
         
-        $subject = $templateType === 'email' 
+        $subject = $template->type === 'email' 
             ? self::replacePlaceholders($template->subject, $data)
             : null;
         

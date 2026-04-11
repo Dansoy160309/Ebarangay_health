@@ -73,7 +73,7 @@ class SendDefaulterAutoFirstReminder extends Command
             }
 
             try {
-                $rendered = TemplateService::render('sms', $appointment);
+                $rendered = TemplateService::render('defaulter_recall_sms', $appointment);
 
                 $patient->notify(new DefaulterRecallNotification($appointment, $rendered['body']));
 

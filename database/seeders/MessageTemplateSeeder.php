@@ -15,10 +15,10 @@ class MessageTemplateSeeder extends Seeder
     {
         // Defaulter Recall Email
         MessageTemplate::firstOrCreate([
-            'type' => 'email',
-            'name' => 'Defaulter Recall Email',
+            'template_key' => 'defaulter_recall_email',
         ], [
             'type' => 'email',
+            'template_key' => 'defaulter_recall_email',
             'name' => 'Defaulter Recall Email',
             'subject' => 'E-Barangay Follow-Up: Missed {service_type} Appointment - {patient_name}',
             'body' => "Dear {recipient_label},
@@ -39,10 +39,10 @@ Sincerely,
 
         // Defaulter Recall SMS
         MessageTemplate::firstOrCreate([
-            'type' => 'sms',
-            'name' => 'Defaulter Recall SMS',
+            'template_key' => 'defaulter_recall_sms',
         ], [
             'type' => 'sms',
+            'template_key' => 'defaulter_recall_sms',
             'name' => 'Defaulter Recall SMS',
             'body' => 'E-Barangay: {recipient_label}, missed {service_type} appointment on {appointment_date}. Call/message {contact_number} to reschedule. Thank you.',
             'is_active' => true,
@@ -51,10 +51,10 @@ Sincerely,
 
         // Appointment Reminder Email
         MessageTemplate::firstOrCreate([
-            'type' => 'email',
-            'name' => 'Appointment Reminder Email',
+            'template_key' => 'appointment_reminder_email',
         ], [
             'type' => 'email',
+            'template_key' => 'appointment_reminder_email',
             'name' => 'Appointment Reminder Email',
             'subject' => 'Reminder: {service_type} Appointment - {appointment_date}',
             'body' => "Dear {recipient_label},
@@ -74,10 +74,10 @@ Thank you!",
 
         // Appointment Reminder SMS
         MessageTemplate::firstOrCreate([
-            'type' => 'sms',
-            'name' => 'Appointment Reminder SMS',
+            'template_key' => 'appointment_reminder_sms',
         ], [
             'type' => 'sms',
+            'template_key' => 'appointment_reminder_sms',
             'name' => 'Appointment Reminder SMS',
             'body' => 'E-Barangay: Reminder of {service_type} appointment for {patient_name} on {appointment_date} at {appointment_time}. Call {contact_number} if you need to reschedule.',
             'is_active' => true,

@@ -37,6 +37,8 @@ Route::prefix('midwife')
         })->name('profile.index');
 
         Route::get('appointments', [AppointmentController::class, 'index'])->name('appointments.index');
+        Route::post('appointments/{appointment}/send-reminder-sms', [AppointmentController::class, 'sendReminderSms'])->name('appointments.send-reminder-sms');
+        Route::post('appointments/{appointment}/send-reminder-email', [AppointmentController::class, 'sendReminderEmail'])->name('appointments.send-reminder-email');
         Route::get('appointments/defaulters', [DefaulterController::class, 'index'])->name('appointments.defaulters');
         Route::post('appointments/{appointment}/send-email-template', [DefaulterController::class, 'sendEmailTemplate'])->name('appointments.send-email-template');
         Route::post('appointments/{appointment}/send-sms-template', [DefaulterController::class, 'sendSmsTemplate'])->name('appointments.send-sms-template');
