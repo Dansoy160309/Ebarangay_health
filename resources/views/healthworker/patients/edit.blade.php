@@ -8,6 +8,11 @@
     class="relative min-h-screen bg-[#f8fafc] overflow-hidden" 
     x-data="{ isSubmitting: false }"
 >
+    @php
+        $isDependent = $patient->guardian_id && $patient->guardian;
+        $guardianContactNo = $isDependent ? ($patient->guardian->contact_no ?? $patient->contact_no) : $patient->contact_no;
+    @endphp
+
     {{-- Decorative Background Elements --}}
     <div class="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-brand-50/50 to-transparent -z-10"></div>
     <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand-200/20 rounded-full blur-[120px] -z-10 animate-pulse"></div>
@@ -270,8 +275,11 @@
                                 <label class="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
                                     <i class="bi bi-telephone-fill text-brand-400"></i> Contact Number <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" name="contact_no" value="{{ old('contact_no', $patient->contact_no) }}" required
-                                       class="block w-full px-5 py-3.5 border-2 border-gray-50 rounded-2xl bg-gray-50/50 focus:outline-none focus:bg-white focus:ring-4 focus:ring-brand-50 focus:border-brand-500 transition-all duration-300 font-bold text-sm">
+                                <input type="text" name="contact_no" value="{{ old('contact_no', $guardianContactNo) }}" {{ $isDependent ? 'readonly' : 'required' }}
+                                       class="block w-full px-5 py-3.5 border-2 border-gray-50 rounded-2xl bg-gray-50/50 focus:outline-none focus:bg-white focus:ring-4 focus:ring-brand-50 focus:border-brand-500 transition-all duration-300 font-bold text-sm {{ $isDependent ? 'cursor-not-allowed opacity-90' : '' }}">
+                                @if($isDependent)
+                                    <p class="text-[10px] font-bold text-amber-600 uppercase tracking-widest ml-2">Inherited from account holder</p>
+                                @endif
                             </div>
 
                             {{-- Email --}}
@@ -376,8 +384,12 @@
                                     <label class="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
                                         <i class="bi bi-telephone-fill text-orange-400"></i> Phone
                                     </label>
-                                    <input type="text" name="emergency_no" value="{{ old('emergency_no', $patient->emergency_no) }}"
-                                           class="block w-full px-4 py-3.5 border-2 border-gray-50 rounded-2xl bg-gray-50/50 placeholder-gray-300 focus:outline-none focus:bg-white focus:ring-4 focus:ring-orange-50 focus:border-orange-500 transition-all duration-300 font-bold text-sm">
+                                    <input type="text" name="emergency_no" value="{{ old('emergency_no', $guardianContactNo) }}"
+                                           class="block w-full px-4 py-3.5 border-2 border-gray-50 rounded-2xl bg-gray-50/50 placeholder-gray-300 focus:outline-none focus:bg-white focus:ring-4 focus:ring-orange-50 focus:border-orange-500 transition-all duration-300 font-bold text-sm {{ $isDependent ? 'cursor-not-allowed opacity-90' : '' }}"
+                                           {{ $isDependent ? 'readonly' : '' }}>
+                                    @if($isDependent)
+                                        <p class="text-[10px] font-bold text-amber-600 uppercase tracking-widest ml-2">Matches the account holder number</p>
+                                    @endif
                                 </div>
                             </div>
                         </div>

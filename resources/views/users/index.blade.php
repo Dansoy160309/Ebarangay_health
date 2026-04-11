@@ -107,21 +107,6 @@
             </div>
         </div>
 
-        <!-- Alerts -->
-        @if(session('success'))
-            <div class="mx-6 mt-6 p-4 bg-green-50 border border-green-100 text-green-600 rounded-xl flex items-center gap-3">
-                <i class="bi bi-check-circle-fill text-xl"></i>
-                <span class="font-medium">{{ session('success') }}</span>
-            </div>
-        @endif
-
-        @if(session('error'))
-            <div class="mx-6 mt-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-xl flex items-center gap-3">
-                <i class="bi bi-exclamation-circle-fill text-xl"></i>
-                <span class="font-medium">{{ session('error') }}</span>
-            </div>
-        @endif
-
         <!-- Mobile View: Cards -->
         <div class="md:hidden p-4 space-y-4 bg-gray-50/50">
             @forelse($users as $user)

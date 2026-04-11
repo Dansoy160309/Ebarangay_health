@@ -169,14 +169,17 @@ class PatientController extends Controller
 
         // Logic for Family Number: Recommendation 1 & 2
         $familyNo = $validated['family_no'] ?? null;
-        
+        $isDependent = $request->filled('guardian_id');
+        $guardian = $isDependent ? User::find($request->guardian_id) : null;
+
         // If it's a dependent, inherit from guardian (Recommendation 1)
-        if ($request->filled('guardian_id')) {
-            $guardian = User::find($request->guardian_id);
-            if ($guardian) {
-                $familyNo = $guardian->family_no;
+        if ($isDependent) {
+            if (!$guardian) {
+                return back()->withInput()->with('error', 'Selected guardian is invalid.');
             }
-        } 
+
+            $familyNo = $guardian->family_no;
+        }
         // If it's a primary account and no family_no provided, auto-generate (Recommendation 2)
         elseif (!$familyNo) {
             $familyNo = User::generateFamilyNumber();
@@ -191,8 +194,8 @@ class PatientController extends Controller
             'address'              => $validated['address'],
             'purok'                => $validated['purok'],
             'family_no'            => $familyNo,
-            'contact_no'           => $validated['contact_no'],
-            'emergency_no'         => $validated['emergency_no'] ?? null,
+            'contact_no'           => $isDependent ? $guardian->contact_no : $validated['contact_no'],
+            'emergency_no'         => $isDependent ? $guardian->contact_no : ($validated['emergency_no'] ?? null),
             'email'                => $email,
             'password'             => $password,
             'status'               => true,
@@ -272,6 +275,7 @@ class PatientController extends Controller
     public function edit(Patient $patient)
     {
         abort_unless($patient->role === 'patient', 403);
+        $patient->loadMissing('guardian', 'patientProfile');
         return view('healthworker.patients.edit', compact('patient'));
     }
 
@@ -308,6 +312,8 @@ class PatientController extends Controller
             'is_fully_immunized'  => 'nullable|boolean',
         ]);
 
+        $guardian = $patient->guardian_id ? $patient->guardian()->first() : null;
+
         $patient->fill([
             'first_name' => $validated['first_name'],
             'middle_name' => $validated['middle_name'] ?? null,
@@ -317,10 +323,16 @@ class PatientController extends Controller
             'address' => $validated['address'],
             'purok' => $validated['purok'],
             'family_no' => $validated['family_no'] ?? null,
-            'contact_no' => $validated['contact_no'],
-            'emergency_no' => $validated['emergency_no'] ?? null,
+                'contact_no' => $guardian ? $guardian->contact_no : $validated['contact_no'],
+                'emergency_no' => $guardian ? $guardian->contact_no : ($validated['emergency_no'] ?? null),
             'email' => $validated['email'],
         ]);
+
+        if ($guardian) {
+            $patient->address = $guardian->address;
+            $patient->purok = $guardian->purok;
+            $patient->family_no = $guardian->family_no;
+        }
 
         // If family_no changed, update all dependents (Recommendation 3)
         if ($patient->isDirty('family_no')) {
