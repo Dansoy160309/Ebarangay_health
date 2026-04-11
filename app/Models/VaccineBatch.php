@@ -28,14 +28,22 @@ class VaccineBatch extends Model
     ];
 
     public function vaccine()
-    {        return $this->belongsTo(Vaccine::class);
+    {
+        return $this->belongsTo(Vaccine::class);
     }
 
     public function isExpired()
-    {        return $this->expiry_date->isPast();
+    {
+        return $this->expiry_date->isPast();
     }
 
     public function isLowStock()
-    {        return $this->quantity_remaining <= 5; // Example threshold
+    {
+        return $this->quantity_remaining <= 5; // Example threshold
+    }
+
+    public function administrations()
+    {
+        return $this->hasMany(VaccineAdministration::class, 'vaccine_batch_id');
     }
 }

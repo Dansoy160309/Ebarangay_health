@@ -77,6 +77,8 @@ Route::prefix('admin')
         // Vaccines
         // ===============================
         Route::resource('vaccines', \App\Http\Controllers\Admin\VaccineController::class);
+        Route::get('vaccines/{vaccine}/recent-administrations', [\App\Http\Controllers\Admin\VaccineController::class, 'recentAdministrations'])
+            ->name('vaccines.recent-administrations');
         Route::post('vaccines/stock-in', [\App\Http\Controllers\Admin\VaccineController::class, 'stockIn'])->name('vaccines.stock-in');
 
         // ===============================

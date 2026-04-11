@@ -220,21 +220,27 @@
                             </div>
                         </td>
                         <td class="px-8 py-6">
-                            <div class="flex -space-x-2">
-                                @php $activeBatches = $vaccine->batches->where('quantity_remaining', '>', 0); @endphp
-                                @foreach($activeBatches->take(3) as $batch)
-                                    <div class="w-8 h-8 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center text-[10px] font-black text-gray-600 shadow-sm" title="Batch {{ $batch->batch_number }}">
-                                        {{ $loop->iteration }}
-                                    </div>
-                                @endforeach
-                                @if($activeBatches->count() > 3)
-                                    <div class="w-8 h-8 rounded-full border-2 border-white bg-brand-50 flex items-center justify-center text-[10px] font-black text-brand-600 shadow-sm">
-                                        +{{ $activeBatches->count() - 3 }}
-                                    </div>
-                                @endif
-                                @if($activeBatches->count() == 0)
-                                    <span class="text-[10px] font-black text-red-400 uppercase tracking-widest">No Stock</span>
-                                @endif
+                            @php $activeBatches = $vaccine->batches->where('quantity_remaining', '>', 0); @endphp
+                            <div class="flex flex-col items-start gap-3">
+                                <div class="flex -space-x-2">
+                                    @foreach($activeBatches->take(3) as $batch)
+                                        <a href="{{ route('admin.vaccines.show', $vaccine->id) }}" class="w-8 h-8 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center text-[10px] font-black text-gray-600 shadow-sm hover:bg-brand-50 hover:text-brand-600 transition-colors" title="Batch {{ $batch->batch_number }}">
+                                            {{ $loop->iteration }}
+                                        </a>
+                                    @endforeach
+                                    @if($activeBatches->count() > 3)
+                                        <a href="{{ route('admin.vaccines.show', $vaccine->id) }}" class="w-8 h-8 rounded-full border-2 border-white bg-brand-50 flex items-center justify-center text-[10px] font-black text-brand-600 shadow-sm hover:bg-brand-100 transition-colors" title="View all batches">
+                                            +{{ $activeBatches->count() - 3 }}
+                                        </a>
+                                    @endif
+                                    @if($activeBatches->count() == 0)
+                                        <span class="text-[10px] font-black text-red-400 uppercase tracking-widest">No Stock</span>
+                                    @endif
+                                </div>
+                                <a href="{{ route('admin.vaccines.show', $vaccine->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-gray-200 text-[10px] font-black uppercase tracking-widest text-gray-600 hover:text-brand-600 hover:border-brand-300 hover:bg-brand-50 transition-all shadow-sm">
+                                    <i class="bi bi-eye"></i>
+                                    View Batch History
+                                </a>
                             </div>
                         </td>
                         <td class="px-8 py-6 text-right whitespace-nowrap">

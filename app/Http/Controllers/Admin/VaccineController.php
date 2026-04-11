@@ -86,12 +86,26 @@ class VaccineController extends Controller
     public function show(Vaccine $vaccine)
     {
         $vaccine->load(['batches' => function($q) {
-            $q->orderBy('expiry_date', 'asc');
+            $q->orderBy('received_at', 'desc')
+                ->orderBy('expiry_date', 'asc');
         }, 'administrations' => function($q) {
-            $q->latest('administered_at')->limit(50);
+            $q->with(['batch', 'patient', 'administeredBy'])
+                ->latest('administered_at')
+                ->limit(50);
         }]);
 
         return view('admin.vaccines.show', compact('vaccine'));
+    }
+
+    public function recentAdministrations(Vaccine $vaccine)
+    {
+        $administrations = $vaccine->administrations()
+            ->with(['batch', 'patient', 'administeredBy'])
+            ->latest('administered_at')
+            ->limit(50)
+            ->get();
+
+        return view('admin.vaccines.partials.recent-administrations-rows', compact('administrations'));
     }
 
     public function update(Request $request, Vaccine $vaccine)
