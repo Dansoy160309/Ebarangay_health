@@ -13,6 +13,7 @@ use App\Mail\DefaulterRecallMail;
 use App\Notifications\UpcomingAppointmentReminder;
 use App\Services\TemplateService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
 class AppointmentController extends Controller
@@ -182,6 +183,12 @@ class AppointmentController extends Controller
 
     public function consult(Request $request, Appointment $appointment)
     {
+        $healthRecord = $appointment->healthRecord;
+
+        if ($healthRecord && !empty($healthRecord->metadata['signature']['signed_at'] ?? null)) {
+            return redirect()->back()->with('error', 'This record is already signed and locked. Create an amendment for corrections.');
+        }
+
         $request->validate([
             'diagnosis' => 'required|string',
             'treatment' => 'required|string',
@@ -194,7 +201,7 @@ class AppointmentController extends Controller
         $isImmunization = str_contains(strtolower($appointment->service), 'immunization');
         if ($isImmunization) {
             // 1. Fever Check
-            $vitals = $appointment->healthRecord->vital_signs ?? [];
+            $vitals = $healthRecord->vital_signs ?? [];
             $temp = (float) ($vitals['temperature'] ?? 0);
             if ($temp > 37.5) {
                 return redirect()->back()->withErrors(['error' => 'Safety Block: Vaccination cannot proceed due to patient fever (' . $temp . '°C).'])->withInput();
@@ -247,6 +254,9 @@ class AppointmentController extends Controller
                 ['doctor_notes' => $request->notes]
             );
 
+            // Clear old signature if record is re-saved before signing.
+            unset($metadata['signature']);
+
             if ($isImmunization) {
                 $doseNo = (int) ($request->input('metadata.dose_no') ?? 0);
                 $nextSchedule = null;
@@ -267,8 +277,8 @@ class AppointmentController extends Controller
                 'consultation' => $request->notes, // Map notes to the consultation field
                 'metadata' => $metadata,
                 'created_by' => $healthRecord->created_by ?? auth()->id(),
-                'verified_by' => auth()->id(),
-                'verified_at' => now(),
+                'verified_by' => $healthRecord->verified_by,
+                'verified_at' => $healthRecord->verified_at,
             ]);
 
             if (!$healthRecord->exists && !$healthRecord->vital_signs) {
@@ -310,15 +320,95 @@ class AppointmentController extends Controller
                     }
                 }
             }
-
-            // 4. Update Appointment Status
-            $appointment->update(['status' => 'completed']);
         });
 
-        /** @var \App\Models\User $user */
+        return redirect()->back()->with('success', 'Consultation saved. Please review and sign to finish this consultation.');
+    }
+
+    public function signAndComplete(Request $request, Appointment $appointment)
+    {
+        $record = $appointment->healthRecord;
+
+        if (!$record || empty($record->vital_signs)) {
+            return redirect()->back()->with('error', 'Cannot sign yet. Vital signs are required first.');
+        }
+
+        if (empty($record->diagnosis) || empty($record->treatment)) {
+            return redirect()->back()->with('error', 'Cannot sign yet. Save diagnosis and treatment first.');
+        }
+
+        if (!in_array($appointment->status, ['approved', 'rescheduled'], true)) {
+            return redirect()->back()->with('error', 'Only active consultations can be signed and finished.');
+        }
+
+        if (!empty($record->metadata['signature']['signed_at'] ?? null)) {
+            return redirect()->back()->with('error', 'This consultation is already signed and locked.');
+        }
+
+        $request->validate([
+            'signer_name' => 'required|string|max:255',
+            'signature_data' => 'required|string',
+            'password' => 'required|string',
+        ]);
+
         $user = auth()->user();
+
+        if (!Hash::check($request->password, $user->password)) {
+            return redirect()->back()->with('error', 'Password confirmation failed. Signature was not applied.');
+        }
+
+        if (!str_starts_with($request->signature_data, 'data:image/')) {
+            return redirect()->back()->with('error', 'Invalid signature format. Please draw your signature and try again.');
+        }
+
+        DB::transaction(function () use ($request, $appointment, $record, $user) {
+            $signedAt = now();
+            $recordHash = $this->generateRecordFingerprint($record, $signedAt->toIso8601String());
+
+            $metadata = $record->metadata ?? [];
+            $metadata['signature'] = [
+                'signed_by_id' => $user->id,
+                'signed_by_name' => $user->full_name,
+                'signed_role' => $user->isMidwife() ? 'Midwife' : 'Doctor',
+                'signer_name_confirmed' => $request->signer_name,
+                'signed_at' => $signedAt->toIso8601String(),
+                'signature_data' => $request->signature_data,
+                'facility' => config('app.name'),
+                'ip_address' => $request->ip(),
+                'user_agent' => substr((string) $request->userAgent(), 0, 500),
+                'record_id' => $record->id,
+                'version' => 1,
+                'content_hash' => $recordHash,
+            ];
+
+            $record->metadata = $metadata;
+            $record->verified_by = $user->id;
+            $record->verified_at = $signedAt;
+            $record->save();
+
+            $appointment->status = 'completed';
+            $appointment->save();
+        });
+
         $routePrefix = $user->isMidwife() ? 'midwife' : 'doctor';
-        return redirect()->route($routePrefix . '.appointments.index')->with('success', 'Consultation completed successfully.');
+        return redirect()->route($routePrefix . '.appointments.index')->with('success', 'Consultation signed and completed successfully.');
+    }
+
+    private function generateRecordFingerprint(HealthRecord $record, string $signedAt): string
+    {
+        $payload = [
+            'record_id' => $record->id,
+            'appointment_id' => $record->appointment_id,
+            'patient_id' => $record->patient_id,
+            'service_id' => $record->service_id,
+            'diagnosis' => $record->diagnosis,
+            'treatment' => $record->treatment,
+            'consultation' => $record->consultation,
+            'vital_signs' => $record->vital_signs,
+            'signed_at' => $signedAt,
+        ];
+
+        return hash('sha256', json_encode($payload, JSON_UNESCAPED_SLASHES));
     }
 
     /**

@@ -45,6 +45,7 @@ Route::prefix('midwife')
         Route::post('appointments/{appointment}/no-show', [DefaulterController::class, 'markAsNoShow'])->name('appointments.no-show');
         Route::get('appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');
         Route::post('appointments/{appointment}/consult', [AppointmentController::class, 'consult'])->name('appointments.consult');
+        Route::post('appointments/{appointment}/sign-complete', [AppointmentController::class, 'signAndComplete'])->name('appointments.sign-complete');
 
         // Patient info access for dashboard alerts (view-only in UI)
         Route::prefix('patients')->name('patients.')->group(function () {

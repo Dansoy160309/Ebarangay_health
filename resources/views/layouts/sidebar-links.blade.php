@@ -2,6 +2,7 @@
 
 @php
     use Illuminate\Support\Facades\Route;
+    use App\Models\Appointment;
     use App\Models\Medicine;
     use App\Models\Vaccine;
     use App\Models\VaccineBatch;
@@ -86,6 +87,36 @@
             ->where('quantity_remaining', '>', 0)
             ->count();
         $vaccineIssueCount = $vaccineLowStockCount + $vaccineExpiringBatchCount;
+    }
+
+    $appointmentAlertCount = 0;
+    if ($user && in_array($role, ['doctor', 'midwife'], true)) {
+        $appointmentAlertCount = Appointment::query()
+            ->where('status', 'approved')
+            ->whereHas('healthRecord', function ($q) {
+                $q->whereNotNull('vital_signs');
+            })
+            ->whereHas('slot', function ($q) use ($user, $role) {
+                $q->where(function ($sq) use ($user, $role) {
+                    $sq->where('doctor_id', $user->id);
+                    if ($role === 'midwife') {
+                        $sq->orWhereNull('doctor_id');
+                    }
+                });
+            })
+            ->where(function ($q) {
+                $q->whereHas('slot', function ($sq) {
+                    $sq->whereDate('date', '>', now()->toDateString())
+                        ->orWhere(function ($x) {
+                            $x->whereDate('date', now()->toDateString())
+                              ->whereTime('end_time', '>', now()->format('H:i:s'));
+                        });
+                })->orWhere(function ($sq) {
+                    $sq->whereNull('slot_id')
+                       ->where('scheduled_at', '>=', now());
+                });
+            })
+            ->count();
     }
 @endphp
 
@@ -179,7 +210,12 @@
            @click="sidebarOpen = false"
            class="{{ getLinkClasses(request()->routeIs('midwife.appointments*') && !request()->routeIs('midwife.appointments.defaulters')) }}">
             <i class="bi bi-calendar-event-fill mr-3 text-xl"></i> 
-            <span>Appointments</span>
+            <span class="flex-1">Appointments</span>
+            @if($appointmentAlertCount > 0)
+                <span class="bg-red-100 text-red-600 py-0.5 px-2 rounded-full text-[10px] font-black">
+                    {{ $appointmentAlertCount }}
+                </span>
+            @endif
         </a>
 
         @if($routes['defaulters'])
@@ -232,7 +268,12 @@
            @click="sidebarOpen = false"
            class="{{ getLinkClasses(request()->routeIs('doctor.appointments*')) }}">
             <i class="bi bi-calendar-event-fill mr-3 text-xl"></i> 
-            <span>Appointments</span>
+            <span class="flex-1">Appointments</span>
+            @if($appointmentAlertCount > 0)
+                <span class="bg-red-100 text-red-600 py-0.5 px-2 rounded-full text-[10px] font-black">
+                    {{ $appointmentAlertCount }}
+                </span>
+            @endif
         </a>
 
         <a href="{{ route('doctor.availability.index') }}"

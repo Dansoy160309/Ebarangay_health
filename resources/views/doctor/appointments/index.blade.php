@@ -128,10 +128,11 @@
         $hasManualReminderTargets = $appointments->getCollection()->contains(function ($appt) {
             $isPastAppt = false;
 
-            if ($appt->scheduled_at) {
-                $isPastAppt = $appt->scheduled_at->isPast();
-            } elseif ($appt->slot) {
+            // Prioritize slot end-time for no-show logic; scheduled_at alone can be earlier than slot end.
+            if ($appt->slot) {
                 $isPastAppt = $appt->slot->isExpired();
+            } elseif ($appt->scheduled_at) {
+                $isPastAppt = $appt->scheduled_at->isPast();
             }
 
             return in_array($appt->status, ['pending', 'approved', 'rescheduled']) && !$isPastAppt;
@@ -185,12 +186,14 @@
                     @php
                         $status = $appt->status;
                         $hasVitals = $appt->healthRecord && $appt->healthRecord->vital_signs;
+                        $scheduleDate = $appt->slot?->date ? $appt->slot->date->format('M d, Y') : ($appt->scheduled_at ? $appt->scheduled_at->format('M d, Y') : '-');
+                        $scheduleTime = $appt->slot ? $appt->slot->displayTime() : ($appt->scheduled_at ? $appt->scheduled_at->format('h:i A') : '--:--');
                         
                         $isPastAppt = false;
-                        if ($appt->scheduled_at) {
-                            $isPastAppt = $appt->scheduled_at->isPast();
-                        } elseif ($appt->slot) {
+                        if ($appt->slot) {
                             $isPastAppt = $appt->slot->isExpired();
+                        } elseif ($appt->scheduled_at) {
+                            $isPastAppt = $appt->scheduled_at->isPast();
                         }
 
                         if (!$isPastAppt && $status === 'no_show') $status = 'approved';
@@ -222,7 +225,7 @@
                         <div class="text-right">
                             <span class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1 block">Time</span>
                             <span class="text-sm font-black text-gray-900 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100 shadow-sm">
-                                {{ $appt->scheduled_at ? $appt->scheduled_at->format('h:i A') : '--:--' }}
+                                {{ $scheduleTime }}
                             </span>
                         </div>
                     </div>
@@ -265,7 +268,7 @@
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2 text-gray-400 text-[10px] font-black uppercase tracking-widest">
                             <i class="bi bi-calendar4-week text-sm"></i>
-                            {{ $appt->scheduled_at ? $appt->scheduled_at->format('M d, Y') : '-' }}
+                            {{ $scheduleDate }}
                             </div>
                             <a href="{{ route($routePrefix . '.appointments.show', $appt->id) }}" 
                                class="inline-flex items-center gap-2 bg-brand-600 text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.15em] hover:bg-brand-700 shadow-lg shadow-brand-600/20 transition-all">
@@ -304,12 +307,14 @@
                                 $status = $appt->status;
                                 $hasVitals = $appt->healthRecord && $appt->healthRecord->vital_signs;
                                 $needsCompletion = in_array($appt->id, $readyAppointmentIds);
+                                $scheduleDate = $appt->slot?->date ? $appt->slot->date->format('M j, Y') : ($appt->scheduled_at ? $appt->scheduled_at->format('M j, Y') : 'N/A');
+                                $scheduleTime = $appt->slot ? $appt->slot->displayTime() : ($appt->scheduled_at ? $appt->scheduled_at->format('h:i A') : '');
                                 
                                 $isPastAppt = false;
-                                if ($appt->scheduled_at) {
-                                    $isPastAppt = $appt->scheduled_at->isPast();
-                                } elseif ($appt->slot) {
+                                if ($appt->slot) {
                                     $isPastAppt = $appt->slot->isExpired();
+                                } elseif ($appt->scheduled_at) {
+                                    $isPastAppt = $appt->scheduled_at->isPast();
                                 }
 
                                 if (!$isPastAppt && $status === 'no_show') $status = 'approved';
@@ -355,10 +360,10 @@
                                 <td class="px-6 py-6">
                                     <div class="flex flex-col">
                                         <span class="text-sm font-black text-gray-900 leading-tight mb-0.5">
-                                            {{ $appt->scheduled_at ? $appt->scheduled_at->format('M j, Y') : 'N/A' }}
+                                            {{ $scheduleDate }}
                                         </span>
                                         <span class="text-[10px] font-black text-brand-500 uppercase tracking-widest">
-                                            {{ $appt->scheduled_at ? $appt->scheduled_at->format('h:i A') : '' }}
+                                            {{ $scheduleTime }}
                                         </span>
                                     </div>
                                 </td>

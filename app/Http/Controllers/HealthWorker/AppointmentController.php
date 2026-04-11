@@ -429,8 +429,8 @@ class AppointmentController extends Controller
             'vital_signs' => $vitalSigns,
             'metadata' => $request->metadata, // 🚀 Capture specialized Prenatal/Immunization metadata
             'status' => 'active',
-            'verified_at' => now(), 
-            'verified_by' => auth()->id(),
+            'verified_at' => null,
+            'verified_by' => null,
         ]);
 
         // 🤰 Sync Prenatal Metadata to Patient Profile if applicable

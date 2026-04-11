@@ -2,6 +2,27 @@
 
 @section('title', 'Consultation - ' . $appointment->user->full_name)
 
+<style>
+/* Keep consultation fields white even when browser autofill/theme styles are applied */
+.consultation-form input,
+.consultation-form textarea,
+.consultation-form select {
+    background-color: #ffffff !important;
+    color: #111827 !important;
+    color-scheme: light;
+}
+
+.consultation-form input:-webkit-autofill,
+.consultation-form input:-webkit-autofill:hover,
+.consultation-form input:-webkit-autofill:focus,
+.consultation-form textarea:-webkit-autofill,
+.consultation-form select:-webkit-autofill {
+    -webkit-text-fill-color: #111827;
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+</style>
+
 @section('content')
 <div class="max-w-7xl mx-auto p-6">
     @php
@@ -16,6 +37,10 @@
         $isPastAppt = $slotPast || $schedPast;
         $isNoShow = $appointment->status === 'no_show' || (in_array($appointment->status, ['approved','rescheduled']) && $isPastAppt);
         $hasVitals = $appointment->healthRecord && $appointment->healthRecord->vital_signs;
+        $record = $appointment->healthRecord;
+        $signatureInfo = $record->metadata['signature'] ?? null;
+        $hasSignature = !empty($signatureInfo['signed_at'] ?? null);
+        $hasConsultationDraft = !empty($record->diagnosis) && !empty($record->treatment);
     @endphp
     <div class="mb-8">
         <a href="{{ route($routePrefix . '.appointments.index') }}" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-blue-600 transition-colors group mb-6">
@@ -279,7 +304,12 @@
                                 </div>
                                 <div class="text-center md:text-left">
                                     <h4 class="text-2xl font-black text-purple-900 tracking-tight">Consultation Finished</h4>
-                                    <p class="text-sm font-bold text-purple-600/80 uppercase tracking-widest mt-1">This appointment was successfully completed on {{ $appointment->healthRecord->verified_at->format('M d, Y') }}</p>
+                                    <p class="text-sm font-bold text-purple-600/80 uppercase tracking-widest mt-1">Signed on {{ optional($appointment->healthRecord->verified_at)->format('M d, Y h:i A') }}</p>
+                                    @if($hasSignature)
+                                        <p class="text-[11px] font-bold text-purple-700 mt-2">
+                                            Signed by {{ $signatureInfo['signed_by_name'] ?? 'Provider' }} ({{ $signatureInfo['signed_role'] ?? 'Clinician' }})
+                                        </p>
+                                    @endif
                                 </div>
                                 <div class="ml-auto flex items-center gap-3">
                                     <button onclick="window.print()" class="px-6 py-3 bg-white border border-purple-200 rounded-xl text-xs font-black text-purple-700 uppercase tracking-widest hover:bg-purple-100 transition-all flex items-center gap-2">
@@ -365,10 +395,6 @@
                             </p>
                         </div>
                         <div class="flex items-center gap-3">
-                            <a href="{{ route('midwife.slots.index', ['service' => $appointment->service]) }}"
-                               class="px-5 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition">
-                                Rebook Patient
-                            </a>
                             <a href="{{ route($routePrefix . '.appointments.index') }}"
                                class="px-5 py-3 rounded-xl bg-gray-100 text-gray-700 font-bold hover:bg-gray-200 transition">
                                 Back to Appointments
@@ -397,12 +423,14 @@
                             </div>
                         </div>
                     @else
-                        <form action="{{ route($routePrefix . '.appointments.consult', $appointment->id) }}" method="POST" id="consultationForm"
+                        <form action="{{ route($routePrefix . '.appointments.consult', $appointment->id) }}" method="POST" id="consultationForm" class="consultation-form"
                             x-data="{ 
+                                savingConsultation: false,
                                 service: '{{ $appointment->service }}',
                                 isPrenatal: '{{ str_contains(strtolower($appointment->service), 'prenatal') }}',
                                 isImmunization: '{{ str_contains(strtolower($appointment->service), 'immunization') }}'
-                            }">
+                            }"
+                            @submit="savingConsultation = true">
                             @csrf
                             
                             <div class="grid grid-cols-1 gap-8">
@@ -682,8 +710,9 @@
                                     </label>
                                     <div class="relative">
                                         <input type="text" name="diagnosis" 
-                                            class="w-full px-4 py-3 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-gray-300" 
+                                            class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-gray-300" 
                                             required 
+                                            value="{{ old('diagnosis', $appointment->healthRecord->diagnosis ?? '') }}"
                                             placeholder="e.g. Acute Upper Respiratory Infection">
                                     </div>
                                 </div>
@@ -695,9 +724,9 @@
                                         Treatment / Prescription <span class="text-red-500">*</span>
                                     </label>
                                     <textarea name="treatment" rows="6" 
-                                        class="w-full px-4 py-3 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-gray-300 resize-none" 
+                                        class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-gray-300 resize-none" 
                                         required 
-                                        placeholder="Enter treatment plan, dosage, and specific medications..."></textarea>
+                                        placeholder="Enter treatment plan, dosage, and specific medications...">{{ old('treatment', $appointment->healthRecord->treatment ?? '') }}</textarea>
                                 </div>
 
                                 <!-- Notes Section -->
@@ -707,33 +736,200 @@
                                         Provider's Internal Notes
                                     </label>
                                     <textarea name="notes" rows="3" 
-                                        class="w-full px-4 py-3 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-gray-300 resize-none bg-gray-50/50" 
-                                        placeholder="Confidential notes, follow-up reminders, etc..."></textarea>
+                                        class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-gray-300 resize-none" 
+                                        placeholder="Confidential notes, follow-up reminders, etc...">{{ old('notes', $appointment->healthRecord->consultation ?? '') }}</textarea>
                                 </div>
                             </div>
 
                             <div class="mt-10 pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
                                 <p class="text-xs text-gray-400 flex items-center gap-1.5 order-2 sm:order-1">
                                     <i class="bi bi-info-circle"></i>
-                                    All fields marked with * are required to complete.
+                                    Save consultation first, then sign to finish.
                                 </p>
                                 <div class="flex items-center gap-3 w-full sm:w-auto order-1 sm:order-2">
                                     <button type="button" onclick="history.back()" 
                                         class="flex-1 sm:flex-none px-6 py-3 bg-white text-gray-600 border border-gray-200 rounded-xl font-bold hover:bg-gray-50 hover:text-gray-900 transition-all active:scale-95">
                                         Discard
                                     </button>
-                                    <button type="submit" 
+                                    <button type="submit" :disabled="savingConsultation"
                                         class="flex-1 sm:flex-none px-8 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all active:scale-95 flex items-center justify-center gap-2">
-                                        <i class="bi bi-check-circle-fill"></i>
-                                        Finish Consultation
+                                        <template x-if="!savingConsultation">
+                                            <span class="inline-flex items-center justify-center gap-2">
+                                                <i class="bi bi-save-fill"></i>
+                                                Save Consultation
+                                            </span>
+                                        </template>
+                                        <template x-if="savingConsultation">
+                                            <span class="inline-flex items-center justify-center gap-2">
+                                                <i class="bi bi-arrow-repeat animate-spin"></i>
+                                                Saving...
+                                            </span>
+                                        </template>
                                     </button>
                                 </div>
                             </div>
                         </form>
+
+                        @if(!$hasConsultationDraft && !$hasSignature)
+                            <div class="mt-8 border-t border-gray-100 pt-8">
+                                <div class="p-5 rounded-2xl border border-blue-200 bg-blue-50">
+                                    <p class="text-xs font-black uppercase tracking-wider text-blue-700">Step 2: Digital Signature Block</p>
+                                    <p class="text-sm font-bold text-blue-800 mt-1">After you click Save Consultation, the signature block will appear here for doctor/midwife signing.</p>
+                                </div>
+                            </div>
+                        @endif
+
+                        @if($hasConsultationDraft && !$hasSignature)
+                            <div class="mt-8 border-t border-gray-100 pt-8" x-data="signaturePad()" x-init="init()">
+                                <div class="rounded-3xl border border-emerald-100 bg-gradient-to-br from-white to-emerald-50/40 p-6 md:p-8 shadow-sm">
+                                    <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                        <div class="flex items-start gap-3">
+                                            <span class="w-11 h-11 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center shadow-inner">
+                                                <i class="bi bi-pen-fill text-lg"></i>
+                                            </span>
+                                            <div>
+                                                <h4 class="text-xl font-black text-gray-900 leading-tight">Digital Signature Block</h4>
+                                                <p class="text-[11px] font-black text-gray-500 uppercase tracking-wider mt-1">Doctor or midwife must sign before finishing consultation.</p>
+                                            </div>
+                                        </div>
+                                        <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-emerald-200 text-[10px] font-black uppercase tracking-widest text-emerald-700 w-fit">
+                                            <i class="bi bi-shield-lock-fill"></i>
+                                            Signature Required
+                                        </span>
+                                    </div>
+
+                                    <form action="{{ route($routePrefix . '.appointments.sign-complete', $appointment->id) }}" method="POST" class="consultation-form" @submit="if (!prepareSignature()) return false; submitting = true; return true;">
+                                        @csrf
+
+                                        @if(session('error'))
+                                            <div class="mb-5 p-4 rounded-2xl bg-red-50 border border-red-100 text-red-700 text-sm font-bold">
+                                                {{ session('error') }}
+                                            </div>
+                                        @endif
+
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                            <div class="md:col-span-2">
+                                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Draw Signature</label>
+                                                <div class="rounded-2xl border border-gray-200 bg-white p-3 shadow-inner">
+                                                    <canvas x-ref="canvas" class="w-full h-44 bg-white rounded-xl border border-dashed border-gray-300"></canvas>
+                                                </div>
+                                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-2">Use mouse or touch to sign within the box.</p>
+                                                <button type="button" @click="clearSignature()" class="mt-2 text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-red-600">Clear signature</button>
+                                            </div>
+                                            <input type="hidden" name="signature_data" x-ref="signatureData">
+
+                                            <div>
+                                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Printed Full Name</label>
+                                                <input type="text" name="signer_name" value="{{ old('signer_name', auth()->user()->full_name) }}" required class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10">
+                                            </div>
+
+                                            <div>
+                                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Role</label>
+                                                <input type="text" value="{{ auth()->user()->isMidwife() ? 'Midwife' : 'Doctor' }}" readonly class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-700 font-bold">
+                                            </div>
+
+                                            <div class="md:col-span-2">
+                                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Password Confirmation</label>
+                                                <input type="password" name="password" required class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10" placeholder="Enter your account password to sign">
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-6 flex justify-end border-t border-gray-100 pt-5">
+                                            <button type="submit" :disabled="submitting" class="w-full md:w-auto px-8 py-3 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition-all active:scale-95 flex items-center justify-center gap-2">
+                                                <template x-if="!submitting">
+                                                    <span class="inline-flex items-center gap-2">
+                                                        <i class="bi bi-pen-fill"></i>
+                                                        Sign and Finish Consultation
+                                                    </span>
+                                                </template>
+                                                <template x-if="submitting">
+                                                    <span class="inline-flex items-center gap-2">
+                                                        <i class="bi bi-arrow-repeat animate-spin"></i>
+                                                        Signing...
+                                                    </span>
+                                                </template>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        @elseif($hasSignature)
+                            <div class="mt-8 border-t border-gray-100 pt-8">
+                                <div class="p-5 rounded-2xl border border-emerald-200 bg-emerald-50">
+                                    <p class="text-xs font-black uppercase tracking-wider text-emerald-700">Signed and Locked</p>
+                                    <p class="text-sm font-bold text-emerald-800 mt-1">{{ $signatureInfo['signed_by_name'] ?? 'Provider' }} • {{ $signatureInfo['signed_role'] ?? 'Clinician' }}</p>
+                                    <p class="text-xs text-emerald-700 mt-1">{{ !empty($signatureInfo['signed_at']) ? \Carbon\Carbon::parse($signatureInfo['signed_at'])->format('M d, Y h:i A') : '' }}</p>
+                                </div>
+                            </div>
+                        @endif
                     @endif
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+function signaturePad() {
+    return {
+        canvas: null,
+        ctx: null,
+        drawing: false,
+        hasStroke: false,
+        submitting: false,
+        init() {
+            this.canvas = this.$refs.canvas;
+            this.ctx = this.canvas.getContext('2d');
+            this.resizeCanvas();
+            this.bindEvents();
+        },
+        resizeCanvas() {
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            const rect = this.canvas.getBoundingClientRect();
+            this.canvas.width = rect.width * ratio;
+            this.canvas.height = rect.height * ratio;
+            this.ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+            this.ctx.lineWidth = 2;
+            this.ctx.lineCap = 'round';
+            this.ctx.strokeStyle = '#111827';
+        },
+        bindEvents() {
+            this.canvas.addEventListener('pointerdown', (e) => {
+                this.drawing = true;
+                this.ctx.beginPath();
+                this.ctx.moveTo(e.offsetX, e.offsetY);
+            });
+
+            this.canvas.addEventListener('pointermove', (e) => {
+                if (!this.drawing) return;
+                this.hasStroke = true;
+                this.ctx.lineTo(e.offsetX, e.offsetY);
+                this.ctx.stroke();
+            });
+
+            window.addEventListener('pointerup', () => {
+                this.drawing = false;
+            });
+        },
+        clearSignature() {
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.$refs.signatureData.value = '';
+            this.hasStroke = false;
+        },
+        prepareSignature() {
+            if (!this.hasStroke) {
+                alert('Please draw a signature before finishing consultation.');
+                return false;
+            }
+            const data = this.canvas.toDataURL('image/png');
+            if (!data || !data.startsWith('data:image/')) {
+                alert('Please draw a signature before finishing consultation.');
+                return false;
+            }
+            this.$refs.signatureData.value = data;
+            return true;
+        }
+    }
+}
+</script>
 @endsection

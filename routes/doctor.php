@@ -26,6 +26,7 @@ Route::prefix('doctor')
         Route::post('appointments/{appointment}/send-reminder-email', [AppointmentController::class, 'sendReminderEmail'])->name('appointments.send-reminder-email');
         Route::get('appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');
         Route::post('appointments/{appointment}/consult', [AppointmentController::class, 'consult'])->name('appointments.consult');
+        Route::post('appointments/{appointment}/sign-complete', [AppointmentController::class, 'signAndComplete'])->name('appointments.sign-complete');
 
         // Patients
         Route::get('patients', [PatientController::class, 'index'])->name('patients.index');

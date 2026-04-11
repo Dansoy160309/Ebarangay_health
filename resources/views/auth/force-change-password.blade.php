@@ -2,6 +2,23 @@
 
 @section('title', 'Change Password')
 
+<style>
+/* Keep password fields white even with browser autofill/theme styling */
+.password-change-form input {
+    background-color: #ffffff !important;
+    color: #111827 !important;
+    color-scheme: light;
+}
+
+.password-change-form input:-webkit-autofill,
+.password-change-form input:-webkit-autofill:hover,
+.password-change-form input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #111827;
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+</style>
+
 @section('content')
 <div class="min-h-[80vh] flex items-center justify-center p-4">
     <div class="max-w-4xl w-full bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
@@ -45,7 +62,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('password.change.update') }}" method="POST">
+            <form action="{{ route('password.change.update') }}" method="POST" class="password-change-form">
                 @csrf
 
                 {{-- Current Password --}}

@@ -297,17 +297,44 @@
                 </div>
 
                 {{-- Record Footer Info --}}
+                @php
+                    $signatureMeta = $record->metadata['signature'] ?? null;
+                    $signatureImage = is_array($signatureMeta) ? ($signatureMeta['signature_data'] ?? null) : null;
+                    $signedByName = is_array($signatureMeta) ? ($signatureMeta['signed_by_name'] ?? $record->provider_name) : $record->provider_name;
+                    $signedRole = is_array($signatureMeta) ? ($signatureMeta['signed_role'] ?? null) : null;
+                    $signedAtRaw = is_array($signatureMeta) ? ($signatureMeta['signed_at'] ?? null) : null;
+                    $signedAt = $signedAtRaw ? \Carbon\Carbon::parse($signedAtRaw) : ($record->verified_at ?? $record->created_at);
+                @endphp
                 <div class="bg-gray-50 px-12 py-10 border-t border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-8">
-                    <div class="flex items-center gap-6">
-                        <div class="w-16 h-16 rounded-2xl bg-white text-gray-300 flex items-center justify-center shadow-sm border border-gray-100 group-hover/content:text-brand-600 transition-colors">
-                            <i class="bi bi-fingerprint text-2xl"></i>
-                        </div>
-                        <div class="space-y-1">
+                    <div class="flex flex-col md:flex-row md:items-center gap-5 w-full">
+                        @if(!empty($signatureImage) && str_starts_with($signatureImage, 'data:image/'))
+                            <div class="w-full md:w-64 h-24 rounded-2xl bg-white flex items-center justify-center shadow-sm border border-gray-200 overflow-hidden p-3 relative">
+                                <div class="absolute inset-0 opacity-40" style="background-image: linear-gradient(to right, rgba(156,163,175,0.15) 1px, transparent 1px), linear-gradient(to bottom, rgba(156,163,175,0.15) 1px, transparent 1px); background-size: 18px 18px;"></div>
+                                <img src="{{ $signatureImage }}" alt="Provider signature" class="max-h-full max-w-full object-contain relative z-10">
+                            </div>
+                        @else
+                            <div class="w-full md:w-64 h-24 rounded-2xl bg-white text-gray-300 flex items-center justify-center shadow-sm border border-gray-100 group-hover/content:text-brand-600 transition-colors">
+                                <div class="text-center">
+                                    <i class="bi bi-fingerprint text-2xl"></i>
+                                    <p class="text-[9px] font-black text-gray-300 uppercase tracking-widest mt-1">No Signature Image</p>
+                                </div>
+                            </div>
+                        @endif
+
+                        <div class="space-y-2 flex-1 min-w-0">
                             <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] leading-none">Electronic Signature</p>
-                            <p class="text-sm font-black text-gray-900 leading-none tracking-tight">
-                                {{ $record->provider_name ?? 'Medical Staff' }}
-                                • {{ $record->verified_at ? $record->verified_at->format('M d, Y H:i') : $record->created_at->format('M d, Y H:i') }}
+                            <p class="text-base font-black text-gray-900 leading-tight tracking-tight break-words">
+                                {{ $signedByName ?? 'Medical Staff' }}@if($signedRole) ({{ $signedRole }}) @endif
+                                • {{ $signedAt ? $signedAt->format('M d, Y H:i') : '' }}
                             </p>
+                            @if(!empty($signatureMeta['content_hash'] ?? null))
+                                <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest break-all">
+                                    Ref: {{ substr($signatureMeta['content_hash'], 0, 16) }}
+                                </p>
+                            @endif
+                            @if(empty($signatureImage))
+                                <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Signature image not available for this record</p>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -362,14 +389,124 @@
 
 <style>
     @media print {
-        .print\:hidden { display: none !important; }
-        body { background: white !important; font-family: sans-serif !important; }
-        .max-w-7xl { max-width: 100% !important; padding: 0 !important; }
-        .rounded-\[3rem\], .rounded-\[4rem\], .rounded-\[2\.5rem\], .rounded-\[3\.5rem\] { border-radius: 0.5rem !important; }
-        .shadow-sm, .shadow-soft, .shadow-xl, .shadow-2xl { box-shadow: none !important; border: 1px solid #eee !important; }
-        .bg-brand-50, .bg-blue-50, .bg-orange-50, .bg-gray-50 { background-color: transparent !important; border: 1px solid #eee !important; color: black !important; }
-        .text-brand-600, .text-blue-600, .text-orange-600, .text-gray-600, .text-gray-900 { color: black !important; }
-        .absolute { display: none !important; }
+        .print\:hidden {
+            display: none !important;
+        }
+
+        @page {
+            size: A4;
+            margin: 10mm;
+        }
+
+        html,
+        body {
+            background: #fff !important;
+            font-family: Arial, Helvetica, sans-serif !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            font-size: 11px !important;
+            line-height: 1.35 !important;
+        }
+
+        .max-w-7xl {
+            max-width: 100% !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            gap: 8px !important;
+        }
+
+        .space-y-8 > * + *,
+        .space-y-6 > * + * {
+            margin-top: 8px !important;
+        }
+
+        .grid.grid-cols-1.lg\:grid-cols-12 {
+            display: grid !important;
+            grid-template-columns: 34% 66% !important;
+            gap: 8px !important;
+            align-items: start !important;
+        }
+
+        .lg\:col-span-4,
+        .lg\:col-span-8,
+        .bg-white,
+        .bg-gray-50,
+        .bg-blue-50\/50,
+        .bg-emerald-50\/50 {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+        }
+
+        .rounded-xl,
+        .rounded-lg,
+        .rounded-\[2\.5rem\],
+        .rounded-\[3rem\],
+        .rounded-\[4rem\],
+        .rounded-\[3\.5rem\] {
+            border-radius: 6px !important;
+        }
+
+        .shadow-sm,
+        .shadow-soft,
+        .shadow-xl,
+        .shadow-2xl {
+            box-shadow: none !important;
+        }
+
+        .border,
+        .border-gray-100,
+        .border-blue-100,
+        .border-emerald-100 {
+            border-color: #d1d5db !important;
+        }
+
+        .p-5,
+        .p-6,
+        .p-8,
+        .p-10,
+        .p-12,
+        .px-12,
+        .py-10 {
+            padding: 10px !important;
+        }
+
+        .min-h-\[200px\] {
+            min-height: 90px !important;
+        }
+
+        .text-3xl,
+        .text-4xl,
+        .text-2xl,
+        .text-xl {
+            font-size: 15px !important;
+            line-height: 1.25 !important;
+        }
+
+        .text-base,
+        .text-sm {
+            font-size: 11px !important;
+            line-height: 1.35 !important;
+        }
+
+        .text-xs,
+        .text-\[10px\],
+        .text-\[9px\],
+        .text-\[8px\],
+        .text-\[7px\] {
+            font-size: 9px !important;
+            line-height: 1.3 !important;
+            letter-spacing: 0.04em !important;
+        }
+
+        .absolute,
+        .animate-pulse {
+            display: none !important;
+        }
+
+        img[alt="Provider signature"] {
+            max-height: 50px !important;
+        }
     }
 </style>
 @endsection
