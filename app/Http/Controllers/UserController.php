@@ -77,7 +77,7 @@ class UserController extends Controller
     // -----------------------------
     public function create()
     {
-        $roles = ['patient', 'health_worker', 'midwife', 'admin', 'doctor'];
+        $roles = ['patient', 'health_worker', 'midwife', 'doctor'];
         return view('users.create', compact('roles'));
     }
 
@@ -98,7 +98,7 @@ class UserController extends Controller
             'emergency_no' => 'nullable|string|max:20',
             'email'        => 'required|email|unique:users,email',
             'password'     => 'required|string|min:6|confirmed',
-            'role'         => ['required', Rule::in(['admin', 'patient', 'health_worker', 'midwife', 'doctor'])],
+            'role'         => ['required', Rule::in(['patient', 'health_worker', 'midwife', 'doctor'])],
             
             // Medical & Additional Info
             'civil_status'               => 'nullable|string|max:50',

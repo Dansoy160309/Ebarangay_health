@@ -96,9 +96,16 @@
                             <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
                                 <i class="bi bi-layers"></i>
                             </div>
-                            <input type="text" name="dosage_form" value="{{ old('dosage_form') }}"
-                                   placeholder="e.g. Tablet, Syrup, Capsule"
-                                   class="w-full pl-12 pr-5 py-4 bg-gray-50 border-transparent rounded-2xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 text-sm font-bold transition-all shadow-sm">
+                            <select name="dosage_form"
+                                   class="w-full pl-12 pr-10 py-4 bg-gray-50 border-transparent rounded-2xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 text-sm font-bold transition-all shadow-sm appearance-none">
+                                <option value="" disabled {{ old('dosage_form') ? '' : 'selected' }}>Select dosage form</option>
+                                <option value="Tablet" {{ old('dosage_form') === 'Tablet' ? 'selected' : '' }}>Tablet</option>
+                                <option value="Capsule" {{ old('dosage_form') === 'Capsule' ? 'selected' : '' }}>Capsule</option>
+                                <option value="Syrup" {{ old('dosage_form') === 'Syrup' ? 'selected' : '' }}>Syrup</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
+                                <i class="bi bi-chevron-down text-xs"></i>
+                            </div>
                         </div>
                     </div>
 
@@ -157,7 +164,10 @@
                                 <i class="bi bi-clock-history"></i>
                             </div>
                             <input type="date" name="expiration_date" value="{{ old('expiration_date') }}"
-                                   class="w-full pl-12 pr-5 py-4 bg-gray-50 border-transparent rounded-2xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 text-sm font-bold transition-all shadow-sm">
+                                   class="w-full pl-12 pr-12 py-4 bg-gray-50 border-transparent rounded-2xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 text-sm font-bold transition-all shadow-sm">
+                            <span onclick="const input=this.previousElementSibling; if(input?.showPicker){input.showPicker();} else {input?.focus();}" class="absolute inset-y-0 right-0 pr-4 flex items-center text-brand-500 cursor-pointer">
+                                <i class="bi bi-calendar-event text-base"></i>
+                            </span>
                         </div>
                     </div>
                 </div>

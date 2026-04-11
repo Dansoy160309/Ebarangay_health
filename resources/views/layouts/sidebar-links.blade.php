@@ -69,6 +69,10 @@
 
     $vaccineIssueCount = 0;
     $medicineIssueCount = 0;
+    $medicineLowStockCount = 0;
+    $medicineExpiringCount = 0;
+    $vaccineLowStockCount = 0;
+    $vaccineExpiringBatchCount = 0;
     if ($role === 'admin') {
         $medicineLowStockCount = Medicine::whereColumn('stock', '<=', 'reorder_level')->count();
         $medicineExpiringCount = Medicine::whereNotNull('expiration_date')
@@ -77,11 +81,11 @@
             ->count();
         $medicineIssueCount = $medicineLowStockCount + $medicineExpiringCount;
 
-        $lowStockCount = Vaccine::all()->filter(fn($v) => $v->in_stock_quantity <= $v->min_stock_level)->count();
-        $expiringBatchCount = VaccineBatch::where('expiry_date', '<=', now()->addMonths(3))
+        $vaccineLowStockCount = Vaccine::all()->filter(fn($v) => $v->in_stock_quantity <= $v->min_stock_level)->count();
+        $vaccineExpiringBatchCount = VaccineBatch::where('expiry_date', '<=', now()->addMonths(3))
             ->where('quantity_remaining', '>', 0)
             ->count();
-        $vaccineIssueCount = $lowStockCount + $expiringBatchCount;
+        $vaccineIssueCount = $vaccineLowStockCount + $vaccineExpiringBatchCount;
     }
 @endphp
 
@@ -268,9 +272,12 @@
             <i class="bi bi-capsule-pill mr-3 text-xl"></i> 
             <span class="flex-1">Medicines</span>
             @if($medicineIssueCount > 0)
-                <span class="bg-red-100 text-red-600 py-0.5 px-2 rounded-full text-[10px] font-black">
-                    {{ $medicineIssueCount }}
-                </span>
+                <div class="flex items-center gap-1.5" title="{{ $medicineLowStockCount }} low stock, {{ $medicineExpiringCount }} expiring soon">
+                    <span class="bg-red-100 text-red-600 py-0.5 px-2 rounded-full text-[10px] font-black">
+                        {{ $medicineIssueCount }}
+                    </span>
+                    <span class="text-[9px] font-black uppercase tracking-widest text-red-600">alerts</span>
+                </div>
             @endif
         </a>
 
@@ -281,9 +288,12 @@
             <i class="bi bi-box-seam-fill mr-3 text-xl text-indigo-600"></i> 
             <span class="flex-1">Vaccine Inventory</span>
             @if($vaccineIssueCount > 0)
-                <span class="bg-red-100 text-red-600 py-0.5 px-2 rounded-full text-[10px] font-black">
-                    {{ $vaccineIssueCount }}
-                </span>
+                <div class="flex items-center gap-1.5" title="{{ $vaccineLowStockCount }} low stock, {{ $vaccineExpiringBatchCount }} expiring soon">
+                    <span class="bg-red-100 text-red-600 py-0.5 px-2 rounded-full text-[10px] font-black">
+                        {{ $vaccineIssueCount }}
+                    </span>
+                    <span class="text-[9px] font-black uppercase tracking-widest text-red-600">alerts</span>
+                </div>
             @endif
         </a>
         @endif

@@ -74,11 +74,6 @@
                         <i class="bi bi-bandaid-fill mr-1.5 text-[11px]"></i>
                         <span>Health Workers</span>
                     </a>
-                    <a href="{{ route('admin.users.admins') }}"
-                       class="px-3 py-1.5 rounded-full text-xs font-semibold border {{ ($currentRole ?? '') === 'admin' ? 'bg-purple-600 text-white border-purple-600 shadow-sm' : 'bg-white text-gray-600 border-transparent hover:bg-gray-100' }}">
-                        <i class="bi bi-shield-lock-fill mr-1.5 text-[11px]"></i>
-                        <span>Admins</span>
-                    </a>
                 </div>
 
                 <form method="GET" action="{{ url()->current() }}" class="flex items-center gap-2">

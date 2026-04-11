@@ -2,6 +2,27 @@
 
 @section('title', 'Add User')
 
+<style>
+    /* Keep all create form fields visually white, including browser autofill states */
+    .user-create-form input,
+    .user-create-form select,
+    .user-create-form textarea {
+        background-color: #ffffff !important;
+        color: #111827 !important;
+    }
+
+    .user-create-form input:-webkit-autofill,
+    .user-create-form input:-webkit-autofill:hover,
+    .user-create-form input:-webkit-autofill:focus,
+    .user-create-form textarea:-webkit-autofill,
+    .user-create-form select:-webkit-autofill {
+        -webkit-text-fill-color: #111827 !important;
+        -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+        box-shadow: 0 0 0px 1000px #ffffff inset !important;
+        transition: background-color 9999s ease-in-out 0s;
+    }
+</style>
+
 @section('content')
 <div class="container mx-auto px-6 py-8 max-w-3xl">
     <div class="bg-white rounded-[2rem] shadow-lg p-8 border border-gray-100">
@@ -29,7 +50,7 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.users.store') }}" method="POST" class="space-y-8">
+    <form action="{{ route('admin.users.store') }}" method="POST" class="space-y-8 user-create-form">
         @csrf
 
         <!-- Role & Status (Moved to Top) -->
@@ -44,7 +65,6 @@
                         <option value="health_worker" {{ old('role') == 'health_worker' ? 'selected' : '' }}>🏥 Health Worker</option>
                         <option value="midwife" {{ old('role') == 'midwife' ? 'selected' : '' }}>🩺 Midwife</option>
                         <option value="doctor" {{ old('role') == 'doctor' ? 'selected' : '' }}>👨‍⚕️ Doctor</option>
-                        <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>👑 Admin</option>
                     </select>
                 </div>
                 <div class="flex items-center">

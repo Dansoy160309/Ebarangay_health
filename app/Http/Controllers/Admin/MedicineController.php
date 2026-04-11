@@ -12,6 +12,7 @@ use App\Notifications\MedicineLowStockAlertNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class MedicineController extends Controller
 {
@@ -56,7 +57,7 @@ class MedicineController extends Controller
         $data = $request->validate([
             'generic_name' => 'required|string|max:255',
             'brand_name' => 'nullable|string|max:255',
-            'dosage_form' => 'required|string|max:255',
+            'dosage_form' => ['required', 'string', Rule::in(['Tablet', 'Capsule', 'Syrup'])],
             'strength' => 'nullable|string|max:255',
             'stock' => 'required|integer|min:0',
             'reorder_level' => 'required|integer|min:0',
@@ -105,7 +106,7 @@ class MedicineController extends Controller
         $data = $request->validate([
             'generic_name' => 'required|string|max:255',
             'brand_name' => 'nullable|string|max:255',
-            'dosage_form' => 'required|string|max:255',
+            'dosage_form' => ['required', 'string', Rule::in(['Tablet', 'Capsule', 'Syrup'])],
             'strength' => 'nullable|string|max:255',
             'reorder_level' => 'required|integer|min:0',
             'expiration_date' => 'nullable|date',

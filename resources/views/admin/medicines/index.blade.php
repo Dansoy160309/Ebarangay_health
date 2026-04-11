@@ -64,6 +64,43 @@
         </div>
     </div>
 
+    @php
+        $lowStockCount = count($lowStockIds ?? []);
+        $expiringSoonCount = count($expiringSoonIds ?? []);
+        $totalAlertCount = $lowStockCount + $expiringSoonCount;
+    @endphp
+
+    @if($totalAlertCount > 0)
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        @if($lowStockCount > 0)
+        <div class="bg-red-50 border border-red-100 rounded-xl p-4 sm:p-5 flex items-start gap-3">
+            <div class="w-9 h-9 rounded-lg bg-red-100 flex items-center justify-center text-red-600 shrink-0 text-lg">
+                <i class="bi bi-graph-down-arrow"></i>
+            </div>
+            <div>
+                <h4 class="text-xs font-black text-red-900 uppercase tracking-widest">Low Stock Alert</h4>
+                <p class="text-xs font-bold text-red-700 mt-1">{{ $lowStockCount }} medicines are below reorder level.</p>
+                <p class="text-[10px] font-black text-red-600 uppercase tracking-wider mt-1">This means replenish stock soon.</p>
+            </div>
+        </div>
+
+        @endif
+
+        @if($expiringSoonCount > 0)
+        <div class="bg-orange-50 border border-orange-100 rounded-xl p-4 sm:p-5 flex items-start gap-3">
+            <div class="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center text-orange-600 shrink-0 text-lg">
+                <i class="bi bi-calendar-x"></i>
+            </div>
+            <div>
+                <h4 class="text-xs font-black text-orange-900 uppercase tracking-widest">Expiring Soon Alert</h4>
+                <p class="text-xs font-bold text-orange-700 mt-1">{{ $expiringSoonCount }} medicines are near expiry.</p>
+                <p class="text-[10px] font-black text-orange-600 uppercase tracking-wider mt-1">This means prioritize use or replace stocks.</p>
+            </div>
+        </div>
+        @endif
+    </div>
+    @endif
+
     {{-- Inventory Table --}}
     <div class="bg-white rounded-2xl shadow-lg shadow-gray-200/30 border border-gray-100 overflow-hidden">
         <div class="overflow-x-auto">

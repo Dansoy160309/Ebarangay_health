@@ -78,9 +78,18 @@
                                 <i class="bi bi-box-fill text-brand-500"></i>
                                 Dosage Form <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="dosage_form" value="{{ old('dosage_form', $medicine->dosage_form) }}"
-                                   class="w-full px-4 py-3 rounded-xl border-gray-200 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all placeholder:text-gray-300 shadow-sm"
-                                   required placeholder="e.g. Tablet, Syrup, Capsule">
+                            <div class="relative">
+                                <select name="dosage_form"
+                                        class="w-full px-4 pr-10 py-3 rounded-xl border-gray-200 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all shadow-sm appearance-none"
+                                        required>
+                                    <option value="Tablet" {{ old('dosage_form', $medicine->dosage_form) === 'Tablet' ? 'selected' : '' }}>Tablet</option>
+                                    <option value="Capsule" {{ old('dosage_form', $medicine->dosage_form) === 'Capsule' ? 'selected' : '' }}>Capsule</option>
+                                    <option value="Syrup" {{ old('dosage_form', $medicine->dosage_form) === 'Syrup' ? 'selected' : '' }}>Syrup</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400">
+                                    <i class="bi bi-chevron-down text-xs"></i>
+                                </div>
+                            </div>
                             @error('dosage_form')
                                 <p class="text-xs text-red-600 font-medium flex items-center gap-1 mt-1">
                                     <i class="bi bi-exclamation-circle"></i> {{ $message }}
@@ -150,8 +159,13 @@
                                 <i class="bi bi-calendar-x text-blue-500"></i>
                                 Expiration Date
                             </label>
-                            <input type="date" name="expiration_date" value="{{ old('expiration_date', optional($medicine->expiration_date)->format('Y-m-d')) }}"
-                                   class="w-full px-4 py-3 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm">
+                            <div class="relative">
+                                <input type="date" name="expiration_date" value="{{ old('expiration_date', optional($medicine->expiration_date)->format('Y-m-d')) }}"
+                                       class="w-full px-4 pr-12 py-3 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm">
+                                <span onclick="const input=this.previousElementSibling; if(input?.showPicker){input.showPicker();} else {input?.focus();}" class="absolute inset-y-0 right-0 pr-4 flex items-center text-blue-500 cursor-pointer">
+                                    <i class="bi bi-calendar-event text-base"></i>
+                                </span>
+                            </div>
                             @error('expiration_date')
                                 <p class="text-xs text-red-600 font-medium flex items-center gap-1 mt-1">
                                     <i class="bi bi-exclamation-circle"></i> {{ $message }}

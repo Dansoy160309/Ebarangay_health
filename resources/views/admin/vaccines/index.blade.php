@@ -84,6 +84,7 @@
             <div>
                 <h4 class="text-xs font-black text-orange-900 uppercase tracking-tighter">Near Expiry Alert</h4>
                 <p class="text-[8px] font-bold text-orange-700 mt-0.5">{{ $nearExpiryBatches->count() }} batches are expiring within 3 months.</p>
+                <p class="text-[10px] font-black text-orange-600 uppercase tracking-wider mt-1">This means prioritize these batches first.</p>
             </div>
         </div>
         @endif
@@ -96,6 +97,7 @@
             <div>
                 <h4 class="text-xs font-black text-red-900 uppercase tracking-tighter">Low Stock Alert</h4>
                 <p class="text-[8px] font-bold text-red-700 mt-0.5">{{ $lowStockVaccines->count() }} vaccines are below minimum stock level.</p>
+                <p class="text-[10px] font-black text-red-600 uppercase tracking-wider mt-1">This means reorder stock before depletion.</p>
             </div>
         </div>
         @endif
