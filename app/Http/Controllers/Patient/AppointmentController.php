@@ -27,6 +27,7 @@ class AppointmentController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
+        $hasAccountActiveAppointment = $this->hasActiveAccountAppointment($user->id);
 
         // One-time fix: Revert future no_show appointments back to approved
         try {
@@ -46,6 +47,34 @@ class AppointmentController extends Controller
                     });
                 })
                 ->update(['status' => 'approved']);
+        } catch (\Exception $e) {}
+
+        // Auto-update: Mark past appointments as no_show (real-time status tracking)
+        try {
+            $now = now();
+            Appointment::where(function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                  ->orWhere('booked_by', $user->id);
+            })
+            ->whereIn('status', ['approved', 'pending', 'rescheduled'])
+            ->where(function ($q) use ($now) {
+                // Past appointments via slots
+                $q->whereHas('slot', function ($sq) use ($now) {
+                    $sq->where(function($sqq) use ($now) {
+                        // Slot date is in the past
+                        $sqq->whereDate('date', '<', $now->toDateString());
+                    })->orWhere(function($sqqq) use ($now) {
+                        // Today's slot, but end_time has passed
+                        $sqqq->whereDate('date', $now->toDateString())
+                             ->whereTime('end_time', '<=', $now->toTimeString());
+                    });
+                })->orWhere(function ($qq) use ($now) {
+                    // Appointments without slots (direct scheduled_at is in past)
+                    $qq->whereNull('slot_id')
+                       ->where('scheduled_at', '<=', $now);
+                });
+            })
+            ->update(['status' => 'no_show']);
         } catch (\Exception $e) {}
 
         // Load appointments with slot relationship
@@ -108,7 +137,13 @@ class AppointmentController extends Controller
 
         $dependents = $user->dependents()->get();
 
-        return view('patient.appointments.index', compact('appointments', 'todaySlots', 'futureSlots', 'dependents'));
+        return view('patient.appointments.index', compact(
+            'appointments',
+            'todaySlots',
+            'futureSlots',
+            'dependents',
+            'hasAccountActiveAppointment'
+        ));
     }
 
     /**
@@ -118,8 +153,11 @@ class AppointmentController extends Controller
     {
         $user = Auth::user();
         $services = Service::all()->keyBy('name');
+        $hasAccountActiveAppointment = $this->hasActiveAccountAppointment($user->id);
 
-        $availableSlots = Slot::with('doctor')
+        $availableSlots = $hasAccountActiveAppointment
+            ? collect()
+            : Slot::with('doctor')
             ->active()
             ->whereDate('date', '>=', now())
             ->where('service', '!=', 'General Checkup') // Exclude General Checkup
@@ -148,7 +186,7 @@ class AppointmentController extends Controller
             })
             ->values();
 
-        return view('patient.appointments.available-slots', compact('availableSlots'));
+        return view('patient.appointments.available-slots', compact('availableSlots', 'hasAccountActiveAppointment'));
     }
 
     /**
@@ -158,6 +196,10 @@ class AppointmentController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
+
+        if ($this->hasActiveAccountAppointment($user->id)) {
+            return redirect()->back()->with('error', 'Only one active appointment is allowed per account. Please cancel or complete your current appointment first.');
+        }
 
         $request->validate([
             'patient_id' => 'required|exists:users,id',
@@ -215,6 +257,29 @@ class AppointmentController extends Controller
 
         return redirect()->route('patient.appointments.index')
             ->with('success', 'Appointment booked and confirmed successfully.');
+    }
+
+    private function hasActiveAccountAppointment(int $accountUserId): bool
+    {
+        $today = Carbon::today();
+
+        return Appointment::whereIn('status', ['pending', 'approved', 'rescheduled'])
+            ->where(function ($query) use ($accountUserId) {
+                $query->where('booked_by', $accountUserId)
+                    ->orWhere(function ($q) use ($accountUserId) {
+                        // Backward compatibility for older self-booked rows with null booked_by.
+                        $q->where('user_id', $accountUserId)->whereNull('booked_by');
+                    });
+            })
+            ->where(function ($query) use ($today) {
+                $query->whereHas('slot', function ($q) use ($today) {
+                    $q->whereDate('date', '>=', $today->toDateString());
+                })->orWhere(function ($q) use ($today) {
+                    $q->whereNull('slot_id')
+                        ->whereDate('scheduled_at', '>=', $today->toDateString());
+                });
+            })
+            ->exists();
     }
 
     /**

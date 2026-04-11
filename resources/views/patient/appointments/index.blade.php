@@ -8,6 +8,7 @@
     openModal: false, 
     selectedSlot: null, 
     isSubmitting: false,
+    hasAccountActiveAppointment: @js($hasAccountActiveAppointment ?? false),
     selectedPatientId: {{ Auth::user()->id }},
     patients: @js($dependents->prepend(Auth::user())->map(function($p) {
         return [
@@ -221,7 +222,7 @@
                     @php
                         $apptDate = ($slot ? \Illuminate\Support\Carbon::parse($slot->date) : null) ?? $appointment->scheduled_at;
                         $isPastDate = $apptDate && $apptDate->copy()->startOfDay()->lessThan(\Illuminate\Support\Carbon::today());
-                        $canCancel = !in_array($appointment->status, ['cancelled', 'rejected', 'completed']) && !$isPastDate;
+                        $canCancel = !in_array($appointment->status, ['cancelled', 'rejected', 'completed', 'no_show']) && !$isPastDate;
                     @endphp
                     @if($canCancel)
                         <form action="{{ route('patient.appointments.cancel', $appointment->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this appointment?');" class="w-full">
@@ -383,7 +384,7 @@
                                         @php
                                             $apptDate = ($slot ? \Illuminate\Support\Carbon::parse($slot->date) : null) ?? $appointment->scheduled_at;
                                             $isPastDate = $apptDate && $apptDate->copy()->startOfDay()->lessThan(\Illuminate\Support\Carbon::today());
-                                            $canCancel = !in_array($appointment->status, ['cancelled', 'rejected', 'completed']) && !$isPastDate;
+                                            $canCancel = !in_array($appointment->status, ['cancelled', 'rejected', 'completed', 'no_show']) && !$isPastDate;
                                         @endphp
                                         @if($canCancel)
                                             <form action="{{ route('patient.appointments.cancel', $appointment->id) }}" method="POST"
@@ -420,6 +421,13 @@
          AVAILABLE SLOTS
     ============================ --}}
     <div id="available-slots-section" class="pt-10">
+        @if($hasAccountActiveAppointment)
+            <div class="mx-4 mb-6 rounded-2xl border border-amber-200 bg-amber-50 text-amber-800 px-5 py-4">
+                <p class="text-xs font-black uppercase tracking-widest">Booking Locked</p>
+                <p class="text-sm font-bold mt-1">Only one active appointment is allowed per account. Please cancel or complete your current appointment first.</p>
+            </div>
+        @endif
+
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 px-4">
             <div>
                 <h2 class="text-2xl font-black text-gray-900 tracking-tight flex items-center gap-3 uppercase">
@@ -517,26 +525,33 @@
                             <span class="text-sm font-black text-gray-900 bg-gray-50 px-4 py-1.5 rounded-xl border border-gray-100">{{ $slot->available_spots ?? 0 }} Left</span>
                         </div>
 
-                        <button
-                            @click="openModal = true; selectedSlot = {
-                                id: {{ $slot->id }},
-                                service: '{{ $slot->service }}',
-                                date: '{{ $slot->date?->format('M d, Y') }}',
-                                time: '{{ ($slot->start_time ? \Carbon\Carbon::parse($slot->start_time)->format('g:i A') : 'N/A') . ' - ' . ($slot->end_time ? \Carbon\Carbon::parse($slot->end_time)->format('g:i A') : '') }}',
-                                provider: '{{ $slot->doctor ? ($slot->doctor->isDoctor() ? 'Dr. ' . $slot->doctor->last_name : 'Midwife ' . $slot->doctor->first_name) : 'Medical Team' }}'
-                            }"
-                            class="w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-lg group/btn"
-                            :class="{
-                                'bg-brand-600 hover:bg-brand-700 text-white shadow-brand-500/20 hover:shadow-brand-500/40 transform active:scale-95': {{ $slotAvailable ? 'true' : 'false' }},
-                                'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60': {{ $slotAvailable ? 'false' : 'true' }}
-                            }"
-                            {{ $slotAvailable ? '' : 'disabled' }}>
-                            @if($slotAvailable)
-                                Book Visit <i class="bi bi-arrow-right group-hover/btn:translate-x-1 transition-transform"></i>
-                            @else
-                                Currently Full
-                            @endif
-                        </button>
+                        @if($hasAccountActiveAppointment)
+                            <button disabled
+                                class="w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] bg-amber-100 text-amber-700 cursor-not-allowed opacity-90 flex items-center justify-center gap-3 shadow-sm border border-amber-200">
+                                One Active Appointment Per Account
+                            </button>
+                        @else
+                            <button
+                                @click="openModal = true; selectedSlot = {
+                                    id: {{ $slot->id }},
+                                    service: '{{ $slot->service }}',
+                                    date: '{{ $slot->date?->format('M d, Y') }}',
+                                    time: '{{ ($slot->start_time ? \Carbon\Carbon::parse($slot->start_time)->format('g:i A') : 'N/A') . ' - ' . ($slot->end_time ? \Carbon\Carbon::parse($slot->end_time)->format('g:i A') : '') }}',
+                                    provider: '{{ $slot->doctor ? ($slot->doctor->isDoctor() ? 'Dr. ' . $slot->doctor->last_name : 'Midwife ' . $slot->doctor->first_name) : 'Medical Team' }}'
+                                }"
+                                class="w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-lg group/btn"
+                                :class="{
+                                    'bg-brand-600 hover:bg-brand-700 text-white shadow-brand-500/20 hover:shadow-brand-500/40 transform active:scale-95': {{ $slotAvailable ? 'true' : 'false' }},
+                                    'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60': {{ $slotAvailable ? 'false' : 'true' }}
+                                }"
+                                {{ $slotAvailable ? '' : 'disabled' }}>
+                                @if($slotAvailable)
+                                    Book Visit <i class="bi bi-arrow-right group-hover/btn:translate-x-1 transition-transform"></i>
+                                @else
+                                    Currently Full
+                                @endif
+                            </button>
+                        @endif
                     </div>
                 @endforeach
             </div>
@@ -654,26 +669,33 @@
                             <span class="text-sm font-black text-gray-900 bg-gray-50 px-4 py-1.5 rounded-xl border border-gray-100">{{ $slot->available_spots ?? 0 }} Left</span>
                         </div>
 
-                        <button
-                            @click="openModal = true; selectedSlot = {
-                                id: {{ $slot->id }},
-                                service: '{{ $slot->service }}',
-                                date: '{{ $slot->date?->format('M d, Y') }}',
-                                time: '{{ ($slot->start_time ? \Carbon\Carbon::parse($slot->start_time)->format('g:i A') : 'N/A') . ' - ' . ($slot->end_time ? \Carbon\Carbon::parse($slot->end_time)->format('g:i A') : '') }}',
-                                provider: '{{ $slot->doctor ? ($slot->doctor->isDoctor() ? 'Dr. ' . $slot->doctor->last_name : 'Midwife ' . $slot->doctor->first_name) : 'Medical Team' }}'
-                            }"
-                            class="w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-lg group/btn"
-                            :class="{
-                                'bg-brand-600 hover:bg-brand-700 text-white shadow-brand-500/20 hover:shadow-brand-500/40 transform active:scale-95': {{ $slotAvailable ? 'true' : 'false' }},
-                                'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60': {{ $slotAvailable ? 'false' : 'true' }}
-                            }"
-                            {{ $slotAvailable ? '' : 'disabled' }}>
-                            @if($slotAvailable)
-                                Book Visit <i class="bi bi-arrow-right group-hover/btn:translate-x-1 transition-transform"></i>
-                            @else
-                                Currently Full
-                            @endif
-                        </button>
+                        @if($hasAccountActiveAppointment)
+                            <button disabled
+                                class="w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] bg-amber-100 text-amber-700 cursor-not-allowed opacity-90 flex items-center justify-center gap-3 shadow-sm border border-amber-200">
+                                One Active Appointment Per Account
+                            </button>
+                        @else
+                            <button
+                                @click="openModal = true; selectedSlot = {
+                                    id: {{ $slot->id }},
+                                    service: '{{ $slot->service }}',
+                                    date: '{{ $slot->date?->format('M d, Y') }}',
+                                    time: '{{ ($slot->start_time ? \Carbon\Carbon::parse($slot->start_time)->format('g:i A') : 'N/A') . ' - ' . ($slot->end_time ? \Carbon\Carbon::parse($slot->end_time)->format('g:i A') : '') }}',
+                                    provider: '{{ $slot->doctor ? ($slot->doctor->isDoctor() ? 'Dr. ' . $slot->doctor->last_name : 'Midwife ' . $slot->doctor->first_name) : 'Medical Team' }}'
+                                }"
+                                class="w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-lg group/btn"
+                                :class="{
+                                    'bg-brand-600 hover:bg-brand-700 text-white shadow-brand-500/20 hover:shadow-brand-500/40 transform active:scale-95': {{ $slotAvailable ? 'true' : 'false' }},
+                                    'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60': {{ $slotAvailable ? 'false' : 'true' }}
+                                }"
+                                {{ $slotAvailable ? '' : 'disabled' }}>
+                                @if($slotAvailable)
+                                    Book Visit <i class="bi bi-arrow-right group-hover/btn:translate-x-1 transition-transform"></i>
+                                @else
+                                    Currently Full
+                                @endif
+                            </button>
+                        @endif
                     </div>
                 @endforeach
             </div>
@@ -1025,14 +1047,19 @@
                         @csrf
                         <input type="hidden" name="patient_id" :value="selectedPatientId">
                         <button type="submit"
-                            :disabled="isSubmitting"
+                            :disabled="isSubmitting || hasAccountActiveAppointment"
                             class="w-full px-4 py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-black text-[10px] uppercase tracking-widest transition shadow-lg shadow-brand-500/30 flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed active:scale-95">
-                            <template x-if="!isSubmitting">
+                            <template x-if="hasAccountActiveAppointment">
+                                <span class="flex items-center gap-2">
+                                    One Active Appointment Per Account
+                                </span>
+                            </template>
+                            <template x-if="!isSubmitting && !hasAccountActiveAppointment">
                                 <span class="flex items-center gap-2">
                                     Confirm <i class="bi bi-check-circle-fill"></i>
                                 </span>
                             </template>
-                            <template x-if="isSubmitting">
+                            <template x-if="isSubmitting && !hasAccountActiveAppointment">
                                 <span class="flex items-center gap-2">
                                     <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

@@ -17,7 +17,7 @@
                     Critical Follow-up Required
                 </span>
             </div>
-            <h1 class="text-5xl font-black text-gray-900 tracking-tight leading-tight">Defaulter Tracking</h1>
+            <h1 class="text-3xl font-black text-gray-900 tracking-tight leading-tight">Defaulter Tracking</h1>
             <p class="text-gray-500 font-bold mt-2 text-base flex items-center gap-2">
                 Monitoring patients who missed their <span class="text-gray-900">scheduled health services</span>
             </p>
@@ -53,47 +53,47 @@
     </div>
 
     <!-- Quick Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10">
         {{-- Total Defaulters --}}
-        <div class="bg-white rounded-lg p-7 border border-gray-100 shadow-sm relative overflow-hidden group hover:border-red-200 transition-all duration-500">
+        <div class="bg-white rounded-lg p-5 border border-gray-100 shadow-sm relative overflow-hidden group hover:border-red-200 transition-all duration-500">
             <div class="absolute top-0 right-0 w-20 h-20 bg-red-50 rounded-full blur-2xl -mr-10 -mt-10 opacity-50 group-hover:opacity-100 transition-opacity"></div>
             <div class="relative z-10 flex items-center gap-4">
-                <div class="w-16 h-16 rounded-lg bg-red-50 flex items-center justify-center text-red-600 shadow-inner group-hover:scale-110 transition-transform duration-500">
-                    <i class="bi bi-person-x-fill text-3xl"></i>
+                <div class="w-12 h-12 rounded-lg bg-red-50 flex items-center justify-center text-red-600 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                    <i class="bi bi-person-x-fill text-xl"></i>
                 </div>
                 <div>
                     <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1">Total Defaulters</p>
-                    <h3 class="text-4xl font-black text-gray-900 group-hover:text-red-600 transition-colors">{{ $stats['total'] }}</h3>
+                    <h3 class="text-3xl font-black text-gray-900 group-hover:text-red-600 transition-colors">{{ $stats['total'] }}</h3>
                 </div>
             </div>
         </div>
         
         {{-- Immunization Misses --}}
         <a href="{{ route('midwife.appointments.defaulters', ['service' => 'Immunization']) }}" 
-           class="bg-white rounded-lg p-7 border border-gray-100 shadow-sm relative overflow-hidden group hover:border-indigo-200 transition-all duration-500">
+           class="bg-white rounded-lg p-5 border border-gray-100 shadow-sm relative overflow-hidden group hover:border-indigo-200 transition-all duration-500">
             <div class="absolute top-0 right-0 w-20 h-20 bg-indigo-50 rounded-full blur-2xl -mr-10 -mt-10 opacity-50 group-hover:opacity-100 transition-opacity"></div>
             <div class="relative z-10 flex items-center gap-4">
-                <div class="w-16 h-16 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 shadow-inner group-hover:scale-110 transition-transform duration-500">
-                    <i class="bi bi-shield-plus text-3xl"></i>
+                <div class="w-12 h-12 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                    <i class="bi bi-shield-plus text-xl"></i>
                 </div>
                 <div>
                     <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1">Immunization</p>
-                    <h3 class="text-4xl font-black text-gray-900 group-hover:text-indigo-600 transition-colors">{{ $stats['immunization'] }}</h3>
+                    <h3 class="text-3xl font-black text-gray-900 group-hover:text-indigo-600 transition-colors">{{ $stats['immunization'] }}</h3>
                 </div>
             </div>
         </a>
 
         {{-- Prenatal Misses --}}
         <a href="{{ route('midwife.appointments.defaulters', ['service' => 'Prenatal']) }}" 
-           class="bg-white rounded-lg p-7 border border-gray-100 shadow-sm relative overflow-hidden group hover:border-brand-200 transition-all duration-500">
+           class="bg-white rounded-lg p-5 border border-gray-100 shadow-sm relative overflow-hidden group hover:border-brand-200 transition-all duration-500">
             <div class="absolute top-0 right-0 w-20 h-20 bg-brand-50 rounded-full blur-2xl -mr-10 -mt-10 opacity-50 group-hover:opacity-100 transition-opacity"></div>
             <div class="relative z-10 flex items-center gap-4">
-                <div class="w-16 h-16 rounded-lg bg-brand-50 flex items-center justify-center text-brand-600 shadow-inner group-hover:scale-110 transition-transform duration-500">
-                    <i class="bi bi-calendar-heart text-3xl"></i>
+                <div class="w-12 h-12 rounded-lg bg-brand-50 flex items-center justify-center text-brand-600 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                    <i class="bi bi-calendar-heart text-xl"></i>
                 </div>
                 <div>
                     <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1">Prenatal Care</p>
-                    <h3 class="text-4xl font-black text-gray-900 group-hover:text-brand-600 transition-colors">{{ $stats['prenatal'] }}</h3>
+                    <h3 class="text-3xl font-black text-gray-900 group-hover:text-brand-600 transition-colors">{{ $stats['prenatal'] }}</h3>
                 </div>
             </div>
         </a>
@@ -102,42 +102,42 @@
     <!-- Filter Pills -->
     <div class="flex flex-wrap items-center gap-3 relative z-10">
         <a href="{{ route('midwife.appointments.defaulters', array_merge(request()->query(), ['service' => 'all'])) }}" 
-           class="px-6 py-3 rounded-lg text-sm font-black uppercase tracking-tighter transition-all {{ $serviceFilter === 'all' ? 'bg-gray-900 text-white shadow-lg' : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50' }}">
+           class="px-4 py-2 rounded-lg text-xs font-black uppercase tracking-tighter transition-all {{ $serviceFilter === 'all' ? 'bg-gray-900 text-white shadow-lg' : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50' }}">
             All Services
         </a>
         <a href="{{ route('midwife.appointments.defaulters', array_merge(request()->query(), ['service' => 'Immunization'])) }}" 
-           class="px-6 py-3 rounded-lg text-sm font-black uppercase tracking-tighter transition-all {{ $serviceFilter === 'Immunization' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50' }}">
+           class="px-4 py-2 rounded-lg text-xs font-black uppercase tracking-tighter transition-all {{ $serviceFilter === 'Immunization' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50' }}">
             Immunization Only
         </a>
         <a href="{{ route('midwife.appointments.defaulters', array_merge(request()->query(), ['service' => 'Prenatal'])) }}" 
-           class="px-6 py-3 rounded-lg text-sm font-black uppercase tracking-tighter transition-all {{ $serviceFilter === 'Prenatal' ? 'bg-brand-600 text-white shadow-lg' : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50' }}">
+           class="px-4 py-2 rounded-lg text-xs font-black uppercase tracking-tighter transition-all {{ $serviceFilter === 'Prenatal' ? 'bg-brand-600 text-white shadow-lg' : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50' }}">
             Prenatal Only
         </a>
     </div>
 
     <!-- Defaulters Table Container -->
-    <div class="bg-white rounded-[3.5rem] shadow-soft border border-gray-100 overflow-hidden relative z-10">
+    <div class="bg-white rounded-[2rem] shadow-soft border border-gray-100 overflow-hidden relative z-10">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-gray-50/50 border-b border-gray-100">
-                        <th class="px-12 py-5 text-sm font-black text-gray-400 uppercase tracking-[0.3em]">Patient Identity</th>
-                        <th class="px-12 py-5 text-sm font-black text-gray-400 uppercase tracking-[0.3em]">Scheduled On</th>
-                        <th class="px-12 py-5 text-sm font-black text-gray-400 uppercase tracking-[0.3em]">Health Service</th>
-                        <th class="px-12 py-5 text-sm font-black text-gray-400 uppercase tracking-[0.3em]">Contact Actions</th>
-                        <th class="px-12 py-5 text-right text-[11px] font-black text-gray-400 uppercase tracking-[0.3em]">Management</th>
+                        <th class="px-6 py-4 text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Patient Identity</th>
+                        <th class="px-6 py-4 text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Scheduled On</th>
+                        <th class="px-6 py-4 text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Health Service</th>
+                        <th class="px-6 py-4 text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Contact Actions</th>
+                        <th class="px-6 py-4 text-right text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Management</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
                     @forelse($defaulters as $appt)
                     <tr class="hover:bg-gray-50/80 transition-all duration-300 group/row">
-                        <td class="px-12 py-6">
-                            <div class="flex items-center gap-6">
-                                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-gray-500 font-black text-xl shadow-inner group-hover/row:scale-110 transition-transform duration-500">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-gray-500 font-black text-base shadow-inner group-hover/row:scale-110 transition-transform duration-500">
                                     {{ substr($appt->user->first_name, 0, 1) }}{{ substr($appt->user->last_name, 0, 1) }}
                                 </div>
                                 <div>
-                                    <p class="text-lg font-black text-gray-900 group-hover/row:text-brand-600 transition-colors leading-tight">{{ $appt->user->full_name }}</p>
+                                    <p class="text-base font-black text-gray-900 group-hover/row:text-brand-600 transition-colors leading-tight">{{ $appt->user->full_name }}</p>
                                     <div class="flex items-center gap-2 mt-2">
                                         <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest bg-gray-100 px-2.5 py-0.5 rounded-md">{{ $appt->user->age ?? 'N/A' }} Yrs</span>
                                         <span class="w-1 h-1 rounded-full bg-gray-300"></span>
@@ -146,11 +146,11 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="px-12 py-6">
+                        <td class="px-6 py-4">
                             <div class="space-y-2">
                                 <div class="flex items-center gap-2">
                                     <i class="bi bi-calendar-x text-red-500 text-base"></i>
-                                    <span class="text-base font-black text-gray-900 uppercase tracking-tight">
+                                    <span class="text-sm font-black text-gray-900 uppercase tracking-tight">
                                         {{ $appt->scheduled_at ? $appt->scheduled_at->format('M d, Y') : ($appt->slot ? \Carbon\Carbon::parse($appt->slot->date)->format('M d, Y') : 'N/A') }}
                                     </span>
                                 </div>
@@ -159,17 +159,17 @@
                                 </p>
                             </div>
                         </td>
-                        <td class="px-12 py-6">
+                        <td class="px-6 py-4">
                             @php
                                 $isImm = str_contains(strtolower($appt->service), 'immunization');
                                 $colorClass = $isImm ? 'bg-indigo-50 text-indigo-700 border-indigo-100' : 'bg-brand-50 text-brand-700 border-brand-100';
                             @endphp
-                            <span class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl {{ $colorClass }} text-[11px] font-black uppercase tracking-widest border shadow-sm">
+                            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl {{ $colorClass }} text-[10px] font-black uppercase tracking-widest border shadow-sm">
                                 <i class="bi {{ $isImm ? 'bi-shield-plus' : 'bi-calendar-heart' }}"></i>
                                 {{ $appt->service }}
                             </span>
                         </td>
-                        <td class="px-12 py-6">
+                        <td class="px-6 py-4">
                             @php
                                 $contactNo = $appt->user->contact_no;
                                 $isDependent = $appt->user->isDependent();
@@ -180,7 +180,7 @@
                             @endphp
                             <div class="flex flex-col gap-2">
                                 @if($contactNo)
-                                <a href="tel:{{ $contactNo }}" class="inline-flex items-center gap-2.5 px-5 py-2.5 bg-emerald-50 text-emerald-700 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-emerald-600 hover:text-white transition-all border border-emerald-100 w-fit">
+                                <a href="tel:{{ $contactNo }}" class="inline-flex items-center gap-2 px-3 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 hover:text-white transition-all border border-emerald-100 w-fit">
                                     <i class="bi bi-telephone-fill"></i>
                                     {{ $contactNo }}
                                 </a>
@@ -196,7 +196,7 @@
                                 @endif
                             </div>
                         </td>
-                        <td class="px-12 py-6 text-right">
+                        <td class="px-6 py-4 text-right">
                             <div class="flex items-center justify-end gap-3 opacity-40 group-hover/row:opacity-100 transition-opacity">
                                 {{-- Recall SMS Button --}}
                                 @if($contactNo)
@@ -204,9 +204,9 @@
                                     @csrf
                                     <button type="submit" 
                                             onclick="return confirm('Send an urgent recall SMS alert to this patient?')"
-                                            class="p-3 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm border border-blue-100 group/btn" 
+                                            class="p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm border border-blue-100 group/btn" 
                                             title="Send Recall SMS">
-                                        <i class="bi bi-chat-dots-fill text-lg"></i>
+                                        <i class="bi bi-chat-dots-fill text-base"></i>
                                     </button>
                                 </form>
                                 @endif
@@ -215,13 +215,13 @@
                                     @csrf
                                     <button type="submit" 
                                             onclick="return confirm('Mark this appointment as a No-Show? This will remove it from the active defaulter list.')"
-                                            class="p-3 bg-orange-50 text-orange-600 rounded-xl hover:bg-orange-600 hover:text-white transition-all shadow-sm border border-orange-100 group/btn" 
+                                            class="p-2.5 bg-orange-50 text-orange-600 rounded-xl hover:bg-orange-600 hover:text-white transition-all shadow-sm border border-orange-100 group/btn" 
                                             title="Mark as No-Show">
-                                        <i class="bi bi-person-dash-fill text-lg"></i>
+                                        <i class="bi bi-person-dash-fill text-base"></i>
                                     </button>
                                 </form>
-                                <a href="{{ route('midwife.appointments.show', $appt->id) }}" class="p-3 bg-brand-600 text-white rounded-xl hover:bg-brand-700 transition-all shadow-lg shadow-brand-500/20" title="Review Case">
-                                    <i class="bi bi-arrow-right-circle-fill text-lg"></i>
+                                <a href="{{ route('midwife.appointments.show', $appt->id) }}" class="p-2.5 bg-brand-600 text-white rounded-xl hover:bg-brand-700 transition-all shadow-lg shadow-brand-500/20" title="Review Case">
+                                    <i class="bi bi-arrow-right-circle-fill text-base"></i>
                                 </a>
                             </div>
                         </td>

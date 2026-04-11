@@ -8,6 +8,7 @@
     openModal: false,
     selectedSlot: null,
     isSubmitting: false,
+    hasAccountActiveAppointment: @js($hasAccountActiveAppointment ?? false),
     rescheduleOpen: false,
     appointmentId: null,
     patientId: '{{ auth()->id() }}',
@@ -68,7 +69,7 @@
         return this.appointments.some(appt => 
             appt.user_id == patient && 
             appt.service.toLowerCase().includes(service.toLowerCase()) &&
-            !['cancelled', 'rejected', 'completed'].includes(appt.status)
+            !['cancelled', 'rejected', 'completed', 'no_show'].includes(appt.status)
         );
     },
     getEffectiveAvailabilitiesForDate(dateStr, dayOfWeek) {
@@ -474,6 +475,13 @@
 
     {{-- 4. Available Slots --}}
     <div id="available-slots-section" class="space-y-6">
+        @if($hasAccountActiveAppointment)
+            <div class="rounded-2xl border border-amber-200 bg-amber-50 text-amber-800 px-5 py-4">
+                <p class="text-xs font-black uppercase tracking-widest">Booking Locked</p>
+                <p class="text-sm font-bold mt-1">Only one active appointment is allowed per account. Please cancel or complete your current appointment first.</p>
+            </div>
+        @endif
+
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600">
@@ -559,7 +567,7 @@
                     </div>
 
                     <button type="button"
-                        x-show="!hasExistingAppointment('{{ $slot->service }}', patientId)"
+                        x-show="!hasAccountActiveAppointment && !hasExistingAppointment('{{ $slot->service }}', patientId)"
                         @click="patientId = '{{ auth()->id() }}'; openModal = true; selectedSlot = {
                             id: {{ $slot->id }},
                             service: '{{ $slot->service }}',
@@ -572,7 +580,12 @@
                         {{ $slotAvailable ? 'Book Appointment' : 'Slot Full' }}
                     </button>
 
-                    <div x-show="hasExistingAppointment('{{ $slot->service }}', patientId)"
+                    <div x-show="hasAccountActiveAppointment"
+                        class="w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-amber-50 text-amber-700 border border-amber-200 font-black text-[10px] sm:text-xs uppercase tracking-widest text-center shadow-sm">
+                        One Active Appointment Per Account
+                    </div>
+
+                    <div x-show="!hasAccountActiveAppointment && hasExistingAppointment('{{ $slot->service }}', patientId)"
                         class="w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-orange-50 text-orange-600 border border-orange-100 font-black text-[10px] sm:text-xs uppercase tracking-widest text-center shadow-sm">
                         Already Booked
                     </div>
@@ -668,7 +681,7 @@
                         </div>
 
                         <button type="button"
-                            x-show="!hasExistingAppointment('{{ $slot->service }}', filterPatientId)"
+                            x-show="!hasAccountActiveAppointment && !hasExistingAppointment('{{ $slot->service }}', filterPatientId)"
                             @click="patientId = filterPatientId; openModal = true; selectedSlot = {
                                 id: {{ $slot->id }},
                                 service: '{{ $slot->service }}',
@@ -680,6 +693,16 @@
                             class="w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all shadow-lg disabled:opacity-50 disabled:shadow-none {{ $slotAvailable ? 'bg-brand-600 text-white shadow-brand-200 hover:bg-brand-700 hover:-translate-y-0.5' : 'bg-gray-100 text-gray-400 cursor-not-allowed' }}">
                             {{ $slotAvailable ? 'Book Appointment' : 'Slot Full' }}
                         </button>
+
+                        <div x-show="hasAccountActiveAppointment"
+                            class="w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-amber-50 text-amber-700 border border-amber-200 font-black text-[10px] sm:text-xs uppercase tracking-widest text-center shadow-sm">
+                            One Active Appointment Per Account
+                        </div>
+
+                        <div x-show="!hasAccountActiveAppointment && hasExistingAppointment('{{ $slot->service }}', filterPatientId)"
+                            class="w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-orange-50 text-orange-600 border border-orange-100 font-black text-[10px] sm:text-xs uppercase tracking-widest text-center shadow-sm">
+                            Already Booked
+                        </div>
                     </div>
                 @endforeach
             @else
@@ -767,7 +790,7 @@
                                 </td>
                                 <td class="px-8 py-6 text-right">
                                     @php
-                                        $canCancel = !in_array($appointment->status, ['cancelled', 'rejected', 'completed']) && !$isPast;
+                                        $canCancel = !in_array($appointment->status, ['cancelled', 'rejected', 'completed', 'no_show']) && !$isPast;
                                     @endphp
                                     @if($canCancel)
                                         <form action="{{ route('patient.appointments.cancel', $appointment->id) }}" method="POST" class="inline">
@@ -855,7 +878,7 @@
                         @php
                             $apptDate = ($appointment->slot ? \Illuminate\Support\Carbon::parse($appointment->slot->date) : null) ?? $appointment->scheduled_at;
                             $isPastDate = $apptDate && $apptDate->copy()->startOfDay()->lessThan(\Illuminate\Support\Carbon::today());
-                            $canCancel = !in_array($appointment->status, ['cancelled', 'rejected', 'completed']) && !$isPastDate;
+                            $canCancel = !in_array($appointment->status, ['cancelled', 'rejected', 'completed', 'no_show']) && !$isPastDate;
                         @endphp
                         @if($canCancel)
                             <form action="{{ route('patient.appointments.cancel', $appointment->id) }}" method="POST" class="block w-full">
@@ -1132,13 +1155,18 @@
                         <button type="submit" 
                                 x-show="selectedSlot"
                                 class="w-full py-5 bg-brand-600 hover:bg-brand-700 text-white rounded-[1.5rem] font-black uppercase tracking-[0.2em] shadow-xl shadow-brand-500/20 transition-all flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed"
-                                :disabled="isSubmitting">
-                            <template x-if="!isSubmitting">
+                                :disabled="isSubmitting || hasAccountActiveAppointment">
+                            <template x-if="hasAccountActiveAppointment">
+                                <span class="flex items-center gap-3">
+                                    One Active Appointment Per Account
+                                </span>
+                            </template>
+                            <template x-if="!isSubmitting && !hasAccountActiveAppointment">
                                 <span class="flex items-center gap-3">
                                     Confirm Appointment <i class="bi bi-arrow-right group-hover:translate-x-1 transition-transform"></i>
                                 </span>
                             </template>
-                            <template x-if="isSubmitting">
+                            <template x-if="isSubmitting && !hasAccountActiveAppointment">
                                 <span class="flex items-center gap-3">
                                     <i class="bi bi-arrow-repeat animate-spin"></i> Processing...
                                 </span>

@@ -446,6 +446,34 @@ class DashboardController extends Controller
         // 👤 PATIENT DASHBOARD
         // =====================================
         if ($user->isPatient()) {
+            // Auto-update: Mark past appointments as no_show (real-time status tracking)
+            try {
+                $now = now();
+                Appointment::where(function ($q) use ($user) {
+                    $q->where('user_id', $user->id)
+                      ->orWhere('booked_by', $user->id);
+                })
+                ->whereIn('status', ['approved', 'pending', 'rescheduled'])
+                ->where(function ($q) use ($now) {
+                    // Past appointments via slots
+                    $q->whereHas('slot', function ($sq) use ($now) {
+                        $sq->where(function($sqq) use ($now) {
+                            // Slot date is in the past
+                            $sqq->whereDate('date', '<', $now->toDateString());
+                        })->orWhere(function($sqqq) use ($now) {
+                            // Today's slot, but end_time has passed
+                            $sqqq->whereDate('date', $now->toDateString())
+                                 ->whereTime('end_time', '<=', $now->toTimeString());
+                        });
+                    })->orWhere(function ($qq) use ($now) {
+                        // Appointments without slots (direct scheduled_at is in past)
+                        $qq->whereNull('slot_id')
+                           ->where('scheduled_at', '<=', $now);
+                    });
+                })
+                ->update(['status' => 'no_show']);
+            } catch (\Exception $e) {}
+
             $totalAppointments    = $user->appointments()->count();
             $pendingAppointments  = $user->appointments()->where('status', 'pending')->count();
             $approvedAppointments = $user->appointments()->where('status', 'approved')->count();
@@ -555,6 +583,24 @@ class DashboardController extends Controller
             $notifications = $user->notifications()->latest()->limit(10)->get();
             $dependents = $user->dependents()->get();
 
+            $hasAccountActiveAppointment = Appointment::whereIn('status', ['pending', 'approved', 'rescheduled'])
+                ->where(function ($query) use ($user) {
+                    $query->where('booked_by', $user->id)
+                        ->orWhere(function ($q) use ($user) {
+                            // Backward compatibility for older self-booked rows with null booked_by.
+                            $q->where('user_id', $user->id)->whereNull('booked_by');
+                        });
+                })
+                ->where(function ($query) {
+                    $query->whereHas('slot', function ($q) {
+                        $q->whereDate('date', '>=', today()->toDateString());
+                    })->orWhere(function ($q) {
+                        $q->whereNull('slot_id')
+                            ->whereDate('scheduled_at', '>=', today()->toDateString());
+                    });
+                })
+                ->exists();
+
             // Fetch Doctor Availabilities for Calendar (with safety check)
             $doctorAvailabilities = collect();
             if (\Illuminate\Support\Facades\Schema::hasTable('doctor_availabilities')) {
@@ -631,7 +677,8 @@ class DashboardController extends Controller
                 'notifications',
                 'dependents',
                 'family',
-                'doctorAvailabilities'
+                'doctorAvailabilities',
+                'hasAccountActiveAppointment'
             ));
         }
 

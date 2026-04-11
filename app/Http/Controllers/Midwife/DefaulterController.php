@@ -12,17 +12,12 @@ class DefaulterController extends Controller
 {
     /**
      * Display a list of "Defaulters" (patients who missed scheduled doses)
+     * Queries appointments with 'no_show' status (auto-marked when appointment time passes)
      */
     public function index(Request $request)
     {
         $query = Appointment::with(['user.guardian', 'slot'])
-            ->whereIn('status', ['approved', 'rescheduled', 'pending'])
-            ->where(function($q) {
-                $q->whereDate('scheduled_at', '<', Carbon::today())
-                  ->orWhereHas('slot', function($sq) {
-                      $sq->whereDate('date', '<', Carbon::today());
-                  });
-            });
+            ->where('status', 'no_show');
 
         // Search Logic
         if ($request->filled('search')) {
