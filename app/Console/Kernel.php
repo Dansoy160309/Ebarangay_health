@@ -20,6 +20,9 @@ class Kernel extends ConsoleKernel
 
         // Auto-mark no-show and archive stale appointments
         $schedule->command('appointments:auto-no-show')->dailyAt('00:10');
+
+        // Auto-send first defaulter reminder with safeguards
+        $schedule->command('notifications:send-defaulter-auto-first-reminders')->hourly();
     }
 
 

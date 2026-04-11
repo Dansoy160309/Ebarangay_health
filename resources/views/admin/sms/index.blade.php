@@ -28,6 +28,9 @@
                     <p class="text-[8px] font-black uppercase tracking-tighter text-brand-400 mb-0.5">PhilSMS Balance</p>
                     <p class="text-lg font-black text-brand-600">{{ $balance }} <span class="text-[8px] font-bold text-brand-400">Credits</span></p>
                 </div>
+                <a href="{{ route('admin.message-templates.index') }}" class="bg-white px-4 py-2.5 rounded-lg border border-gray-100 text-gray-700 hover:text-brand-600 hover:border-brand-200 transition-colors text-xs font-bold">
+                    Message Templates
+                </a>
             </div>
         </div>
     </div>
@@ -73,6 +76,7 @@
                             $toggles = [
                                 'sms_appointment_reminders' => 'Reminders',
                                 'sms_defaulter_recall' => 'Defaulter Recall',
+                                'sms_auto_defaulter_first_reminder' => 'Auto First Defaulter',
                             ];
                         @endphp
 

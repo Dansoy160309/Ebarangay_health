@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\NotificationLogController as AdminNotificationLogController;
 use App\Http\Controllers\Admin\MedicineController as AdminMedicineController;
+use App\Http\Controllers\Admin\MessageTemplateController;
 
 Route::prefix('admin')
     ->name('admin.')
@@ -113,4 +114,10 @@ Route::prefix('admin')
             Route::post('broadcast', [\App\Http\Controllers\Admin\SmsSettingController::class, 'broadcast'])->name('broadcast');
             Route::post('clear-logs', [\App\Http\Controllers\Admin\SmsSettingController::class, 'clearLogs'])->name('clear-logs');
         });
+
+        // ===============================
+        // Message Templates
+        // ===============================
+        Route::resource('message-templates', MessageTemplateController::class)
+            ->only(['index', 'edit', 'update']);
     });

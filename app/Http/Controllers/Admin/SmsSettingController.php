@@ -47,7 +47,8 @@ class SmsSettingController extends Controller
             'sms_appointment_confirmed', 
             'sms_appointment_reminders', 
             'sms_appointment_cancelled',
-            'sms_defaulter_recall'
+            'sms_defaulter_recall',
+            'sms_auto_defaulter_first_reminder',
         ];
 
         // Process each setting key

@@ -124,8 +124,8 @@
                         <th class="px-6 py-4 text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Patient Identity</th>
                         <th class="px-6 py-4 text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Scheduled On</th>
                         <th class="px-6 py-4 text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Health Service</th>
-                        <th class="px-6 py-4 text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Contact Actions</th>
-                        <th class="px-6 py-4 text-right text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Management</th>
+                        <th class="px-6 py-4 text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Email</th>
+                        <th class="px-6 py-4 text-right text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Action</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
@@ -171,57 +171,50 @@
                         </td>
                         <td class="px-6 py-4">
                             @php
-                                $contactNo = $appt->user->contact_no;
                                 $isDependent = $appt->user->isDependent();
-                                
-                                if (empty($contactNo) && $isDependent) {
-                                    $contactNo = $appt->user->guardian->contact_no ?? null;
-                                }
+                                $contactEmail = $isDependent
+                                    ? optional($appt->user->guardian)->email
+                                    : $appt->user->email;
                             @endphp
                             <div class="flex flex-col gap-2">
-                                @if($contactNo)
-                                <a href="tel:{{ $contactNo }}" class="inline-flex items-center gap-2 px-3 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 hover:text-white transition-all border border-emerald-100 w-fit">
-                                    <i class="bi bi-telephone-fill"></i>
-                                    {{ $contactNo }}
-                                </a>
+                                @if($contactEmail)
+                                <form action="{{ route('midwife.appointments.send-email-template', $appt->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    <button type="submit"
+                                            onclick="return confirm('Send a follow-up email to this patient or guardian?')"
+                                            class="inline-flex items-center gap-2 px-3 py-2 bg-emerald-50 text-emerald-700 rounded-xl hover:bg-emerald-600 hover:text-white transition-all border border-emerald-100 text-[10px] font-black uppercase tracking-widest w-fit"
+                                            title="Send Email">
+                                        <i class="bi bi-envelope-fill"></i>
+                                        {{ $contactEmail }}
+                                    </button>
+                                </form>
                                 @else
-                                <span class="text-[11px] font-black text-gray-300 uppercase tracking-widest italic">No Contact Provided</span>
+                                <span class="text-[11px] font-black text-gray-300 uppercase tracking-widest italic">No Email Provided</span>
                                 @endif
                                 
                                 @if($isDependent)
                                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1.5">
                                         <i class="bi bi-people-fill text-gray-300"></i>
-                                        Via: {{ $appt->user->guardian->first_name ?? 'Guardian' }}
+                                        Via: {{ optional($appt->user->guardian)->first_name ?? 'Guardian' }}
                                     </p>
                                 @endif
                             </div>
                         </td>
                         <td class="px-6 py-4 text-right">
                             <div class="flex items-center justify-end gap-3 opacity-40 group-hover/row:opacity-100 transition-opacity">
-                                {{-- Recall SMS Button --}}
-                                @if($contactNo)
-                                <form action="{{ route('midwife.appointments.recall-sms', $appt->id) }}" method="POST">
+                                <form action="{{ route('midwife.appointments.send-sms-template', $appt->id) }}" method="POST">
                                     @csrf
-                                    <button type="submit" 
-                                            onclick="return confirm('Send an urgent recall SMS alert to this patient?')"
-                                            class="p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm border border-blue-100 group/btn" 
-                                            title="Send Recall SMS">
+                                    <button type="submit"
+                                            onclick="return confirm('Send a recall SMS to this patient or guardian?')"
+                                            class="inline-flex items-center gap-2 px-3 py-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm border border-blue-100 text-[10px] font-black uppercase tracking-widest"
+                                            title="Send SMS">
                                         <i class="bi bi-chat-dots-fill text-base"></i>
+                                        Send SMS
                                     </button>
                                 </form>
-                                @endif
-
-                                <form action="{{ route('midwife.appointments.no-show', $appt->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" 
-                                            onclick="return confirm('Mark this appointment as a No-Show? This will remove it from the active defaulter list.')"
-                                            class="p-2.5 bg-orange-50 text-orange-600 rounded-xl hover:bg-orange-600 hover:text-white transition-all shadow-sm border border-orange-100 group/btn" 
-                                            title="Mark as No-Show">
-                                        <i class="bi bi-person-dash-fill text-base"></i>
-                                    </button>
-                                </form>
-                                <a href="{{ route('midwife.appointments.show', $appt->id) }}" class="p-2.5 bg-brand-600 text-white rounded-xl hover:bg-brand-700 transition-all shadow-lg shadow-brand-500/20" title="Review Case">
+                                <a href="{{ route('midwife.appointments.show', $appt->id) }}" class="inline-flex items-center gap-2 px-3 py-2 bg-brand-600 text-white rounded-xl hover:bg-brand-700 transition-all shadow-lg shadow-brand-500/20 text-[10px] font-black uppercase tracking-widest" title="View Details">
                                     <i class="bi bi-arrow-right-circle-fill text-base"></i>
+                                    View Details
                                 </a>
                             </div>
                         </td>

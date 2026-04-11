@@ -13,13 +13,15 @@ class DefaulterRecallNotification extends Notification
 
     protected Appointment $appointment;
     public $smsType = 'sms_defaulter_recall';
+    protected ?string $renderedBody;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(Appointment $appointment)
+    public function __construct(Appointment $appointment, ?string $renderedBody = null)
     {
         $this->appointment = $appointment;
+        $this->renderedBody = $renderedBody;
     }
 
     /**
@@ -41,22 +43,31 @@ class DefaulterRecallNotification extends Notification
         
         // If the notifiable is a dependent, we use the guardian's contact number
         if (empty($recipient) && method_exists($notifiable, 'isDependent') && $notifiable->isDependent()) {
-            $recipient = $notifiable->guardian->contact_no ?? null;
+            $recipient = optional($notifiable->guardian)->contact_no;
         }
 
         if (empty($recipient)) {
             return [];
         }
 
-        $patientName = $notifiable->first_name;
-        $service = $this->appointment->service;
-        $date = $this->appointment->scheduled_at 
-            ? $this->appointment->scheduled_at->format('M d, Y') 
-            : ($this->appointment->slot ? \Carbon\Carbon::parse($this->appointment->slot->date)->format('M d, Y') : 'N/A');
+        // Use rendered body if provided (from TemplateService), otherwise generate default
+        $body = $this->renderedBody;
+        if (!$body) {
+            $patientName = $notifiable->full_name ?? $notifiable->first_name;
+            $service = $this->appointment->service;
+            $date = $this->appointment->scheduled_at 
+                ? $this->appointment->scheduled_at->format('M d, Y') 
+                : ($this->appointment->slot ? \Carbon\Carbon::parse($this->appointment->slot->date)->format('M d, Y') : 'N/A');
+
+            $isDependent = method_exists($notifiable, 'isDependent') && $notifiable->isDependent();
+            $body = $isDependent
+                ? "E-Barangay: Guardian of {$patientName}, missed {$service} appointment on {$date}. Please call or message your barangay health center to reschedule."
+                : "E-Barangay: You missed your {$service} appointment on {$date}. Please call or message your barangay health center to reschedule.";
+        }
 
         return [
             'recipient' => $recipient,
-            'body'      => "Urgent: {$patientName} missed a critical {$service} appointment on {$date}. Please visit the Barangay Health Center as soon as possible to reschedule.",
+            'body'      => $body,
         ];
     }
 

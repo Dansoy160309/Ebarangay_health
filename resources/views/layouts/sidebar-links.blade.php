@@ -336,6 +336,13 @@
             <i class="bi bi-chat-left-dots-fill mr-3 text-xl"></i> 
             <span>SMS Management</span>
         </a>
+
+        <a href="{{ route('admin.message-templates.index') }}"
+           @click="sidebarOpen = false"
+           class="{{ getLinkClasses(request()->routeIs('admin.message-templates.*')) }}">
+            <i class="bi bi-envelope-paper-fill mr-3 text-xl"></i>
+            <span>Message Templates</span>
+        </a>
     @endif
 </div>
 

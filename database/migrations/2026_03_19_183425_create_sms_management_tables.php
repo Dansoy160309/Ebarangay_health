@@ -47,6 +47,7 @@ return new class extends Migration
             ['key' => 'sms_appointment_reminders', 'value' => '1', 'description' => 'Send SMS for appointment reminders'],
             ['key' => 'sms_appointment_cancelled', 'value' => '1', 'description' => 'Send SMS when an appointment is cancelled'],
             ['key' => 'sms_defaulter_recall', 'value' => '1', 'description' => 'Send SMS for manual defaulter recall'],
+            ['key' => 'sms_auto_defaulter_first_reminder', 'value' => '0', 'description' => 'Enable automatic first SMS reminder for defaulters'],
         ]);
     }
 
