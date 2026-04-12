@@ -148,7 +148,7 @@
 
     {{-- Today's Schedule --}}
     <div class="space-y-5">
-        {{-- Section Header --}}
+        {{-- Section Header with Alert --}}
         <div class="flex items-center justify-between mb-3">
             <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
                 <i class="bi bi-clipboard-pulse text-blue-600 text-2xl"></i>
@@ -157,29 +157,33 @@
             <a href="{{ route($routePrefix . '.appointments.index') }}" class="text-sm text-blue-600 hover:text-blue-700 font-medium">View All</a>
         </div>
 
+        {{-- Alert if there are ready-for-provider consultations --}}
+        @if(count($todaysAppointmentsList) > 0)
+            <div class="mb-4 rounded-xl border-2 border-blue-300 bg-gradient-to-r from-blue-50 to-blue-50/50 px-4 py-4 text-sm text-blue-900 font-black flex items-center justify-between gap-4 shadow-lg shadow-blue-200/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center flex-shrink-0 animate-pulse">
+                        <i class="bi bi-clipboard-check-fill text-lg"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-black uppercase tracking-widest">✅ Ready for {{ $user->isMidwife() ? 'Midwife' : 'Doctor' }}</p>
+                        <p class="text-xs font-bold text-blue-700 mt-0.5">{{ count($todaysAppointmentsList) }} {{ count($todaysAppointmentsList) == 1 ? 'consultation' : 'consultations' }} waiting for you to review</p>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         {{-- Mobile View: Bento Cards --}}
         <div class="md:hidden space-y-5">
             @forelse($todaysAppointmentsList as $appt)
-                <div class="bg-white rounded-[1.5rem] p-6 shadow-sm relative overflow-hidden">
+                <a href="{{ route($routePrefix . '.appointments.show', $appt->id) }}" class="block bg-white rounded-[1.5rem] p-6 shadow-sm relative overflow-hidden hover:shadow-md transition hover:no-underline focus:outline-none focus:ring-2 focus:ring-blue-500">
                     {{-- Header: Time & Status --}}
                     <div class="flex justify-between items-center mb-5">
-                        <div class="flex items-center gap-2 text-gray-500 text-sm font-bold bg-gray-50 px-4 py-2 rounded-full">
-                            <i class="bi bi-clock-fill text-blue-400"></i>
-                            {{ \Carbon\Carbon::parse($appt->scheduled_at)->format('h:i A') }}
+                        <div class="flex items-center gap-2 text-blue-600 text-sm font-bold bg-blue-50 px-4 py-2 rounded-full">
+                            <i class="bi bi-clock-fill text-blue-500"></i>
+                            {{ $appt->slot ? $appt->slot->displayTime() : ($appt->scheduled_at ? $appt->scheduled_at->format('h:i A') : 'N/A') }}
                         </div>
-                        @php
-                            $statusColors = [
-                                'pending' => 'bg-yellow-50 text-yellow-600',
-                                'approved' => 'bg-green-50 text-green-600',
-                                'rejected' => 'bg-red-50 text-red-600',
-                                'cancelled' => 'bg-gray-50 text-gray-600',
-                                'rescheduled' => 'bg-blue-50 text-blue-600',
-                                'completed' => 'bg-purple-50 text-purple-600',
-                            ];
-                            $statusClass = $statusColors[$appt->status] ?? 'bg-gray-50 text-gray-600';
-                        @endphp
-                        <span class="px-3.5 py-1.5 rounded-full text-sm font-extrabold uppercase tracking-wide {{ $statusClass }}">
-                            {{ $appt->status }}
+                        <span class="px-3.5 py-1.5 rounded-full text-sm font-extrabold uppercase tracking-wide bg-blue-50 text-blue-600 border border-blue-100">
+                            Ready
                         </span>
                     </div>
 
@@ -220,28 +224,30 @@
         <div class="hidden md:block bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
             <div class="divide-y divide-gray-100">
                 @forelse($todaysAppointmentsList as $appt)
-                    <div class="p-5 hover:bg-gray-50 transition flex items-center justify-between">
+                    <a href="{{ route($routePrefix . '.appointments.show', $appt->id) }}" class="p-5 hover:bg-blue-50 transition flex items-center justify-between group">
                         <div class="flex items-center gap-5">
-                            <div class="h-14 w-14 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-lg">
+                            <div class="h-14 w-14 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-lg shadow-sm group-hover:bg-blue-200 transition">
                                 {{ substr($appt->user->first_name, 0, 1) }}
                             </div>
                             <div>
-                                <p class="font-bold text-gray-900 text-lg">{{ $appt->user->full_name }}</p>
-                                <p class="text-base text-gray-500 flex items-center gap-2">
-                                    <i class="bi bi-clock"></i> {{ \Carbon\Carbon::parse($appt->scheduled_at)->format('h:i A') }}
+                                <p class="font-bold text-gray-900 text-lg group-hover:text-blue-600 transition">{{ $appt->user->full_name }}</p>
+                                <p class="text-base text-gray-500 flex items-center gap-2 flex-wrap mt-1">
+                                    <i class="bi bi-clock text-blue-500"></i> 
+                                    <span class="font-semibold">{{ $appt->slot ? $appt->slot->displayTime() : ($appt->scheduled_at ? $appt->scheduled_at->format('h:i A') : 'N/A') }}</span>
                                     <span class="w-1 h-1 rounded-full bg-gray-300"></span>
-                                    {{ $appt->service }}
+                                    <i class="bi bi-bandaid text-blue-500"></i>
+                                    <span class="font-semibold">{{ $appt->service }}</span>
                                     <span class="w-1 h-1 rounded-full bg-gray-300"></span>
-                                    <span class="text-sm font-bold uppercase tracking-wider {{ $appt->status === 'approved' ? 'text-green-500' : 'text-orange-500' }}">
-                                        {{ $appt->status }}
+                                    <span class="px-2 py-1 rounded-full text-xs font-black uppercase tracking-widest bg-blue-100 text-blue-700 border border-blue-200">
+                                        ✓ Ready
                                     </span>
                                 </p>
                             </div>
                         </div>
-                        <a href="{{ route($routePrefix . '.appointments.show', $appt->id) }}" class="px-6 py-2.5 bg-blue-600 text-white rounded-lg text-base font-medium hover:bg-blue-700 transition shadow-sm shadow-blue-200">
+                        <button type="button" class="px-6 py-2.5 bg-blue-600 text-white rounded-lg text-base font-medium hover:bg-blue-700 transition shadow-sm shadow-blue-200 group-hover:shadow-blue-300 transform group-hover:-translate-y-0.5">
                             Start Consultation
-                        </a>
-                    </div>
+                        </button>
+                    </a>
                 @empty
                     <div class="p-10 text-center text-gray-500">
                         <div class="mb-4 bg-gray-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto">

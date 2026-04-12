@@ -284,13 +284,20 @@ class DashboardController extends Controller
                 ->get();
 
              // 📋 Today's Patient List (Specific for Doctor/Midwife - Approved with Vitals)
-            $todaysAppointmentsList = (clone $baseQuery)->with(['user', 'slot', 'healthRecord'])
+            $todaysAppointmentsList = (clone $baseQuery)->with(['user', 'slot', 'healthRecord' => function($q) {
+                    $q->select('*');
+                }])
                 ->where('status', 'approved');
             $applyTodayFilter($todaysAppointmentsList);
             $todaysAppointmentsList = $todaysAppointmentsList->whereHas('healthRecord', function($q) {
                     $q->whereNotNull('vital_signs');
                 })
-                ->orderBy('scheduled_at')
+                ->orderBy(function($q) {
+                    $q->select('scheduled_at')
+                      ->from('appointments')
+                      ->whereColumn('appointments.id', 'appointments.id');
+                }, 'asc')
+                ->orderBy('scheduled_at', 'asc')
                 ->get();
 
             // 🤰 MIDWIFE SPECIFIC MONITORING
