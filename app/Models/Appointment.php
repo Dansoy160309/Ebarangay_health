@@ -65,7 +65,7 @@ class Appointment extends Model
      */
     public function healthRecord()
     {
-        return $this->hasOne(HealthRecord::class);
+        return $this->hasOne(HealthRecord::class)->latestOfMany('id');
     }
 
     // =====================================================

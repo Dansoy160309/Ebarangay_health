@@ -421,17 +421,25 @@ class AppointmentController extends Controller
             'oxygen_saturation' => $request->oxygen_saturation,
         ];
 
-        \App\Models\HealthRecord::create([
-            'patient_id' => $appointment->user_id,
+        $healthRecord = \App\Models\HealthRecord::firstOrNew([
             'appointment_id' => $appointment->id,
-            'created_by' => auth()->id(),
-            'service_id' => $appointment->slot->service_id ?? null, 
+        ]);
+
+        $existingMetadata = is_array($healthRecord->metadata) ? $healthRecord->metadata : [];
+        $incomingMetadata = is_array($request->metadata) ? $request->metadata : [];
+
+        $healthRecord->fill([
+            'patient_id' => $appointment->user_id,
+            'created_by' => $healthRecord->created_by ?? auth()->id(),
+            'service_id' => $appointment->slot->service_id ?? $healthRecord->service_id,
             'vital_signs' => $vitalSigns,
-            'metadata' => $request->metadata, // 🚀 Capture specialized Prenatal/Immunization metadata
-            'status' => 'active',
+            'metadata' => array_merge($existingMetadata, $incomingMetadata), // keep prior metadata while updating vitals payload
+            'status' => $healthRecord->status ?? 'active',
             'verified_at' => null,
             'verified_by' => null,
         ]);
+
+        $healthRecord->save();
 
         // 🤰 Sync Prenatal Metadata to Patient Profile if applicable
         if ($request->has('metadata.lmp')) {
