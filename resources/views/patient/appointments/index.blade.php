@@ -973,6 +973,23 @@
                     <p class="text-xs text-gray-500 font-medium">Review appointment details below</p>
                 </div>
 
+                {{-- Patient Selector --}}
+                <div class="mb-6">
+                    <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">Service For</label>
+                    <div class="relative">
+                        <select x-model="selectedPatientId" 
+                                class="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 font-bold text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition appearance-none pr-10 hover:border-gray-300">
+                            <template x-for="patient in patients" :key="patient.id">
+                                <option :value="patient.id" :selected="selectedPatientId == patient.id" 
+                                        x-text="patient.id == {{ Auth::user()->id }} ? patient.name.toUpperCase() + ' (ACCOUNT HOLDER)' : patient.name.toUpperCase() + ' (SON)' "></option>
+                            </template>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
+                            <i class="bi bi-chevron-down text-sm"></i>
+                        </div>
+                    </div>
+                </div>
+
                 <template x-if="selectedSlot">
                     <div class="bg-gray-50 rounded-[1.5rem] p-5 border border-gray-100 shadow-inner mb-6 space-y-3">
                         <div class="flex items-center gap-3">
