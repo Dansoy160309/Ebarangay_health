@@ -10,11 +10,12 @@ use App\Models\MessageTemplate;
 use App\Models\HealthRecord;
 use App\Models\Service;
 use App\Mail\DefaulterRecallMail;
-use App\Notifications\UpcomingAppointmentReminder;
+use App\Channels\PhilSmsChannel;
 use App\Services\TemplateService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Notifications\Notification;
 
 class AppointmentController extends Controller
 {
@@ -442,8 +443,25 @@ class AppointmentController extends Controller
                 return redirect()->back()->with('error', 'No contact number found for reminder SMS.');
             }
 
-            // Uses appointment_reminder_sms template via notification class
-            $target->notify(new UpcomingAppointmentReminder($appointment));
+            // Send directly via SMS channel to avoid database notification dependency.
+            $smsBody = $this->buildReminderSmsBody($appointment);
+            $smsNotification = new class($smsBody) extends Notification {
+                public string $smsType = 'sms_appointment_reminders';
+
+                public function __construct(private string $body)
+                {
+                }
+
+                public function toSms($notifiable): array
+                {
+                    return [
+                        'recipient' => $notifiable->contact_no,
+                        'body' => $this->body,
+                    ];
+                }
+            };
+
+            app(PhilSmsChannel::class)->send($target, $smsNotification);
 
             $templateId = MessageTemplate::query()
                 ->where('template_key', 'appointment_reminder_sms')
@@ -516,7 +534,15 @@ class AppointmentController extends Controller
                 return redirect()->back()->with('error', 'No email found for reminder email.');
             }
 
-            $rendered = TemplateService::render('appointment_reminder_email', $appointment);
+            try {
+                $rendered = TemplateService::render('appointment_reminder_email', $appointment);
+            } catch (\Throwable $e) {
+                $rendered = [
+                    'subject' => 'Appointment Reminder',
+                    'body' => $this->buildReminderEmailBody($appointment),
+                    'template_id' => null,
+                ];
+            }
 
             Mail::to($recipient)->send(new DefaulterRecallMail(
                 $rendered['subject'] ?? 'Appointment Reminder',
@@ -557,5 +583,32 @@ class AppointmentController extends Controller
 
             return redirect()->back()->with('error', 'Failed to send reminder email.');
         }
+    }
+
+    private function buildReminderSmsBody(Appointment $appointment): string
+    {
+        try {
+            $rendered = TemplateService::render('appointment_reminder_sms', $appointment);
+            if (!empty($rendered['body'])) {
+                return $rendered['body'];
+            }
+        } catch (\Throwable $e) {
+            // Fallback below.
+        }
+
+        return 'Reminder: You have an appointment for '
+            . ($appointment->service ?? 'a health service')
+            . ' on ' . $appointment->formatted_date
+            . ' at ' . $appointment->formatted_time
+            . '. Please arrive 15 minutes early.';
+    }
+
+    private function buildReminderEmailBody(Appointment $appointment): string
+    {
+        return 'Good day. This is a reminder for your appointment for '
+            . ($appointment->service ?? 'a health service')
+            . ' on ' . $appointment->formatted_date
+            . ' at ' . $appointment->formatted_time
+            . '. Please arrive 15 minutes early. Thank you.';
     }
 }
