@@ -14,6 +14,7 @@ use App\Channels\PhilSmsChannel;
 use App\Services\TemplateService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Notifications\Notification;
 
@@ -426,7 +427,7 @@ class AppointmentController extends Controller
                 : $patient;
 
             if (!$target || empty($target->contact_no)) {
-                MessageDispatchLog::create([
+                $this->logDispatchSafe([
                     'appointment_id' => $appointment->id,
                     'patient_user_id' => $patient?->id,
                     'sender_user_id' => auth()->id(),
@@ -463,12 +464,17 @@ class AppointmentController extends Controller
 
             app(PhilSmsChannel::class)->send($target, $smsNotification);
 
-            $templateId = MessageTemplate::query()
-                ->where('template_key', 'appointment_reminder_sms')
-                ->where('is_active', true)
-                ->value('id');
+            $templateId = null;
+            try {
+                $templateId = MessageTemplate::query()
+                    ->where('template_key', 'appointment_reminder_sms')
+                    ->where('is_active', true)
+                    ->value('id');
+            } catch (\Throwable $e) {
+                // Optional metadata only. Do not fail send result.
+            }
 
-            MessageDispatchLog::create([
+            $this->logDispatchSafe([
                 'appointment_id' => $appointment->id,
                 'patient_user_id' => $patient?->id,
                 'sender_user_id' => auth()->id(),
@@ -484,7 +490,7 @@ class AppointmentController extends Controller
 
             return redirect()->back()->with('success', 'Reminder SMS sent successfully.');
         } catch (\Throwable $e) {
-            MessageDispatchLog::create([
+            $this->logDispatchSafe([
                 'appointment_id' => $appointment->id,
                 'patient_user_id' => $appointment->user_id,
                 'sender_user_id' => auth()->id(),
@@ -517,7 +523,7 @@ class AppointmentController extends Controller
                 : $patient->email;
 
             if (empty($recipient)) {
-                MessageDispatchLog::create([
+                $this->logDispatchSafe([
                     'appointment_id' => $appointment->id,
                     'patient_user_id' => $patient?->id,
                     'sender_user_id' => auth()->id(),
@@ -550,7 +556,7 @@ class AppointmentController extends Controller
                 $recipient
             ));
 
-            MessageDispatchLog::create([
+            $this->logDispatchSafe([
                 'appointment_id' => $appointment->id,
                 'patient_user_id' => $patient?->id,
                 'sender_user_id' => auth()->id(),
@@ -566,7 +572,7 @@ class AppointmentController extends Controller
 
             return redirect()->back()->with('success', 'Reminder email sent successfully.');
         } catch (\Throwable $e) {
-            MessageDispatchLog::create([
+            $this->logDispatchSafe([
                 'appointment_id' => $appointment->id,
                 'patient_user_id' => $appointment->user_id,
                 'sender_user_id' => auth()->id(),
@@ -610,5 +616,18 @@ class AppointmentController extends Controller
             . ' on ' . $appointment->formatted_date
             . ' at ' . $appointment->formatted_time
             . '. Please arrive 15 minutes early. Thank you.';
+    }
+
+    private function logDispatchSafe(array $payload): void
+    {
+        try {
+            MessageDispatchLog::create($payload);
+        } catch (\Throwable $e) {
+            Log::warning('Message dispatch log write failed', [
+                'error' => $e->getMessage(),
+                'payload_channel' => $payload['channel'] ?? null,
+                'payload_status' => $payload['status'] ?? null,
+            ]);
+        }
     }
 }

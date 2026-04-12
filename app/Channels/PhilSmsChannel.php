@@ -67,8 +67,8 @@ class PhilSmsChannel
                 'message' => $body,
             ]);
 
-            // 4. Log the attempt
-            SmsLog::create([
+            // 4. Log the attempt (non-blocking)
+            $this->safeLogSms([
                 'user_id' => isset($notifiable->id) ? $notifiable->id : null,
                 'recipient' => $phoneNumber,
                 'message' => $body,
@@ -82,14 +82,26 @@ class PhilSmsChannel
 
         } catch (\Exception $e) {
             Log::error('PhilSMS Exception: ' . $e->getMessage());
-            
-            // Log the exception
-            SmsLog::create([
+
+            // Log the exception (non-blocking)
+            $this->safeLogSms([
                 'user_id' => isset($notifiable->id) ? $notifiable->id : null,
                 'recipient' => $phoneNumber,
                 'message' => $body,
                 'status' => 'failed',
                 'gateway_response' => 'Exception: ' . $e->getMessage(),
+            ]);
+        }
+    }
+
+    private function safeLogSms(array $payload): void
+    {
+        try {
+            SmsLog::create($payload);
+        } catch (\Throwable $e) {
+            Log::warning('SMS log write failed', [
+                'error' => $e->getMessage(),
+                'recipient' => $payload['recipient'] ?? null,
             ]);
         }
     }
