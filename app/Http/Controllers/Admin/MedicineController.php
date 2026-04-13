@@ -37,6 +37,12 @@ class MedicineController extends Controller
 
         $medicines = $query->orderBy('generic_name')->paginate(15)->appends($request->query());
 
+        $statusCounts = [
+            'active' => Medicine::where('is_active', true)->count(),
+            'archived' => Medicine::where('is_active', false)->count(),
+            'all' => Medicine::count(),
+        ];
+
         $today = Carbon::today();
         $expiringSoonThreshold = $today->copy()->addDays(30);
 
@@ -139,6 +145,7 @@ class MedicineController extends Controller
         return view('admin.medicines.index', compact(
             'medicines',
             'status',
+            'statusCounts',
             'lowStockIds',
             'expiredIds',
             'expiringTodayIds',
@@ -161,27 +168,35 @@ class MedicineController extends Controller
             'dosage_form' => ['required', 'string', Rule::in(['Tablet', 'Capsule', 'Syrup'])],
             'strength' => 'nullable|string|max:255',
             'stock' => 'required|integer|min:0',
+            'initial_batch_number' => [
+                'nullable',
+                'string',
+                'max:255',
+                Rule::requiredIf(fn () => (int) $request->input('stock', 0) > 0),
+            ],
             'reorder_level' => 'required|integer|min:0',
         ]);
 
-        if ($this->hasDuplicateMedicine($data['generic_name'], $data['strength'] ?? null)) {
+        if ($this->hasDuplicateMedicine($data['generic_name'], $data['strength'] ?? null, $data['brand_name'] ?? null)) {
             return back()
                 ->withErrors([
-                    'generic_name' => 'This medicine already exists with the same dosage/strength. Use a different dosage or update the existing record.',
+                    'generic_name' => 'This exact medicine (same generic name, strength, and brand) already exists. Use a different brand name or update the existing record.',
                 ])
                 ->withInput();
         }
 
         $initialStock = $data['stock'] ?? 0;
+        $initialBatchNumber = $data['initial_batch_number'] ?? null;
         unset($data['stock']);
+        unset($data['initial_batch_number']);
 
-        DB::transaction(function () use ($data, $initialStock) {
+        DB::transaction(function () use ($data, $initialStock, $initialBatchNumber) {
             $medicine = Medicine::create($data + ['stock' => 0]);
 
             if ($initialStock > 0) {
                 MedicineSupply::create([
                     'medicine_id' => $medicine->id,
-                    'batch_number' => null,
+                    'batch_number' => $initialBatchNumber,
                     'quantity' => $initialStock,
                     'expiration_date' => null,
                     'supplier_name' => 'Initial Stock',
@@ -218,10 +233,10 @@ class MedicineController extends Controller
             'reorder_level' => 'required|integer|min:0',
         ]);
 
-        if ($this->hasDuplicateMedicine($data['generic_name'], $data['strength'] ?? null, $medicine->id)) {
+        if ($this->hasDuplicateMedicine($data['generic_name'], $data['strength'] ?? null, $data['brand_name'] ?? null, $medicine->id)) {
             return back()
                 ->withErrors([
-                    'generic_name' => 'Another medicine already uses this name and dosage/strength. Please change the dosage or edit that existing entry instead.',
+                    'generic_name' => 'Another medicine already uses this name, strength, and brand. Please use a different brand name or edit that existing entry instead.',
                 ])
                 ->withInput();
         }
@@ -695,21 +710,24 @@ class MedicineController extends Controller
         }
     }
 
-    private function hasDuplicateMedicine(string $genericName, ?string $strength, ?int $ignoreId = null): bool
+    private function hasDuplicateMedicine(string $genericName, ?string $strength, ?string $brandName = null, ?int $ignoreId = null): bool
     {
         $normalizedName = $this->normalizeMedicineName($genericName);
         $normalizedStrength = $this->normalizeMedicineStrength($strength);
+        $normalizedBrand = $this->normalizeMedicineName($brandName ?? '');
 
         $query = Medicine::query()
-            ->select(['id', 'generic_name', 'strength'])
+            ->select(['id', 'generic_name', 'strength', 'brand_name'])
             ->whereRaw('LOWER(TRIM(generic_name)) = ?', [$normalizedName]);
 
         if ($ignoreId) {
             $query->where('id', '!=', $ignoreId);
         }
 
-        return $query->get()->contains(function (Medicine $medicine) use ($normalizedStrength) {
-            return $this->normalizeMedicineStrength($medicine->strength) === $normalizedStrength;
+        return $query->get()->contains(function (Medicine $medicine) use ($normalizedStrength, $normalizedBrand) {
+            $matchesStrength = $this->normalizeMedicineStrength($medicine->strength) === $normalizedStrength;
+            $matchesBrand = $this->normalizeMedicineName($medicine->brand_name ?? '') === $normalizedBrand;
+            return $matchesStrength && $matchesBrand;
         });
     }
 

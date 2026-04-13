@@ -77,6 +77,7 @@
                             <input type="text" name="generic_name" value="{{ old('generic_name', $medicine->generic_name) }}"
                                    class="w-full px-4 py-3 rounded-xl border-gray-200 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all placeholder:text-gray-300 shadow-sm"
                                    required placeholder="e.g. Paracetamol">
+                            <p class="text-xs text-gray-500 mt-1">For combination drugs, separate ingredients with <span class="font-semibold">+</span></p>
                             @error('generic_name')
                                 <p class="text-xs text-red-600 font-medium flex items-center gap-1 mt-1">
                                     <i class="bi bi-exclamation-circle"></i> {{ $message }}

@@ -36,47 +36,64 @@
 
     {{-- Search & Action Bar --}}
     <div class="bg-white rounded-2xl shadow-md shadow-gray-200/25 border border-gray-100 p-4 sm:p-5">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            {{-- Quick Links --}}
-            <div class="flex items-center p-2 bg-gray-50 rounded-xl border border-gray-100 overflow-x-auto no-scrollbar">
-                <a href="{{ route('admin.medicines.index', ['status' => 'active'] + request()->except('status', 'page')) }}"
-                   class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wide transition-all whitespace-nowrap {{ ($status ?? 'active') === 'active' ? 'bg-white text-brand-600 shadow-sm' : 'text-gray-500 hover:text-brand-600 hover:bg-white' }}">
-                    Active
-                </a>
-                <a href="{{ route('admin.medicines.index', ['status' => 'archived'] + request()->except('status', 'page')) }}"
-                   class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wide transition-all whitespace-nowrap {{ ($status ?? '') === 'archived' ? 'bg-white text-brand-600 shadow-sm' : 'text-gray-500 hover:text-brand-600 hover:bg-white' }}">
-                    Archived
-                </a>
-                <a href="{{ route('admin.medicines.index', ['status' => 'all'] + request()->except('status', 'page')) }}"
-                   class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wide transition-all whitespace-nowrap {{ ($status ?? '') === 'all' ? 'bg-white text-brand-600 shadow-sm' : 'text-gray-500 hover:text-brand-600 hover:bg-white' }}">
-                    All
-                </a>
-                <a href="{{ route('admin.medicines.distributions') }}" 
-                   class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wide text-gray-500 hover:text-brand-600 hover:bg-white transition-all whitespace-nowrap">
-                    Distributions
-                </a>
-                <a href="{{ route('admin.medicines.supplies') }}" 
-                   class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wide text-gray-500 hover:text-brand-600 hover:bg-white transition-all whitespace-nowrap">
-                    Supplies
-                </a>
-                <a href="{{ route('admin.medicines.reports') }}" 
-                   class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wide text-gray-500 hover:text-brand-600 hover:bg-white transition-all whitespace-nowrap">
-                    Reports
-                </a>
-                <a href="{{ route('admin.medicines.disposals') }}" 
-                   class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wide text-gray-500 hover:text-brand-600 hover:bg-white transition-all whitespace-nowrap">
-                    Disposal Log
-                </a>
+        <div class="flex flex-col gap-4">
+            <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+                <div class="space-y-2">
+                    <p class="text-[10px] font-black uppercase tracking-[0.18em] text-gray-400">Status</p>
+                    <div class="flex flex-wrap items-center gap-2 p-2 bg-gray-50 rounded-xl border border-gray-100">
+                        <a href="{{ route('admin.medicines.index', ['status' => 'active'] + request()->except('status', 'page')) }}"
+                           class="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-black uppercase tracking-wide transition-all whitespace-nowrap {{ ($status ?? 'active') === 'active' ? 'bg-white text-brand-600 shadow-sm ring-1 ring-brand-100' : 'text-gray-500 hover:text-brand-600 hover:bg-white' }}">
+                            <span>Active</span>
+                            <span class="px-1.5 py-0.5 rounded-md text-[10px] font-black {{ ($status ?? 'active') === 'active' ? 'bg-brand-50 text-brand-600' : 'bg-gray-200 text-gray-600' }}">{{ $statusCounts['active'] ?? 0 }}</span>
+                        </a>
+                        <a href="{{ route('admin.medicines.index', ['status' => 'archived'] + request()->except('status', 'page')) }}"
+                           class="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-black uppercase tracking-wide transition-all whitespace-nowrap {{ ($status ?? '') === 'archived' ? 'bg-white text-brand-600 shadow-sm ring-1 ring-brand-100' : 'text-gray-500 hover:text-brand-600 hover:bg-white' }}">
+                            <span>Archived</span>
+                            <span class="px-1.5 py-0.5 rounded-md text-[10px] font-black {{ ($status ?? '') === 'archived' ? 'bg-brand-50 text-brand-600' : 'bg-gray-200 text-gray-600' }}">{{ $statusCounts['archived'] ?? 0 }}</span>
+                        </a>
+                        <a href="{{ route('admin.medicines.index', ['status' => 'all'] + request()->except('status', 'page')) }}"
+                           class="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-black uppercase tracking-wide transition-all whitespace-nowrap {{ ($status ?? '') === 'all' ? 'bg-white text-brand-600 shadow-sm ring-1 ring-brand-100' : 'text-gray-500 hover:text-brand-600 hover:bg-white' }}">
+                            <span>All Status</span>
+                            <span class="px-1.5 py-0.5 rounded-md text-[10px] font-black {{ ($status ?? '') === 'all' ? 'bg-brand-50 text-brand-600' : 'bg-gray-200 text-gray-600' }}">{{ $statusCounts['all'] ?? 0 }}</span>
+                        </a>
+                    </div>
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide ml-1">Filters medicines shown in this table only</p>
+                </div>
+
+                {{-- Search Input --}}
+                <form method="GET" class="relative w-full xl:max-w-md group">
+                    @if(request()->filled('status'))
+                        <input type="hidden" name="status" value="{{ request('status') }}">
+                    @endif
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
+                        <i class="bi bi-search text-[10px]"></i>
+                    </div>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name, brand, or form..."
+                        class="w-full pl-9 pr-3 py-2.5 bg-gray-50 border-none rounded-lg focus:ring-3 focus:ring-brand-500/10 focus:bg-white transition-all text-[10px] font-bold text-gray-700 placeholder-gray-400 shadow-inner">
+                </form>
             </div>
 
-            {{-- Search Input --}}
-            <form method="GET" class="relative w-full lg:max-w-md group">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
-                    <i class="bi bi-search text-[10px]"></i>
+            <div class="space-y-2">
+                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-gray-400">Sections</p>
+                <div class="flex flex-wrap items-center gap-2 p-2 bg-gray-50 rounded-xl border border-gray-100">
+                    <a href="{{ route('admin.medicines.distributions') }}"
+                       class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wide text-gray-500 hover:text-brand-600 hover:bg-white transition-all whitespace-nowrap">
+                        Distributions
+                    </a>
+                    <a href="{{ route('admin.medicines.supplies') }}"
+                       class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wide text-gray-500 hover:text-brand-600 hover:bg-white transition-all whitespace-nowrap">
+                        Supplies
+                    </a>
+                    <a href="{{ route('admin.medicines.reports') }}"
+                       class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wide text-gray-500 hover:text-brand-600 hover:bg-white transition-all whitespace-nowrap">
+                        Reports
+                    </a>
+                    <a href="{{ route('admin.medicines.disposals') }}"
+                       class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wide text-gray-500 hover:text-brand-600 hover:bg-white transition-all whitespace-nowrap">
+                        Disposal Log
+                    </a>
                 </div>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name, brand, or form..."
-                    class="w-full pl-9 pr-3 py-2.5 bg-gray-50 border-none rounded-lg focus:ring-3 focus:ring-brand-500/10 focus:bg-white transition-all text-[10px] font-bold text-gray-700 placeholder-gray-400 shadow-inner">
-            </form>
+            </div>
         </div>
     </div>
 

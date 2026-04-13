@@ -102,6 +102,7 @@
                                            placeholder="e.g. Paracetamol"
                                            class="w-full pl-12 pr-5 py-3.5 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 text-sm font-bold transition-all shadow-sm">
                                 </div>
+                                <p class="text-xs text-gray-500 ml-1 mt-1">For combination drugs, separate ingredients with <span class="font-semibold">+</span></p>
                             </div>
 
                             <div class="space-y-2.5">
@@ -158,7 +159,7 @@
                             <h2 class="text-lg font-black text-gray-900">Inventory Settings</h2>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                             <div class="space-y-2.5">
                                 <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Initial Stock</label>
                                 <div class="relative group">
@@ -169,6 +170,16 @@
                                     </div>
                                 </div>
                                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide ml-1">Initial quantity on hand</p>
+                            </div>
+
+                            <div class="space-y-2.5">
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Initial Batch Number</label>
+                                <div class="relative group">
+                                    <input type="text" name="initial_batch_number" value="{{ old('initial_batch_number') }}"
+                                           placeholder="e.g. INIT-2026-0001"
+                                           class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 text-sm font-black transition-all shadow-sm">
+                                </div>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide ml-1">Used when initial stock is greater than zero</p>
                             </div>
 
                             <div class="space-y-2.5">
