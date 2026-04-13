@@ -32,6 +32,8 @@ Route::prefix('admin')
         // Announcements
         // ===============================
         Route::resource('announcements', AdminAnnouncementController::class);
+        Route::post('announcements/{announcement}/broadcast-patients', [AdminAnnouncementController::class, 'broadcastToPatients'])
+            ->name('announcements.broadcast-patients');
 
         // ===============================
         // Appointments

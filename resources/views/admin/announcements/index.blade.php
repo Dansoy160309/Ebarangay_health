@@ -83,6 +83,14 @@
                             Read Details <i class="bi bi-arrow-right ml-1 transition-transform group-hover/link:translate-x-1"></i>
                         </a>
                         <div class="flex gap-2">
+                            <form action="{{ route('admin.announcements.broadcast-patients', $announcement->id) }}" method="POST" onsubmit="return confirm('Send this announcement to all active patients now?');" class="inline">
+                                @csrf
+                                <button type="submit"
+                                        class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-emerald-600 hover:bg-white hover:shadow-sm border border-transparent hover:border-emerald-200 transition-all"
+                                        title="Send to All Patients">
+                                    <i class="bi bi-send-fill text-sm"></i>
+                                </button>
+                            </form>
                              <a href="{{ route('admin.announcements.edit', $announcement->id) }}" 
                                 class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-brand-600 hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-200 transition-all"
                                 title="Edit Announcement">

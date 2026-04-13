@@ -59,13 +59,7 @@ class AnnouncementController extends Controller
         ]);
 
         if ($announcement->status === 'active') {
-            User::where('status', true)
-                ->where('id', '!=', auth()->id())
-                ->chunkById(100, function ($users) use ($announcement) {
-                    foreach ($users as $user) {
-                        $user->notify(new NewAnnouncementNotification($announcement));
-                    }
-                });
+            $this->notifyActivePatients($announcement);
         }
 
         return redirect()->route('admin.announcements.index')->with('success', 'Announcement created successfully.');
@@ -108,13 +102,7 @@ class AnnouncementController extends Controller
         }
 
         if ($request->status === 'active' && $wasArchived) {
-            User::where('status', true)
-                ->where('id', '!=', auth()->id())
-                ->chunkById(100, function ($users) use ($announcement) {
-                    foreach ($users as $user) {
-                        $user->notify(new NewAnnouncementNotification($announcement));
-                    }
-                });
+            $this->notifyActivePatients($announcement);
         }
 
         return redirect()->route('admin.announcements.index')->with('success', 'Announcement updated successfully.');
@@ -125,5 +113,44 @@ class AnnouncementController extends Controller
         $announcement = Announcement::findOrFail($id);
         $announcement->delete();
         return redirect()->route('admin.announcements.index')->with('success', 'Announcement deleted successfully.');
+    }
+
+    public function broadcastToPatients($id)
+    {
+        $announcement = Announcement::findOrFail($id);
+
+        if ($announcement->status !== 'active') {
+            return redirect()
+                ->route('admin.announcements.index')
+                ->with('error', 'Only active announcements can be sent to patients.');
+        }
+
+        $sentCount = $this->notifyActivePatients($announcement);
+
+        return redirect()
+            ->route('admin.announcements.index')
+            ->with('success', "Announcement sent to {$sentCount} active patients.");
+    }
+
+    private function activePatientsQuery()
+    {
+        return User::query()
+            ->where('role', 'patient')
+            ->where('status', true);
+    }
+
+    private function notifyActivePatients(Announcement $announcement): int
+    {
+        $sentCount = 0;
+
+        $this->activePatientsQuery()
+            ->chunkById(100, function ($users) use ($announcement, &$sentCount) {
+                foreach ($users as $user) {
+                    $user->notify(new NewAnnouncementNotification($announcement));
+                    $sentCount++;
+                }
+            });
+
+        return $sentCount;
     }
 }
