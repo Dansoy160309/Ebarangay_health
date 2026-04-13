@@ -441,6 +441,12 @@ class AppointmentController extends Controller
 
         $healthRecord->save();
 
+        // Keep a single canonical appointment-linked record so provider views are deterministic.
+        \App\Models\HealthRecord::query()
+            ->where('appointment_id', $appointment->id)
+            ->where('id', '!=', $healthRecord->id)
+            ->update(['appointment_id' => null]);
+
         // 🤰 Sync Prenatal Metadata to Patient Profile if applicable
         if ($request->has('metadata.lmp')) {
             $profile = $appointment->user->patientProfile;

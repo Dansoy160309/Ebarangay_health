@@ -169,6 +169,18 @@ class AppointmentController extends Controller
             $q->with('service')->latest()->limit(5);
         }, 'healthRecord', 'user.patientProfile']);
 
+        // Prefer an appointment-linked record that already contains vitals.
+        // This guards against legacy duplicate rows where one row may have empty vitals.
+        $bestRecord = HealthRecord::query()
+            ->where('appointment_id', $appointment->id)
+            ->orderByRaw("CASE WHEN vital_signs IS NULL OR TRIM(vital_signs) = '' OR TRIM(vital_signs) = '[]' OR TRIM(vital_signs) = '{}' THEN 1 ELSE 0 END ASC")
+            ->orderByDesc('id')
+            ->first();
+
+        if ($bestRecord) {
+            $appointment->setRelation('healthRecord', $bestRecord);
+        }
+
         // Load available vaccine batches if this is an immunization appointment
         $vaccineBatches = [];
         if (str_contains(strtolower($appointment->service), 'immunization')) {

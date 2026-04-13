@@ -32,7 +32,7 @@
     </div>
 
     {{-- Stats Grid --}}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
         
         {{-- Total Residents --}}
         <a href="{{ route('admin.users.index', ['role' => 'patient']) }}" class="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition block relative overflow-hidden group">
@@ -88,23 +88,6 @@
             </div>
         </a>
 
-        {{-- Pending Requests --}}
-        <a href="{{ route('admin.appointments.index', ['status' => 'pending']) }}" class="bg-white rounded-[2rem] p-6 shadow-sm hover:shadow-md transition block relative overflow-hidden group">
-             <div class="flex flex-col h-full justify-between relative z-10">
-                <div class="flex justify-between items-start mb-4">
-                     <div class="w-12 h-12 rounded-2xl bg-yellow-50 text-yellow-500 flex items-center justify-center text-2xl shadow-sm">
-                         <i class="bi bi-clock-history"></i>
-                     </div>
-                </div>
-                <div>
-                     <h3 class="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight">{{ $pendingAppointments }}</h3>
-                     <p class="text-sm font-bold text-gray-400 mt-1">Pending Requests</p>
-                </div>
-            </div>
-            <div class="absolute -right-6 -bottom-6 text-yellow-50 opacity-50 group-hover:scale-110 transition duration-500">
-                <i class="bi bi-clock-history text-9xl"></i>
-            </div>
-        </a>
     </div>
 
     {{-- Analytics & Calendar Section --}}

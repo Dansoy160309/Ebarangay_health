@@ -12,7 +12,12 @@ class ProfileController extends Controller
     public function index()
     {
         /** @var \App\Models\User $user */
-        $user = Auth::user();
+        $user = Auth::user()->load(['dependents' => function ($query) {
+            $query->where('role', 'patient')
+                ->orderBy('first_name')
+                ->orderBy('last_name');
+        }]);
+
         return view('patient.profile.index', compact('user'));
     }
 

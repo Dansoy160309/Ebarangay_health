@@ -133,15 +133,56 @@
                 </h3>
 
                 @if($user->dependents->count() > 0)
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 gap-4">
                         @foreach($user->dependents as $dependent)
-                            <div class="flex items-center gap-4 p-4 rounded-xl border border-gray-200 bg-gray-50 hover:bg-white hover:border-pink-200 hover:shadow-sm transition-all group">
-                                <div class="h-14 w-14 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-lg group-hover:scale-105 transition-transform">
-                                    {{ substr($dependent->first_name, 0, 1) }}{{ substr($dependent->last_name, 0, 1) }}
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-gray-900">{{ $dependent->full_name }}</h4>
-                                    <p class="text-sm text-gray-500">{{ $dependent->relationship }} • {{ $dependent->age }} yrs</p>
+                            <div class="p-4 sm:p-5 rounded-xl border border-gray-200 bg-gray-50 hover:bg-white hover:border-pink-200 hover:shadow-sm transition-all group">
+                                <div class="flex items-start gap-4">
+                                    <div class="h-14 w-14 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-lg group-hover:scale-105 transition-transform shrink-0">
+                                        {{ strtoupper(substr($dependent->first_name ?? '', 0, 1)) }}{{ strtoupper(substr($dependent->last_name ?? '', 0, 1)) }}
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            <h4 class="font-bold text-gray-900 text-base">{{ $dependent->full_name }}</h4>
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-pink-100 text-pink-700 border border-pink-200">
+                                                {{ $dependent->relationship ?: 'Dependent' }}
+                                            </span>
+                                        </div>
+
+                                        <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                                            <p class="text-gray-600">
+                                                <span class="font-semibold text-gray-800">Age:</span>
+                                                {{ $dependent->age ?? 'N/A' }} yrs
+                                            </p>
+                                            <p class="text-gray-600">
+                                                <span class="font-semibold text-gray-800">Sex:</span>
+                                                {{ $dependent->gender ? ucfirst($dependent->gender) : 'N/A' }}
+                                            </p>
+                                            <p class="text-gray-600">
+                                                <span class="font-semibold text-gray-800">Birthday:</span>
+                                                {{ $dependent->dob ? $dependent->dob->format('M d, Y') : 'N/A' }}
+                                            </p>
+                                            <p class="text-gray-600 break-all">
+                                                <span class="font-semibold text-gray-800">Patient ID:</span>
+                                                {{ $dependent->patient_code }}
+                                            </p>
+                                            <p class="text-gray-600 break-all sm:col-span-2">
+                                                <span class="font-semibold text-gray-800">Contact:</span>
+                                                {{ $dependent->contact_no ?: 'Not Provided' }}
+                                            </p>
+                                            <p class="text-gray-600 sm:col-span-2">
+                                                <span class="font-semibold text-gray-800">Address:</span>
+                                                {{ $dependent->address ?: 'Not Provided' }}
+                                            </p>
+                                        </div>
+
+                                        <div class="mt-4 pt-3 border-t border-gray-200/70">
+                                            <a href="{{ route('patient.health-records.index', ['subject_id' => $dependent->id]) }}"
+                                               class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wider border border-blue-200 hover:bg-blue-100 transition">
+                                                <i class="bi bi-file-medical-fill"></i>
+                                                View Health Records
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         @endforeach

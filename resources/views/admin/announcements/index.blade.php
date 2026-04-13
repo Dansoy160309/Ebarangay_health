@@ -138,12 +138,23 @@
             @if($archivedAnnouncements->count())
                 <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     @foreach($archivedAnnouncements as $announcement)
-                        <article class="flex flex-col bg-gray-50 rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-300 group relative">
+                        @php
+                            $isExpired = $announcement->isExpired();
+                            $expiredDays = $isExpired && $announcement->expires_at ? $announcement->expires_at->diffInDays(now()) : 0;
+                        @endphp
+                        <article class="flex flex-col rounded-xl overflow-hidden hover:shadow-md transition-all duration-300 group relative {{ $isExpired ? 'bg-red-50/40 border border-red-200' : 'bg-gray-50 border border-gray-100' }}">
                             <div class="absolute top-3 right-3 z-10">
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[8px] font-bold bg-gray-100 text-gray-800 border border-gray-200 shadow-sm">
-                                    <i class="bi bi-archive-fill mr-1 text-gray-500 text-[7px]"></i>
-                                    {{ $announcement->isExpired() ? 'Expired' : 'Archived' }}
-                                </span>
+                                @if($isExpired)
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[9px] font-black bg-red-100 text-red-700 border border-red-200 shadow-sm uppercase tracking-wider">
+                                        <i class="bi bi-exclamation-circle-fill mr-1.5 text-[9px]"></i>
+                                        Expired
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[8px] font-bold bg-gray-100 text-gray-800 border border-gray-200 shadow-sm">
+                                        <i class="bi bi-archive-fill mr-1 text-gray-500 text-[7px]"></i>
+                                        Archived
+                                    </span>
+                                @endif
                             </div>
 
                             <div class="p-4 flex-1 flex flex-col">
@@ -162,9 +173,14 @@
 
                                 @if($announcement->expires_at)
                                     <div class="mt-auto pt-3 border-t border-gray-100">
-                                        <p class="text-xs text-orange-500 flex items-center font-medium bg-orange-50 px-2 py-1 rounded-lg w-fit">
+                                        <p class="text-xs flex items-center font-medium px-2 py-1 rounded-lg w-fit {{ $isExpired ? 'text-red-600 bg-red-100' : 'text-orange-500 bg-orange-50' }}">
                                             <i class="bi bi-clock-history mr-1.5"></i> Expires: {{ $announcement->expires_at->format('M d, Y') }}
                                         </p>
+                                        @if($isExpired)
+                                            <p class="text-[10px] font-bold text-red-600 mt-2 uppercase tracking-widest">
+                                                Expired {{ $expiredDays }} {{ $expiredDays === 1 ? 'day' : 'days' }} ago
+                                            </p>
+                                        @endif
                                     </div>
                                 @endif
                             </div>
