@@ -97,6 +97,7 @@ class ReportController extends Controller
 
         // Calculate Growth
         $growthStats = [];
+        $deltaStats = [];
         foreach ($appointmentStats as $key => $currentValue) {
             $prevValue = $prevAppointmentStats[$key];
             if ($prevValue > 0) {
@@ -105,6 +106,7 @@ class ReportController extends Controller
                 $growth = $currentValue > 0 ? 100 : 0;
             }
             $growthStats[$key] = round($growth, 1);
+            $deltaStats[$key] = $currentValue - $prevValue;
         }
 
         // 4. Appointment Trends (Dynamic Grouping)
@@ -295,6 +297,8 @@ class ReportController extends Controller
             'vaccineStats',
             'bpStats',
             'growthStats',
+            'deltaStats',
+            'prevAppointmentStats',
             'startDate',
             'endDate',
             'maternalStats',

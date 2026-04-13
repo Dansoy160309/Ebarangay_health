@@ -195,10 +195,46 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             @php
                 $stats = [
-                    ['label' => 'Total Appointments', 'value' => $appointmentStats['total'], 'growth' => $growthStats['total'], 'icon' => 'bi-calendar-check', 'color' => 'blue'],
-                    ['label' => 'Completed', 'value' => $appointmentStats['completed'], 'growth' => $growthStats['completed'], 'icon' => 'bi-check-circle', 'color' => 'emerald'],
-                    ['label' => 'Pending', 'value' => $appointmentStats['pending'], 'growth' => $growthStats['pending'], 'icon' => 'bi-hourglass-split', 'color' => 'amber'],
-                    ['label' => 'Cancelled', 'value' => $appointmentStats['cancelled'], 'growth' => $growthStats['cancelled'], 'icon' => 'bi-x-circle', 'color' => 'rose'],
+                    [
+                        'key' => 'total',
+                        'label' => 'Total Appointments',
+                        'value' => $appointmentStats['total'],
+                        'growth' => $growthStats['total'],
+                        'delta' => $deltaStats['total'] ?? 0,
+                        'previous' => $prevAppointmentStats['total'] ?? 0,
+                        'icon' => 'bi-calendar-check',
+                        'color' => 'blue'
+                    ],
+                    [
+                        'key' => 'completed',
+                        'label' => 'Completed',
+                        'value' => $appointmentStats['completed'],
+                        'growth' => $growthStats['completed'],
+                        'delta' => $deltaStats['completed'] ?? 0,
+                        'previous' => $prevAppointmentStats['completed'] ?? 0,
+                        'icon' => 'bi-check-circle',
+                        'color' => 'emerald'
+                    ],
+                    [
+                        'key' => 'pending',
+                        'label' => 'Pending',
+                        'value' => $appointmentStats['pending'],
+                        'growth' => $growthStats['pending'],
+                        'delta' => $deltaStats['pending'] ?? 0,
+                        'previous' => $prevAppointmentStats['pending'] ?? 0,
+                        'icon' => 'bi-hourglass-split',
+                        'color' => 'amber'
+                    ],
+                    [
+                        'key' => 'cancelled',
+                        'label' => 'Cancelled',
+                        'value' => $appointmentStats['cancelled'],
+                        'growth' => $growthStats['cancelled'],
+                        'delta' => $deltaStats['cancelled'] ?? 0,
+                        'previous' => $prevAppointmentStats['cancelled'] ?? 0,
+                        'icon' => 'bi-x-circle',
+                        'color' => 'rose'
+                    ],
                 ];
             @endphp
 
@@ -214,7 +250,7 @@
                             'flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest uppercase border',
                             'bg-emerald-50 text-emerald-600 border-emerald-100' => $stat['growth'] >= 0,
                             'bg-rose-50 text-rose-600 border-rose-100' => $stat['growth'] < 0,
-                        ])>
+                        ]) title="Compared with previous period: {{ number_format($stat['previous']) }}">
                             <i class="bi bi-arrow-{{ $stat['growth'] >= 0 ? 'up' : 'down' }}"></i>
                             {{ abs($stat['growth']) }}%
                         </div>
@@ -223,6 +259,11 @@
                     <div class="relative z-10">
                         <p class="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">{{ $stat['label'] }}</p>
                         <h3 class="text-4xl font-black text-gray-900 tracking-tight">{{ number_format($stat['value']) }}</h3>
+                        <p class="text-[11px] font-bold text-gray-500 mt-1 uppercase tracking-wider">
+                            From {{ number_format($stat['previous']) }}
+                            <span class="mx-1 text-gray-300">|</span>
+                            {{ $stat['delta'] >= 0 ? '+' : '' }}{{ number_format($stat['delta']) }} net
+                        </p>
                     </div>
                 </div>
             @endforeach
