@@ -89,7 +89,6 @@
             <div>
                 <h4 class="text-xs font-black text-red-900 uppercase tracking-tighter">Expired Batch Alert</h4>
                 <p class="text-[8px] font-bold text-red-700 mt-0.5">{{ $expiredBatches->count() }} expired batches must be disposed.</p>
-                <p class="text-[10px] font-black text-red-600 uppercase tracking-wider mt-1">Identify by vaccine + batch and dispose below.</p>
             </div>
         </div>
         @endif
@@ -124,7 +123,7 @@
 
     @if(($expiredBatches ?? collect())->count() > 0)
     <div class="bg-white rounded-2xl shadow-sm border border-red-100 overflow-hidden mb-6">
-        <div class="px-5 sm:px-6 py-4 border-b border-red-50 flex items-center justify-between gap-3">
+        <div class="px-5 sm:px-6 py-4 border-b border-red-50 flex items-center gap-3">
             <div class="flex items-center gap-3">
                 <div class="w-9 h-9 rounded-xl bg-red-50 text-red-600 flex items-center justify-center">
                     <i class="bi bi-trash3"></i>
@@ -134,9 +133,6 @@
                     <p class="text-[10px] font-bold text-red-500 uppercase tracking-widest">Vaccine name, batch number, expiry date, and remaining doses</p>
                 </div>
             </div>
-            <span class="px-2.5 py-1 rounded-full bg-red-50 text-red-600 text-[10px] font-black uppercase tracking-widest border border-red-100">
-                {{ $expiredBatches->count() }} Pending
-            </span>
         </div>
 
         <div class="divide-y divide-red-50">
