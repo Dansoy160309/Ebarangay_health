@@ -27,5 +27,10 @@ class Medicine extends Model
     {
         return $this->hasMany(MedicineDistribution::class);
     }
+
+    public function supplies()
+    {
+        return $this->hasMany(MedicineSupply::class);
+    }
 }
 

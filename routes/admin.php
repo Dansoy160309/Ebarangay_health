@@ -71,8 +71,11 @@ Route::prefix('admin')
         Route::get('medicines-reports', [AdminMedicineController::class, 'reports'])->name('medicines.reports');
         Route::get('medicines-reports/export', [AdminMedicineController::class, 'exportExcel'])->name('medicines.reports.export');
         Route::get('medicines-supplies', [AdminMedicineController::class, 'supplies'])->name('medicines.supplies');
+        Route::get('medicines-disposals', [AdminMedicineController::class, 'disposals'])->name('medicines.disposals');
         Route::get('medicines-supplies/create', [AdminMedicineController::class, 'createSupply'])->name('medicines.supplies.create');
         Route::post('medicines-supplies', [AdminMedicineController::class, 'storeSupply'])->name('medicines.supplies.store');
+        Route::post('medicines-supplies/{supply}/dispose', [AdminMedicineController::class, 'disposeSupply'])
+            ->name('medicines.supplies.dispose');
 
         // ===============================
         // Vaccines

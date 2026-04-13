@@ -2,8 +2,36 @@
 
 @section('title', 'Edit Medicine')
 
+<style>
+.medicine-form input,
+.medicine-form select,
+.medicine-form textarea {
+    background-color: #ffffff !important;
+    color: #111827 !important;
+    color-scheme: light;
+}
+
+.medicine-form input:-webkit-autofill,
+.medicine-form input:-webkit-autofill:hover,
+.medicine-form input:-webkit-autofill:focus,
+.medicine-form select:-webkit-autofill {
+    -webkit-text-fill-color: #111827;
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+</style>
+
 @section('content')
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    @php
+        $today = now()->startOfDay();
+        $allBatches = $medicine->supplies ?? collect();
+        $activeBatches = $allBatches->whereNull('disposed_at');
+        $expiredActiveBatches = $activeBatches->filter(fn($b) => $b->expiration_date && $b->expiration_date->copy()->startOfDay()->lt($today));
+        $expiringSoonBatches = $activeBatches->filter(fn($b) => $b->expiration_date && $b->expiration_date->copy()->startOfDay()->gte($today) && $b->expiration_date->copy()->startOfDay()->lte($today->copy()->addDays(30)));
+        $disposedBatches = $allBatches->whereNotNull('disposed_at');
+    @endphp
+
     <div class="mb-8 flex items-center justify-between">
         <div>
             <a href="{{ route('admin.medicines.index') }}" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-brand-600 transition-colors group mb-4">
@@ -23,7 +51,7 @@
         </div>
     </div>
 
-    <form method="POST" action="{{ route('admin.medicines.update', $medicine) }}">
+    <form method="POST" action="{{ route('admin.medicines.update', $medicine) }}" class="medicine-form">
         @csrf
         @method('PUT')
 
@@ -153,24 +181,27 @@
                             @enderror
                         </div>
 
-                        {{-- Expiration Date --}}
+                        {{-- Expiration Date (Batch Managed) --}}
                         <div class="space-y-2">
                             <label class="flex items-center gap-2 text-sm font-bold text-gray-700 uppercase tracking-wider">
                                 <i class="bi bi-calendar-x text-blue-500"></i>
                                 Expiration Date
                             </label>
-                            <div class="relative">
-                                <input type="date" name="expiration_date" value="{{ old('expiration_date', optional($medicine->expiration_date)->format('Y-m-d')) }}"
-                                       class="w-full px-4 pr-12 py-3 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm">
-                                <span onclick="const input=this.previousElementSibling; if(input?.showPicker){input.showPicker();} else {input?.focus();}" class="absolute inset-y-0 right-0 pr-4 flex items-center text-blue-500 cursor-pointer">
-                                    <i class="bi bi-calendar-event text-base"></i>
-                                </span>
-                            </div>
-                            @error('expiration_date')
-                                <p class="text-xs text-red-600 font-medium flex items-center gap-1 mt-1">
-                                    <i class="bi bi-exclamation-circle"></i> {{ $message }}
+                            <div class="rounded-xl border border-blue-100 bg-blue-50/60 p-4">
+                                <p class="text-sm font-black {{ $medicine->expiration_date ? 'text-blue-800' : 'text-gray-500' }}">
+                                    {{ $medicine->expiration_date ? $medicine->expiration_date->format('M d, Y') : 'No active batch' }}
                                 </p>
-                            @enderror
+                                <p class="text-[11px] font-bold text-blue-700 mt-1 uppercase tracking-wider">
+                                    Managed by supply batches only
+                                </p>
+                                <p class="text-[11px] text-blue-700/90 mt-2">
+                                    To update expiry, edit/add a batch in the Supplies module.
+                                </p>
+                                <a href="{{ route('admin.medicines.supplies') }}" class="inline-flex items-center mt-3 px-3 py-1.5 rounded-lg bg-white border border-blue-200 text-blue-700 text-[10px] font-black uppercase tracking-widest hover:bg-blue-100 transition">
+                                    <i class="bi bi-box-seam mr-1.5"></i>
+                                    Open Supplies
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -187,6 +218,108 @@
                     Update Medicine
                 </button>
             </div>
+        </div>
+
+        <div class="mt-8 bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/40 border border-gray-100 p-8 md:p-10">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="text-xl font-black text-gray-900 flex items-center gap-2">
+                        <i class="bi bi-box-seam text-brand-600"></i>
+                        Batch Attention Board
+                    </h2>
+                    <p class="text-sm text-gray-500 font-medium mt-1">Use this to identify which exact batch needs action.</p>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2">
+                    <a href="{{ route('admin.medicines.supplies', ['medicine_id' => $medicine->id]) }}"
+                       class="inline-flex items-center px-4 py-2 rounded-xl bg-white border border-gray-200 text-gray-700 text-xs font-black uppercase tracking-wider hover:bg-gray-50 transition">
+                        <i class="bi bi-list-ul mr-1.5"></i>
+                        Open Supply History
+                    </a>
+                    <a href="{{ route('admin.medicines.supplies.create') }}"
+                       class="inline-flex items-center px-4 py-2 rounded-xl bg-brand-600 text-white text-xs font-black uppercase tracking-wider hover:bg-brand-700 transition">
+                        <i class="bi bi-plus-lg mr-1.5"></i>
+                        Add Batch
+                    </a>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+                <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-red-600">Expired Active</p>
+                    <p class="text-2xl font-black text-red-700">{{ $expiredActiveBatches->count() }}</p>
+                </div>
+                <div class="rounded-xl border border-orange-200 bg-orange-50 px-4 py-3">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-orange-600">Expiring 30 Days</p>
+                    <p class="text-2xl font-black text-orange-700">{{ $expiringSoonBatches->count() }}</p>
+                </div>
+                <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-emerald-600">Active Batches</p>
+                    <p class="text-2xl font-black text-emerald-700">{{ $activeBatches->count() }}</p>
+                </div>
+                <div class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-500">Disposed</p>
+                    <p class="text-2xl font-black text-gray-700">{{ $disposedBatches->count() }}</p>
+                </div>
+            </div>
+
+            @if($allBatches->count() > 0)
+                <div class="overflow-x-auto rounded-2xl border border-gray-100">
+                    <table class="w-full min-w-[760px]">
+                        <thead>
+                            <tr class="bg-gray-50 border-b border-gray-100">
+                                <th class="px-4 py-3 text-left text-[10px] font-black text-gray-400 uppercase tracking-wider">Batch</th>
+                                <th class="px-4 py-3 text-left text-[10px] font-black text-gray-400 uppercase tracking-wider">Qty</th>
+                                <th class="px-4 py-3 text-left text-[10px] font-black text-gray-400 uppercase tracking-wider">Received</th>
+                                <th class="px-4 py-3 text-left text-[10px] font-black text-gray-400 uppercase tracking-wider">Expiry</th>
+                                <th class="px-4 py-3 text-left text-[10px] font-black text-gray-400 uppercase tracking-wider">Status</th>
+                                <th class="px-4 py-3 text-right text-[10px] font-black text-gray-400 uppercase tracking-wider">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-50">
+                            @foreach($allBatches->take(10) as $batch)
+                                @php
+                                    $isDisposed = !is_null($batch->disposed_at);
+                                    $isExpired = !$isDisposed && $batch->expiration_date && $batch->expiration_date->copy()->startOfDay()->lt($today);
+                                    $isExpiringSoon = !$isDisposed && $batch->expiration_date && $batch->expiration_date->copy()->startOfDay()->gte($today) && $batch->expiration_date->copy()->startOfDay()->lte($today->copy()->addDays(30));
+                                @endphp
+                                <tr class="hover:bg-gray-50/50">
+                                    <td class="px-4 py-3 text-sm font-bold text-gray-900">{{ $batch->batch_number ?: 'NO-BATCH' }}</td>
+                                    <td class="px-4 py-3 text-sm font-bold text-gray-700">{{ number_format($batch->quantity) }}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-600">{{ $batch->date_received?->format('M d, Y') ?: '-' }}</td>
+                                    <td class="px-4 py-3 text-sm font-bold {{ $isExpired ? 'text-red-600' : ($isExpiringSoon ? 'text-orange-600' : 'text-gray-700') }}">{{ $batch->expiration_date?->format('M d, Y') ?: 'No date' }}</td>
+                                    <td class="px-4 py-3">
+                                        @if($isDisposed)
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest bg-gray-100 text-gray-600">Disposed</span>
+                                        @elseif($isExpired)
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest bg-red-100 text-red-600">Expired</span>
+                                        @elseif($isExpiringSoon)
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest bg-orange-100 text-orange-600">Expiring Soon</span>
+                                        @else
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest bg-emerald-100 text-emerald-600">Active</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-3 text-right">
+                                        <a href="{{ route('admin.medicines.supplies', ['medicine_id' => $medicine->id]) }}"
+                                           class="inline-flex items-center px-3 py-1.5 rounded-lg bg-white border border-gray-200 text-gray-700 text-[10px] font-black uppercase tracking-widest hover:bg-gray-50 transition">
+                                            Manage
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                @if($allBatches->count() > 10)
+                    <p class="text-[11px] text-gray-500 font-medium mt-3">Showing latest 10 batches. Open Supply History for full list.</p>
+                @endif
+            @else
+                <div class="rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-8 text-center">
+                    <i class="bi bi-box2 text-3xl text-gray-300"></i>
+                    <p class="text-sm font-bold text-gray-700 mt-2">No batches yet for this medicine</p>
+                    <p class="text-xs text-gray-500 mt-1">Add a supply batch to start batch-level expiry tracking.</p>
+                </div>
+            @endif
         </div>
     </form>
 </div>

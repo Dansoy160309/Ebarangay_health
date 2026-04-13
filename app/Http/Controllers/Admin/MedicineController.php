@@ -55,7 +55,16 @@ class MedicineController extends Controller
             ->whereNotNull('expiration_date')
             ->whereDate('expiration_date', '>=', $today)
             ->whereDate('expiration_date', '<=', $expiringSoonThreshold)
+            ->whereNull('disposed_at')
             ->orderBy('expiration_date')
+            ->limit(5)
+            ->get();
+
+        $expiredSupplyBatches = MedicineSupply::with('medicine')
+            ->whereNotNull('expiration_date')
+            ->whereDate('expiration_date', '<', $today)
+            ->whereNull('disposed_at')
+            ->orderByDesc('expiration_date')
             ->limit(5)
             ->get();
 
@@ -78,7 +87,8 @@ class MedicineController extends Controller
             'expiredIds',
             'expiringTodayIds',
             'expiringSoonIds',
-            'expiringSupplyBatches'
+            'expiringSupplyBatches',
+            'expiredSupplyBatches'
         ));
     }
 
@@ -96,7 +106,6 @@ class MedicineController extends Controller
             'strength' => 'nullable|string|max:255',
             'stock' => 'required|integer|min:0',
             'reorder_level' => 'required|integer|min:0',
-            'expiration_date' => 'nullable|date',
         ]);
 
         if ($this->hasDuplicateMedicine($data['generic_name'], $data['strength'] ?? null)) {
@@ -118,7 +127,7 @@ class MedicineController extends Controller
                     'medicine_id' => $medicine->id,
                     'batch_number' => null,
                     'quantity' => $initialStock,
-                    'expiration_date' => $medicine->expiration_date,
+                    'expiration_date' => null,
                     'supplier_name' => 'Initial Stock',
                     'date_received' => now()->toDateString(),
                     'received_by' => auth()->id(),
@@ -133,6 +142,13 @@ class MedicineController extends Controller
 
     public function edit(Medicine $medicine)
     {
+        $medicine->load(['supplies' => function ($query) {
+            $query->with(['receiver', 'disposer'])
+                ->orderByRaw('CASE WHEN disposed_at IS NULL THEN 0 ELSE 1 END ASC')
+                ->orderBy('expiration_date')
+                ->orderByDesc('date_received');
+        }]);
+
         return view('admin.medicines.edit', compact('medicine'));
     }
 
@@ -144,7 +160,6 @@ class MedicineController extends Controller
             'dosage_form' => ['required', 'string', Rule::in(['Tablet', 'Capsule', 'Syrup'])],
             'strength' => 'nullable|string|max:255',
             'reorder_level' => 'required|integer|min:0',
-            'expiration_date' => 'nullable|date',
         ]);
 
         if ($this->hasDuplicateMedicine($data['generic_name'], $data['strength'] ?? null, $medicine->id)) {
@@ -458,6 +473,29 @@ class MedicineController extends Controller
         return view('admin.medicines.supplies', compact('supplies', 'medicines'));
     }
 
+    public function disposals(Request $request)
+    {
+        $query = MedicineSupply::with(['medicine', 'receiver', 'disposer'])
+            ->whereNotNull('disposed_at');
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('disposed_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('disposed_at', '<=', $request->date_to);
+        }
+
+        if ($request->filled('medicine_id')) {
+            $query->where('medicine_id', $request->medicine_id);
+        }
+
+        $disposals = $query->orderByDesc('disposed_at')->paginate(20)->appends($request->query());
+        $medicines = Medicine::orderBy('generic_name')->get();
+
+        return view('admin.medicines.disposals', compact('disposals', 'medicines'));
+    }
+
     public function createSupply()
     {
         $medicines = Medicine::orderBy('generic_name')->get();
@@ -492,8 +530,48 @@ class MedicineController extends Controller
             $medicine->increment('stock', $data['quantity']);
         });
 
+        $this->syncMedicineExpirationDate($medicine->id);
+
         return redirect()->route('admin.medicines.supplies')
             ->with('success', 'Supply recorded and stock updated.');
+    }
+
+    public function disposeSupply(Request $request, MedicineSupply $supply)
+    {
+        $request->validate([
+            'disposal_notes' => 'nullable|string|max:500',
+        ]);
+
+        $today = Carbon::today();
+
+        if ($supply->disposed_at) {
+            return redirect()->back()->with('info', 'This batch is already marked as disposed.');
+        }
+
+        if (!$supply->expiration_date || !$supply->expiration_date->isBefore($today)) {
+            return redirect()->back()->with('error', 'Only expired batches can be disposed.');
+        }
+
+        DB::transaction(function () use ($supply, $request) {
+            $supply->loadMissing('medicine');
+
+            if ($supply->medicine) {
+                $decrementQty = min((int) $supply->quantity, (int) $supply->medicine->stock);
+                if ($decrementQty > 0) {
+                    $supply->medicine->decrement('stock', $decrementQty);
+                }
+            }
+
+            $supply->update([
+                'disposed_at' => now(),
+                'disposed_by' => auth()->id(),
+                'disposal_notes' => $request->input('disposal_notes'),
+            ]);
+
+            $this->syncMedicineExpirationDate($supply->medicine_id);
+        });
+
+        return redirect()->back()->with('success', 'Expired batch marked as disposed and stock adjusted.');
     }
 
     private function notifyAdminsForLowStockMedicines($medicines): void
@@ -573,5 +651,26 @@ class MedicineController extends Controller
     private function normalizeMedicineStrength(?string $value): string
     {
         return preg_replace('/\s+/', '', strtolower(trim((string) $value))) ?? '';
+    }
+
+    private function syncMedicineExpirationDate(?int $medicineId): void
+    {
+        if (!$medicineId) {
+            return;
+        }
+
+        $medicine = Medicine::find($medicineId);
+        if (!$medicine) {
+            return;
+        }
+
+        $nextExpiry = MedicineSupply::query()
+            ->where('medicine_id', $medicineId)
+            ->whereNull('disposed_at')
+            ->whereNotNull('expiration_date')
+            ->min('expiration_date');
+
+        $medicine->expiration_date = $nextExpiry ?: null;
+        $medicine->save();
     }
 }

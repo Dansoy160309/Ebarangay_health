@@ -51,6 +51,10 @@
                    class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wide text-gray-500 hover:text-brand-600 hover:bg-white transition-all whitespace-nowrap">
                     Reports
                 </a>
+                <a href="{{ route('admin.medicines.disposals') }}" 
+                   class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wide text-gray-500 hover:text-brand-600 hover:bg-white transition-all whitespace-nowrap">
+                    Disposal Log
+                </a>
             </div>
 
             {{-- Search Input --}}
@@ -67,11 +71,55 @@
     @php
         $lowStockCount = count($lowStockIds ?? []);
         $expiringSoonCount = count($expiringSoonIds ?? []) + count($expiringTodayIds ?? []);
-        $totalAlertCount = $lowStockCount + $expiringSoonCount;
+        $expiredBatchCount = isset($expiredSupplyBatches) ? $expiredSupplyBatches->count() : 0;
+        $totalAlertCount = $lowStockCount + $expiringSoonCount + $expiredBatchCount;
     @endphp
 
     @if($totalAlertCount > 0)
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        @if($expiredBatchCount > 0)
+        <div class="bg-red-100 border-2 border-red-300 rounded-xl p-4 sm:p-5 flex items-start gap-3 md:col-span-2">
+            <div class="w-10 h-10 rounded-lg bg-red-200 flex items-center justify-center text-red-700 shrink-0 text-lg">
+                <i class="bi bi-exclamation-octagon-fill"></i>
+            </div>
+            <div class="w-full">
+                <h4 class="text-xs font-black text-red-900 uppercase tracking-widest">Expired Batch Disposal Alert</h4>
+                <p class="text-xs font-bold text-red-800 mt-1">{{ $expiredBatchCount }} medicine batch(es) are already expired.</p>
+                <p class="text-[10px] font-black text-red-700 uppercase tracking-wider mt-1">Action Required: Segregate and dispose expired batches following DOH disposal protocol.</p>
+
+                <div class="mt-3 space-y-1.5">
+                    <p class="text-[10px] font-black text-red-900 uppercase tracking-wider">Expired Batches</p>
+                    @foreach($expiredSupplyBatches as $batch)
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-[11px] font-bold text-red-900 bg-red-50 border border-red-200 rounded-lg px-2.5 py-2">
+                            <div class="flex items-center justify-between gap-3">
+                                <span>
+                                    {{ $batch->batch_number ?: 'NO-BATCH' }}
+                                    •
+                                    {{ $batch->medicine?->generic_name ?? 'Unknown medicine' }}
+                                </span>
+                                <span class="whitespace-nowrap text-red-700">
+                                    {{ $batch->expiration_date?->format('M d, Y') }}
+                                    (Expired)
+                                </span>
+                            </div>
+
+                            <div class="sm:ml-auto">
+                                <form action="{{ route('admin.medicines.supplies.dispose', $batch) }}" method="POST" onsubmit="return confirm('Mark this expired batch as disposed? This will deduct its quantity from stock.');">
+                                    @csrf
+                                    <button type="submit"
+                                            class="inline-flex items-center px-3 py-1.5 rounded-lg bg-red-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-red-700 transition">
+                                        <i class="bi bi-trash3-fill mr-1.5"></i>
+                                        Dispose Batch
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+        @endif
+
         @if($lowStockCount > 0)
         <div class="bg-red-50 border border-red-100 rounded-xl p-4 sm:p-5 flex items-start gap-3">
             <div class="w-9 h-9 rounded-lg bg-red-100 flex items-center justify-center text-red-600 shrink-0 text-lg">
@@ -143,6 +191,7 @@
                             $isExpired = in_array($medicine->id, $expiredIds ?? [], true);
                             $isExpiringToday = in_array($medicine->id, $expiringTodayIds ?? [], true);
                             $isExpiring = in_array($medicine->id, $expiringSoonIds, true);
+                            $hasActiveStock = (int) $medicine->stock > 0;
                         @endphp
                         <tr class="hover:bg-gray-50/50 transition-colors group">
                             <td class="px-8 py-6">
@@ -184,7 +233,7 @@
                                 </div>
                             </td>
                             <td class="px-8 py-6">
-                                @if($medicine->expiration_date)
+                                @if($medicine->expiration_date && $hasActiveStock)
                                     <div class="flex flex-col gap-1">
                                         <div class="flex items-center gap-2">
                                             <i class="bi bi-calendar3 text-gray-400 text-xs"></i>
@@ -207,7 +256,7 @@
                                         @endif
                                     </div>
                                 @else
-                                    <span class="text-xs font-bold text-gray-300 uppercase tracking-widest">No Date Set</span>
+                                    <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">No Active Batch</span>
                                 @endif
                             </td>
                             <td class="px-8 py-6 text-right">
