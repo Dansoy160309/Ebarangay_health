@@ -46,7 +46,8 @@ class NewAnnouncementNotification extends Notification
         }
 
         return $mailMessage
-            ->line('Please log in to your account to view any related details or updates.');
+            ->line('Please log in to your account to view any related details or updates.')
+            ->salutation('Regards, E-Barangay Health Team');
     }
 
     public function toDatabase($notifiable): array
