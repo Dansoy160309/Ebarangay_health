@@ -31,23 +31,13 @@ class NewAnnouncementNotification extends Notification
 
     public function toMail($notifiable): MailMessage
     {
-        $subject = 'New Announcement: ' . $this->announcement->title;
-
-        $mailMessage = (new MailMessage)
-            ->subject($subject)
-            ->greeting('Hello ' . ($notifiable->full_name ?? 'Patient') . ',')
-            ->line('A new announcement has been posted for all patients.')
-            ->line('Title: ' . $this->announcement->title)
-            ->line('Message:')
-            ->line($this->announcement->message);
-
-        if ($this->announcement->expires_at) {
-            $mailMessage->line('Expires: ' . $this->announcement->expires_at->format('F d, Y'));
-        }
-
-        return $mailMessage
-            ->line('Please log in to your account to view any related details or updates.')
-            ->salutation('Regards, E-Barangay Health Team');
+        return (new MailMessage)
+            ->subject('New Announcement: ' . $this->announcement->title)
+            ->view('emails.announcements.broadcast', [
+                'announcement' => $this->announcement,
+                'recipientName' => $notifiable->full_name ?? 'Patient',
+                'appUrl' => config('app.url'),
+            ]);
     }
 
     public function toDatabase($notifiable): array
