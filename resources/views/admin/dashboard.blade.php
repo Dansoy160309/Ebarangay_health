@@ -52,21 +52,21 @@
             </div>
         </a>
 
-        {{-- Scheduled Appointments --}}
-        <a href="{{ route('admin.appointments.index', ['status' => 'approved']) }}" class="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition block relative overflow-hidden group">
+        {{-- Vaccine Inventory --}}
+        <a href="{{ route('admin.vaccines.index') }}" class="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition block relative overflow-hidden group">
              <div class="flex flex-col h-full justify-between relative z-10">
                 <div class="flex justify-between items-start mb-3">
-                     <div class="w-9 h-9 rounded-lg bg-green-50 text-green-500 flex items-center justify-center text-lg shadow-sm">
-                         <i class="bi bi-calendar-check-fill"></i>
+                     <div class="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center text-lg shadow-sm">
+                         <i class="bi bi-shield-plus"></i>
                      </div>
                 </div>
                 <div>
-                     <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">{{ $approvedAppointments }}</h3>
-                     <p class="text-[8px] font-bold text-gray-400 mt-0.5">Upcoming</p>
+                     <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">{{ number_format($vaccineStats['total_stock']) }}</h3>
+                     <p class="text-[8px] font-bold text-gray-400 mt-0.5">Vaccine Stock</p>
                 </div>
             </div>
-            <div class="absolute -right-4 -bottom-4 text-green-50 opacity-50 group-hover:scale-110 transition duration-500">
-                <i class="bi bi-calendar-check-fill text-6xl"></i>
+            <div class="absolute -right-5 -bottom-5 text-emerald-50 opacity-50 group-hover:scale-110 transition duration-500">
+                <i class="bi bi-shield-plus text-7xl"></i>
             </div>
         </a>
 

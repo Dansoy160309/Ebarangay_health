@@ -14,6 +14,7 @@ use App\Models\Announcement;
 use App\Models\PatientProfile;
 use App\Models\HealthRecord;
 use App\Models\Service;
+use App\Models\VaccineBatch;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -98,6 +99,18 @@ class DashboardController extends Controller
                     ->where('expiration_date', '<=', now()->addMonths(3))
                     ->orderBy('expiration_date')
                     ->get()
+            ];
+
+            // 💉 VACCINE DATA
+            $vaccineStats = [
+                'total_stock' => VaccineBatch::query()
+                    ->where('is_active', true)
+                    ->whereNull('disposed_at')
+                    ->where(function ($query) {
+                        $query->whereNull('expiry_date')
+                            ->orWhereDate('expiry_date', '>=', now()->toDateString());
+                    })
+                    ->sum('quantity_remaining'),
             ];
 
             // 🤰 MATERNAL HEALTH STATS
@@ -215,6 +228,7 @@ class DashboardController extends Controller
                 'monthlyStats',
                 'serviceStats',
                 'medicineStats',
+                'vaccineStats',
                 'healthAdvisories',
                 'healthAnalytics',
                 'maternalStats',
