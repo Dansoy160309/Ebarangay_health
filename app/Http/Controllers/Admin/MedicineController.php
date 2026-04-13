@@ -40,40 +40,88 @@ class MedicineController extends Controller
         $today = Carbon::today();
         $expiringSoonThreshold = $today->copy()->addDays(30);
 
-        $lowStockMedicines = Medicine::whereColumn('stock', '<=', 'reorder_level')->get();
+        $lowStockMedicinesQuery = Medicine::whereColumn('stock', '<=', 'reorder_level');
+        if ($status === 'active') {
+            $lowStockMedicinesQuery->where('is_active', true);
+        } elseif ($status === 'archived') {
+            $lowStockMedicinesQuery->where('is_active', false);
+        }
+        $lowStockMedicines = $lowStockMedicinesQuery->get();
 
-        $expiredMedicines = Medicine::whereNotNull('expiration_date')
+        $expiredMedicineIdsQuery = MedicineSupply::query()
+            ->whereNotNull('expiration_date')
             ->whereDate('expiration_date', '<', $today)
-            ->where('stock', '>', 0)
-            ->get();
+            ->whereNull('disposed_at');
+        if ($status === 'active') {
+            $expiredMedicineIdsQuery->whereHas('medicine', fn ($q) => $q->where('is_active', true));
+        } elseif ($status === 'archived') {
+            $expiredMedicineIdsQuery->whereHas('medicine', fn ($q) => $q->where('is_active', false));
+        }
+        $expiredMedicineIds = $expiredMedicineIdsQuery->pluck('medicine_id')->unique()->values();
 
-        $expiringTodayMedicines = Medicine::whereNotNull('expiration_date')
+        $expiringTodayMedicineIdsQuery = MedicineSupply::query()
+            ->whereNotNull('expiration_date')
             ->whereDate('expiration_date', '=', $today)
-            ->where('stock', '>', 0)
-            ->get();
+            ->whereNull('disposed_at');
+        if ($status === 'active') {
+            $expiringTodayMedicineIdsQuery->whereHas('medicine', fn ($q) => $q->where('is_active', true));
+        } elseif ($status === 'archived') {
+            $expiringTodayMedicineIdsQuery->whereHas('medicine', fn ($q) => $q->where('is_active', false));
+        }
+        $expiringTodayMedicineIds = $expiringTodayMedicineIdsQuery->pluck('medicine_id')->unique()->values();
 
-        $expiringSoonMedicines = Medicine::whereNotNull('expiration_date')
+        $expiringSoonMedicineIdsQuery = MedicineSupply::query()
+            ->whereNotNull('expiration_date')
             ->whereDate('expiration_date', '>', $today)
             ->whereDate('expiration_date', '<=', $expiringSoonThreshold)
-            ->where('stock', '>', 0)
-            ->get();
+            ->whereNull('disposed_at');
+        if ($status === 'active') {
+            $expiringSoonMedicineIdsQuery->whereHas('medicine', fn ($q) => $q->where('is_active', true));
+        } elseif ($status === 'archived') {
+            $expiringSoonMedicineIdsQuery->whereHas('medicine', fn ($q) => $q->where('is_active', false));
+        }
+        $expiringSoonMedicineIds = $expiringSoonMedicineIdsQuery->pluck('medicine_id')->unique()->values();
 
-        $expiringSupplyBatches = MedicineSupply::with('medicine')
+        $expiringSupplyBatchesQuery = MedicineSupply::with('medicine')
             ->whereNotNull('expiration_date')
             ->whereDate('expiration_date', '>=', $today)
             ->whereDate('expiration_date', '<=', $expiringSoonThreshold)
             ->whereNull('disposed_at')
-            ->orderBy('expiration_date')
-            ->limit(5)
-            ->get();
+            ->orderBy('expiration_date');
+        if ($status === 'active') {
+            $expiringSupplyBatchesQuery->whereHas('medicine', fn ($q) => $q->where('is_active', true));
+        } elseif ($status === 'archived') {
+            $expiringSupplyBatchesQuery->whereHas('medicine', fn ($q) => $q->where('is_active', false));
+        }
+        $expiringSupplyBatches = $expiringSupplyBatchesQuery->limit(5)->get();
 
-        $expiredSupplyBatches = MedicineSupply::with('medicine')
+        $expiredSupplyBatchesQuery = MedicineSupply::with('medicine')
             ->whereNotNull('expiration_date')
             ->whereDate('expiration_date', '<', $today)
             ->whereNull('disposed_at')
-            ->orderByDesc('expiration_date')
-            ->limit(5)
-            ->get();
+            ->orderByDesc('expiration_date');
+        if ($status === 'active') {
+            $expiredSupplyBatchesQuery->whereHas('medicine', fn ($q) => $q->where('is_active', true));
+        } elseif ($status === 'archived') {
+            $expiredSupplyBatchesQuery->whereHas('medicine', fn ($q) => $q->where('is_active', false));
+        }
+        $expiredSupplyBatches = $expiredSupplyBatchesQuery->limit(5)->get();
+
+        $nextExpiryByMedicine = MedicineSupply::query()
+            ->selectRaw('medicine_id, MIN(expiration_date) as next_expiration')
+            ->whereIn('medicine_id', $medicines->pluck('id'))
+            ->whereNull('disposed_at')
+            ->whereNotNull('expiration_date')
+            ->groupBy('medicine_id')
+            ->pluck('next_expiration', 'medicine_id');
+
+        foreach ($medicines as $medicine) {
+            $medicine->expiration_date = $nextExpiryByMedicine[$medicine->id] ?? null;
+        }
+
+        $expiredMedicines = Medicine::whereIn('id', $expiredMedicineIds)->get();
+        $expiringTodayMedicines = Medicine::whereIn('id', $expiringTodayMedicineIds)->get();
+        $expiringSoonMedicines = Medicine::whereIn('id', $expiringSoonMedicineIds)->get();
 
         $lowStockIds = $lowStockMedicines->pluck('id')->all();
         $expiredIds = $expiredMedicines->pluck('id')->all();
