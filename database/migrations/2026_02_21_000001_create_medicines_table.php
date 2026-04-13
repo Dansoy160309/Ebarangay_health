@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->unsignedInteger('stock')->default(0);
             $table->unsignedInteger('reorder_level')->default(0);
             $table->date('expiration_date')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

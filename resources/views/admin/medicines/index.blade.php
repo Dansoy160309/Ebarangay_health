@@ -39,6 +39,18 @@
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             {{-- Quick Links --}}
             <div class="flex items-center p-2 bg-gray-50 rounded-xl border border-gray-100 overflow-x-auto no-scrollbar">
+                <a href="{{ route('admin.medicines.index', ['status' => 'active'] + request()->except('status', 'page')) }}"
+                   class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wide transition-all whitespace-nowrap {{ ($status ?? 'active') === 'active' ? 'bg-white text-brand-600 shadow-sm' : 'text-gray-500 hover:text-brand-600 hover:bg-white' }}">
+                    Active
+                </a>
+                <a href="{{ route('admin.medicines.index', ['status' => 'archived'] + request()->except('status', 'page')) }}"
+                   class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wide transition-all whitespace-nowrap {{ ($status ?? '') === 'archived' ? 'bg-white text-brand-600 shadow-sm' : 'text-gray-500 hover:text-brand-600 hover:bg-white' }}">
+                    Archived
+                </a>
+                <a href="{{ route('admin.medicines.index', ['status' => 'all'] + request()->except('status', 'page')) }}"
+                   class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wide transition-all whitespace-nowrap {{ ($status ?? '') === 'all' ? 'bg-white text-brand-600 shadow-sm' : 'text-gray-500 hover:text-brand-600 hover:bg-white' }}">
+                    All
+                </a>
                 <a href="{{ route('admin.medicines.distributions') }}" 
                    class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wide text-gray-500 hover:text-brand-600 hover:bg-white transition-all whitespace-nowrap">
                     Distributions
@@ -267,15 +279,25 @@
                                         Edit
                                     </a>
 
-                                    <form action="{{ route('admin.medicines.destroy', $medicine) }}" method="POST" onsubmit="return confirm('Delete this medicine? This action cannot be undone.');" class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                                class="inline-flex items-center px-5 py-2 rounded-xl bg-white border border-red-200 text-xs font-bold text-red-600 hover:bg-red-50 hover:border-red-300 transition-all active:scale-95 shadow-sm">
-                                            <i class="bi bi-trash me-2"></i>
-                                            Delete
-                                        </button>
-                                    </form>
+                                    @if($medicine->is_active)
+                                        <form action="{{ route('admin.medicines.archive', $medicine) }}" method="POST" onsubmit="return confirm('Archive this medicine from the active list?');" class="inline">
+                                            @csrf
+                                            <button type="submit"
+                                                    class="inline-flex items-center px-5 py-2 rounded-xl bg-white border border-amber-200 text-xs font-bold text-amber-700 hover:bg-amber-50 hover:border-amber-300 transition-all active:scale-95 shadow-sm">
+                                                <i class="bi bi-archive me-2"></i>
+                                                Archive
+                                            </button>
+                                        </form>
+                                    @else
+                                        <form action="{{ route('admin.medicines.unarchive', $medicine) }}" method="POST" onsubmit="return confirm('Move this medicine back to active list?');" class="inline">
+                                            @csrf
+                                            <button type="submit"
+                                                    class="inline-flex items-center px-5 py-2 rounded-xl bg-white border border-emerald-200 text-xs font-bold text-emerald-700 hover:bg-emerald-50 hover:border-emerald-300 transition-all active:scale-95 shadow-sm">
+                                                <i class="bi bi-arrow-counterclockwise me-2"></i>
+                                                Unarchive
+                                            </button>
+                                        </form>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

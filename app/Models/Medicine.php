@@ -17,10 +17,12 @@ class Medicine extends Model
         'stock',
         'reorder_level',
         'expiration_date',
+        'is_active',
     ];
 
     protected $casts = [
         'expiration_date' => 'date',
+        'is_active' => 'boolean',
     ];
 
     public function distributions()

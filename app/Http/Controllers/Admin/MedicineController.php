@@ -19,6 +19,13 @@ class MedicineController extends Controller
     public function index(Request $request)
     {
         $query = Medicine::query();
+        $status = $request->input('status', 'active');
+
+        if ($status === 'active') {
+            $query->where('is_active', true);
+        } elseif ($status === 'archived') {
+            $query->where('is_active', false);
+        }
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -83,6 +90,7 @@ class MedicineController extends Controller
 
         return view('admin.medicines.index', compact(
             'medicines',
+            'status',
             'lowStockIds',
             'expiredIds',
             'expiringTodayIds',
@@ -187,6 +195,20 @@ class MedicineController extends Controller
         $medicine->delete();
 
         return redirect()->route('admin.medicines.index')->with('success', 'Medicine deleted successfully.');
+    }
+
+    public function archive(Medicine $medicine)
+    {
+        $medicine->update(['is_active' => false]);
+
+        return redirect()->back()->with('success', 'Medicine archived successfully.');
+    }
+
+    public function unarchive(Medicine $medicine)
+    {
+        $medicine->update(['is_active' => true]);
+
+        return redirect()->back()->with('success', 'Medicine moved back to active list.');
     }
 
     public function distributions(Request $request)
@@ -498,7 +520,7 @@ class MedicineController extends Controller
 
     public function createSupply()
     {
-        $medicines = Medicine::orderBy('generic_name')->get();
+        $medicines = Medicine::where('is_active', true)->orderBy('generic_name')->get();
 
         return view('admin.medicines.supply-create', compact('medicines'));
     }

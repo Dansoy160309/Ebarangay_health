@@ -76,6 +76,10 @@ Route::prefix('admin')
         Route::post('medicines-supplies', [AdminMedicineController::class, 'storeSupply'])->name('medicines.supplies.store');
         Route::post('medicines-supplies/{supply}/dispose', [AdminMedicineController::class, 'disposeSupply'])
             ->name('medicines.supplies.dispose');
+        Route::post('medicines/{medicine}/archive', [AdminMedicineController::class, 'archive'])
+            ->name('medicines.archive');
+        Route::post('medicines/{medicine}/unarchive', [AdminMedicineController::class, 'unarchive'])
+            ->name('medicines.unarchive');
 
         // ===============================
         // Vaccines
