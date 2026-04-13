@@ -14,6 +14,7 @@ class Vaccine extends Model
         'manufacturer',
         'description',
         'storage_temp_range',
+        'initial_stock',
         'min_stock_level',
         'is_active',
     ];
@@ -30,7 +31,7 @@ class Vaccine extends Model
 
     public function getInStockQuantityAttribute()
     {
-        return $this->batches()
+        return (int) $this->initial_stock + (int) $this->batches()
             ->where('is_active', true)
             ->where('expiry_date', '>', now())
             ->sum('quantity_remaining');

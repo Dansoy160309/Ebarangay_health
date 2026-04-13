@@ -21,6 +21,10 @@ return new class extends Migration
             $table->integer('quantity_remaining');
             $table->date('received_at');
             $table->string('supplier')->nullable();
+            $table->timestamp('disposed_at')->nullable();
+            $table->foreignId('disposed_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->unsignedInteger('disposed_quantity')->nullable();
+            $table->text('disposal_notes')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             

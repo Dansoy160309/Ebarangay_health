@@ -10,6 +10,7 @@ use App\Models\VaccineAdministration;
 use App\Models\User;
 use App\Notifications\VaccineExpiryAlertNotification;
 use App\Notifications\VaccineLowStockAlertNotification;
+use Illuminate\Support\Facades\DB;
 
 class VaccineController extends Controller
 {
@@ -28,13 +29,26 @@ class VaccineController extends Controller
         $vaccines = $query->paginate(15);
 
         $lowStockVaccines = Vaccine::all()->filter(fn($v) => $v->in_stock_quantity <= $v->min_stock_level);
+
+        $expiredBatches = VaccineBatch::with('vaccine')
+            ->whereNotNull('expiry_date')
+            ->whereDate('expiry_date', '<', now()->toDateString())
+            ->where('quantity_remaining', '>', 0)
+            ->whereNull('disposed_at')
+            ->orderBy('expiry_date')
+            ->get();
+
         $nearExpiryBatches = VaccineBatch::with('vaccine')
+            ->whereNotNull('expiry_date')
+            ->whereDate('expiry_date', '>=', now()->toDateString())
             ->where('expiry_date', '<=', now()->addMonths(3))
             ->where('quantity_remaining', '>', 0)
+            ->whereNull('disposed_at')
+            ->orderBy('expiry_date')
             ->get();
 
         // Send deduplicated in-app notifications for expiring/expired vaccine batches.
-        $this->notifyAdminsForExpiringBatches($nearExpiryBatches);
+        $this->notifyAdminsForExpiringBatches($expiredBatches->merge($nearExpiryBatches)->unique('id')->values());
         // Send deduplicated in-app notifications for low stock vaccines.
         $this->notifyAdminsForLowStockVaccines($lowStockVaccines);
 
@@ -63,7 +77,7 @@ class VaccineController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('admin.vaccines.index', compact('vaccines', 'lowStockVaccines', 'nearExpiryBatches', 'recentAdministrations'));
+        return view('admin.vaccines.index', compact('vaccines', 'lowStockVaccines', 'nearExpiryBatches', 'expiredBatches', 'recentAdministrations'));
     }
 
     private function notifyAdminsForExpiringBatches($batches): void
@@ -130,6 +144,7 @@ class VaccineController extends Controller
             'name' => 'required|string|unique:vaccines,name',
             'manufacturer' => 'nullable|string',
             'storage_temp_range' => 'nullable|string',
+            'initial_stock' => 'nullable|integer|min:0',
             'min_stock_level' => 'required|integer|min:0',
             'description' => 'nullable|string',
         ]);
@@ -175,6 +190,7 @@ class VaccineController extends Controller
             'name' => 'required|string|unique:vaccines,name,' . $vaccine->id,
             'manufacturer' => 'nullable|string',
             'storage_temp_range' => 'nullable|string',
+            'initial_stock' => 'nullable|integer|min:0',
             'min_stock_level' => 'required|integer|min:0',
             'description' => 'nullable|string',
         ]);
@@ -220,5 +236,61 @@ class VaccineController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'New stock added to inventory.');
+    }
+
+    public function disposeBatch(Request $request, VaccineBatch $batch)
+    {
+        $request->validate([
+            'disposal_notes' => 'nullable|string|max:1000',
+        ]);
+
+        if (!$batch->expiry_date || !$batch->expiry_date->isPast()) {
+            return redirect()->back()->with('error', 'Only expired vaccine batches can be disposed.');
+        }
+
+        if ($batch->disposed_at) {
+            return redirect()->back()->with('error', 'This batch has already been disposed.');
+        }
+
+        DB::transaction(function () use ($batch, $request) {
+            $disposedQuantity = (int) $batch->quantity_remaining;
+
+            $batch->update([
+                'quantity_remaining' => 0,
+                'is_active' => false,
+                'disposed_at' => now(),
+                'disposed_by' => auth()->id(),
+                'disposed_quantity' => $disposedQuantity,
+                'disposal_notes' => $request->input('disposal_notes'),
+            ]);
+        });
+
+        return redirect()->back()->with('success', 'Expired vaccine batch disposed successfully.');
+    }
+
+    public function disposals(Request $request)
+    {
+        $query = VaccineBatch::with(['vaccine', 'disposer'])
+            ->whereNotNull('disposed_at');
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('disposed_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('disposed_at', '<=', $request->date_to);
+        }
+
+        if ($request->filled('vaccine_id')) {
+            $query->where('vaccine_id', $request->vaccine_id);
+        }
+
+        $disposals = $query->orderByDesc('disposed_at')
+            ->paginate(15)
+            ->appends($request->query());
+
+        $vaccines = Vaccine::orderBy('name')->get();
+
+        return view('admin.vaccines.disposals', compact('disposals', 'vaccines'));
     }
 }

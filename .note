@@ -8,3 +8,11 @@ php artisan config:clear
 php artisan cache:clear
 php artisan view:clear
 
+# For Improving UI
+expanded the page container to use more of the screen width
+Converted the form into:
+a large left form area
+a right-side sticky guidance rail
+Kept the actual fields compact and readable
+Added quick actions and batch guidance on the right
+Kept the autofill styling consistent so inputs stay white.

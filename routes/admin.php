@@ -83,7 +83,11 @@ Route::prefix('admin')
         Route::resource('vaccines', \App\Http\Controllers\Admin\VaccineController::class);
         Route::get('vaccines/{vaccine}/recent-administrations', [\App\Http\Controllers\Admin\VaccineController::class, 'recentAdministrations'])
             ->name('vaccines.recent-administrations');
+        Route::get('vaccines-disposals', [\App\Http\Controllers\Admin\VaccineController::class, 'disposals'])
+            ->name('vaccines.disposals');
         Route::post('vaccines/stock-in', [\App\Http\Controllers\Admin\VaccineController::class, 'stockIn'])->name('vaccines.stock-in');
+        Route::post('vaccine-batches/{batch}/dispose', [\App\Http\Controllers\Admin\VaccineController::class, 'disposeBatch'])
+            ->name('vaccines.batches.dispose');
 
         // ===============================
         // Profile

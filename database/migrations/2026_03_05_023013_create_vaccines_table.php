@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('manufacturer')->nullable();
             $table->text('description')->nullable();
             $table->string('storage_temp_range')->nullable(); // e.g. "2°C - 8°C"
+            $table->unsignedInteger('initial_stock')->default(0);
             $table->integer('min_stock_level')->default(10);
             $table->boolean('is_active')->default(true);
             $table->timestamps();

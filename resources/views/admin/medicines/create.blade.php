@@ -77,115 +77,153 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('admin.medicines.store') }}" class="medicine-form space-y-8 relative z-10">
+        <form method="POST" action="{{ route('admin.medicines.store') }}" class="medicine-form relative z-10">
             @csrf
 
-            {{-- Basic Information --}}
-            <div class="space-y-5">
-                <div class="flex items-center gap-3">
-                    <div class="h-9 w-9 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center">
-                        <i class="bi bi-info-circle text-lg"></i>
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
+                <div class="xl:col-span-2 space-y-6">
+                    {{-- Basic Information --}}
+                    <div class="space-y-5 rounded-[2rem] border border-gray-100 bg-white p-5 md:p-6 shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <div class="h-9 w-9 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center">
+                                <i class="bi bi-info-circle text-lg"></i>
+                            </div>
+                            <h2 class="text-lg font-black text-gray-900">Basic Information</h2>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div class="space-y-2.5 md:col-span-2">
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Generic Name</label>
+                                <div class="relative group">
+                                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
+                                        <i class="bi bi-capsule"></i>
+                                    </div>
+                                    <input type="text" name="generic_name" value="{{ old('generic_name') }}"
+                                           placeholder="e.g. Paracetamol"
+                                           class="w-full pl-12 pr-5 py-3.5 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 text-sm font-bold transition-all shadow-sm">
+                                </div>
+                            </div>
+
+                            <div class="space-y-2.5">
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Brand Name (Optional)</label>
+                                <div class="relative group">
+                                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
+                                        <i class="bi bi-tag"></i>
+                                    </div>
+                                    <input type="text" name="brand_name" value="{{ old('brand_name') }}"
+                                           placeholder="e.g. Biogesic"
+                                           class="w-full pl-12 pr-5 py-3.5 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 text-sm font-bold transition-all shadow-sm">
+                                </div>
+                            </div>
+
+                            <div class="space-y-2.5">
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Dosage Form</label>
+                                <div class="relative group">
+                                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
+                                        <i class="bi bi-layers"></i>
+                                    </div>
+                                    <select name="dosage_form"
+                                        class="w-full pl-12 pr-10 py-3.5 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 text-sm font-bold transition-all shadow-sm appearance-none">
+                                        <option value="" disabled {{ old('dosage_form') ? '' : 'selected' }}>Select dosage form</option>
+                                        <option value="Tablet" {{ old('dosage_form') === 'Tablet' ? 'selected' : '' }}>Tablet</option>
+                                        <option value="Capsule" {{ old('dosage_form') === 'Capsule' ? 'selected' : '' }}>Capsule</option>
+                                        <option value="Syrup" {{ old('dosage_form') === 'Syrup' ? 'selected' : '' }}>Syrup</option>
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
+                                        <i class="bi bi-chevron-down text-xs"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-2.5">
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Strength</label>
+                                <div class="relative group">
+                                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
+                                        <i class="bi bi-speedometer2"></i>
+                                    </div>
+                                    <input type="text" name="strength" value="{{ old('strength') }}"
+                                           placeholder="e.g. 500mg, 125mg/5mL"
+                                           class="w-full pl-12 pr-5 py-3.5 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 text-sm font-bold transition-all shadow-sm">
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <h2 class="text-lg font-black text-gray-900">Basic Information</h2>
+
+                    {{-- Inventory Configuration --}}
+                    <div class="space-y-5 rounded-[2rem] border border-gray-100 bg-white p-5 md:p-6 shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <div class="h-9 w-9 rounded-xl bg-gray-50 text-gray-600 flex items-center justify-center">
+                                <i class="bi bi-box-seam text-lg"></i>
+                            </div>
+                            <h2 class="text-lg font-black text-gray-900">Inventory Settings</h2>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div class="space-y-2.5">
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Initial Stock</label>
+                                <div class="relative group">
+                                    <input type="number" name="stock" min="0" value="{{ old('stock', 0) }}"
+                                           class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 text-sm font-black transition-all shadow-sm">
+                                    <div class="absolute inset-y-0 right-0 pr-5 flex items-center pointer-events-none text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                        Units
+                                    </div>
+                                </div>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide ml-1">Initial quantity on hand</p>
+                            </div>
+
+                            <div class="space-y-2.5">
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Reorder Level</label>
+                                <div class="relative group">
+                                    <input type="number" name="reorder_level" min="0" value="{{ old('reorder_level', 0) }}"
+                                           class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 text-sm font-black transition-all shadow-sm">
+                                    <div class="absolute inset-y-0 right-0 pr-5 flex items-center pointer-events-none text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                        Alert at
+                                    </div>
+                                </div>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide ml-1">Low stock notification threshold</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
-                    <div class="space-y-2.5">
-                        <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Generic Name</label>
-                        <div class="relative group">
-                            <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
-                                <i class="bi bi-capsule"></i>
+                <aside class="space-y-5 xl:sticky xl:top-6">
+                    <div class="rounded-[2rem] bg-gradient-to-br from-brand-600 to-indigo-600 text-white p-6 shadow-lg shadow-brand-500/20">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="h-10 w-10 rounded-2xl bg-white/15 flex items-center justify-center">
+                                <i class="bi bi-layout-three-columns text-lg"></i>
                             </div>
-                            <input type="text" name="generic_name" value="{{ old('generic_name') }}"
-                                   placeholder="e.g. Paracetamol"
-                                   class="w-full pl-12 pr-5 py-3.5 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 text-sm font-bold transition-all shadow-sm">
+                            <div>
+                                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-white/70">Layout</p>
+                                <h3 class="text-lg font-black">Full-Width Desktop</h3>
+                            </div>
                         </div>
+                        <p class="text-sm text-white/85 leading-relaxed">
+                            This screen is designed to use the full available width. On larger laptops it will look bigger because the columns expand with the viewport.
+                        </p>
                     </div>
 
-                    <div class="space-y-2.5">
-                        <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Brand Name (Optional)</label>
-                        <div class="relative group">
-                            <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
-                                <i class="bi bi-tag"></i>
-                            </div>
-                            <input type="text" name="brand_name" value="{{ old('brand_name') }}"
-                                   placeholder="e.g. Biogesic"
-                                   class="w-full pl-12 pr-5 py-3.5 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 text-sm font-bold transition-all shadow-sm">
-                        </div>
+                    <div class="rounded-[2rem] border border-gray-100 bg-white p-6 shadow-sm">
+                        <h3 class="text-base font-black text-gray-900 mb-3">Batch Rule</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            Expiration is not edited here. Add or edit batches in Supplies, where each batch has its own expiration date.
+                        </p>
                     </div>
 
-                    <div class="space-y-2.5">
-                        <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Dosage Form</label>
-                        <div class="relative group">
-                            <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
-                                <i class="bi bi-layers"></i>
-                            </div>
-                            <select name="dosage_form"
-                                class="w-full pl-12 pr-10 py-3.5 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 text-sm font-bold transition-all shadow-sm appearance-none">
-                                <option value="" disabled {{ old('dosage_form') ? '' : 'selected' }}>Select dosage form</option>
-                                <option value="Tablet" {{ old('dosage_form') === 'Tablet' ? 'selected' : '' }}>Tablet</option>
-                                <option value="Capsule" {{ old('dosage_form') === 'Capsule' ? 'selected' : '' }}>Capsule</option>
-                                <option value="Syrup" {{ old('dosage_form') === 'Syrup' ? 'selected' : '' }}>Syrup</option>
-                            </select>
-                            <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
-                                <i class="bi bi-chevron-down text-xs"></i>
-                            </div>
+                    <div class="rounded-[2rem] border border-gray-100 bg-gray-50 p-6 shadow-sm">
+                        <h3 class="text-base font-black text-gray-900 mb-3">Quick Actions</h3>
+                        <div class="space-y-3">
+                            <a href="{{ route('admin.medicines.supplies.create') }}" class="block w-full px-4 py-3 rounded-xl bg-white border border-gray-200 text-gray-700 text-sm font-black hover:bg-gray-100 transition">
+                                + Add Supply Batch
+                            </a>
+                            <a href="{{ route('admin.medicines.supplies') }}" class="block w-full px-4 py-3 rounded-xl bg-brand-600 text-white text-sm font-black hover:bg-brand-700 transition">
+                                Open Supply History
+                            </a>
                         </div>
                     </div>
-
-                    <div class="space-y-2.5">
-                        <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Strength</label>
-                        <div class="relative group">
-                            <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
-                                <i class="bi bi-speedometer2"></i>
-                            </div>
-                            <input type="text" name="strength" value="{{ old('strength') }}"
-                                   placeholder="e.g. 500mg, 125mg/5mL"
-                                class="w-full pl-12 pr-5 py-3.5 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 text-sm font-bold transition-all shadow-sm">
-                        </div>
-                    </div>
-                </div>
+                </aside>
             </div>
 
-            {{-- Inventory Configuration --}}
-            <div class="space-y-5 pt-1">
-                <div class="flex items-center gap-3">
-                    <div class="h-9 w-9 rounded-xl bg-gray-50 text-gray-600 flex items-center justify-center">
-                        <i class="bi bi-box-seam text-lg"></i>
-                    </div>
-                    <h2 class="text-lg font-black text-gray-900">Inventory Settings</h2>
-                </div>
-
-                <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
-                    <div class="space-y-2.5">
-                        <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Initial Stock</label>
-                        <div class="relative group">
-                            <input type="number" name="stock" min="0" value="{{ old('stock', 0) }}"
-                                   class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 text-sm font-black transition-all shadow-sm">
-                            <div class="absolute inset-y-0 right-0 pr-5 flex items-center pointer-events-none text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                                Units
-                            </div>
-                        </div>
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide ml-1">Initial quantity on hand</p>
-                    </div>
-
-                    <div class="space-y-2.5">
-                        <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Reorder Level</label>
-                        <div class="relative group">
-                            <input type="number" name="reorder_level" min="0" value="{{ old('reorder_level', 0) }}"
-                                   class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 text-sm font-black transition-all shadow-sm">
-                            <div class="absolute inset-y-0 right-0 pr-5 flex items-center pointer-events-none text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                                Alert at
-                            </div>
-                        </div>
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide ml-1">Low stock notification threshold</p>
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="flex items-center justify-end gap-3 pt-8 border-t border-gray-50">
+            <div class="flex items-center justify-end gap-3 pt-8 mt-8 border-t border-gray-100">
                 <a href="{{ route('admin.medicines.index') }}" class="px-8 py-4 rounded-2xl text-sm font-black text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-all active:scale-95">
                     Cancel
                 </a>

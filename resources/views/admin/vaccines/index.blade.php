@@ -44,6 +44,11 @@
             </div>
 
             <div class="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto">
+                <a href="{{ route('admin.vaccines.disposals') }}"
+                   class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-white text-red-600 border border-red-100 font-black text-[9px] sm:text-xs uppercase tracking-tighter shadow-sm hover:bg-red-50 hover:scale-105 transition-all transform group shrink-0">
+                    <i class="bi bi-archive mr-1.5 group-hover:translate-y-0.5 transition-transform text-xs"></i>
+                    Disposal Log
+                </a>
                 <a href="{{ route('admin.vaccines.create') }}" 
                    class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-white text-brand-600 border border-brand-100 font-black text-[9px] sm:text-xs uppercase tracking-tighter shadow-sm hover:bg-brand-50 hover:scale-105 transition-all transform group shrink-0">
                     <i class="bi bi-plus-circle mr-1.5 group-hover:rotate-12 transition-transform text-xs"></i>
@@ -74,8 +79,21 @@
     </div>
 
     <!-- Alerts Section -->
-    @if($nearExpiryBatches->count() > 0 || $lowStockVaccines->count() > 0)
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+    @if(($expiredBatches ?? collect())->count() > 0 || $nearExpiryBatches->count() > 0 || $lowStockVaccines->count() > 0)
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        @if(($expiredBatches ?? collect())->count() > 0)
+        <div class="bg-red-50 border border-red-100 rounded-lg p-4 flex items-start gap-3">
+            <div class="w-9 h-9 rounded-lg bg-red-100 flex items-center justify-center text-red-600 shrink-0 text-lg">
+                <i class="bi bi-x-octagon"></i>
+            </div>
+            <div>
+                <h4 class="text-xs font-black text-red-900 uppercase tracking-tighter">Expired Batch Alert</h4>
+                <p class="text-[8px] font-bold text-red-700 mt-0.5">{{ $expiredBatches->count() }} expired batches must be disposed.</p>
+                <p class="text-[10px] font-black text-red-600 uppercase tracking-wider mt-1">Identify by vaccine + batch and dispose below.</p>
+            </div>
+        </div>
+        @endif
+
         @if($nearExpiryBatches->count() > 0)
         <div class="bg-orange-50 border border-orange-100 rounded-lg p-4 flex items-start gap-3">
             <div class="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center text-orange-600 shrink-0 text-lg">
@@ -101,6 +119,50 @@
             </div>
         </div>
         @endif
+    </div>
+    @endif
+
+    @if(($expiredBatches ?? collect())->count() > 0)
+    <div class="bg-white rounded-2xl shadow-sm border border-red-100 overflow-hidden mb-6">
+        <div class="px-5 sm:px-6 py-4 border-b border-red-50 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-red-50 text-red-600 flex items-center justify-center">
+                    <i class="bi bi-trash3"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-black text-red-900 uppercase tracking-tighter">Expired Batches For Disposal</h3>
+                    <p class="text-[10px] font-bold text-red-500 uppercase tracking-widest">Vaccine name, batch number, expiry date, and remaining doses</p>
+                </div>
+            </div>
+            <span class="px-2.5 py-1 rounded-full bg-red-50 text-red-600 text-[10px] font-black uppercase tracking-widest border border-red-100">
+                {{ $expiredBatches->count() }} Pending
+            </span>
+        </div>
+
+        <div class="divide-y divide-red-50">
+            @foreach($expiredBatches as $expiredBatch)
+                <div class="px-5 sm:px-6 py-4 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                    <div class="space-y-1">
+                        <div class="text-sm font-black text-gray-900">{{ $expiredBatch->vaccine?->name ?? 'Unknown Vaccine' }}</div>
+                        <div class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">
+                            Batch {{ $expiredBatch->batch_number }}
+                            • Expired {{ $expiredBatch->expiry_date?->format('M d, Y') ?? 'N/A' }}
+                            • {{ $expiredBatch->quantity_remaining }} doses remaining
+                        </div>
+                    </div>
+
+                    <form action="{{ route('admin.vaccines.batches.dispose', $expiredBatch->id) }}" method="POST" class="flex items-center gap-2"
+                          onsubmit="return confirm('Dispose expired batch {{ $expiredBatch->batch_number }} ({{ $expiredBatch->vaccine?->name ?? 'Unknown Vaccine' }})?');">
+                        @csrf
+                        <input type="text" name="disposal_notes" placeholder="Optional disposal note" class="w-48 px-3 py-2 rounded-lg border border-gray-200 text-xs font-bold text-gray-700">
+                        <button type="submit" class="inline-flex items-center gap-2 px-3 py-2 bg-red-600 text-white rounded-lg text-[10px] font-black uppercase tracking-wider hover:bg-red-700 transition">
+                            <i class="bi bi-trash3"></i>
+                            Dispose Batch
+                        </button>
+                    </form>
+                </div>
+            @endforeach
+        </div>
     </div>
     @endif
 
