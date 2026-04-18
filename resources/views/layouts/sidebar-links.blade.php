@@ -4,6 +4,7 @@
     use Illuminate\Support\Facades\Route;
     use App\Models\Appointment;
     use App\Models\Medicine;
+    use App\Models\MedicineSupply;
     use App\Models\Vaccine;
     use App\Models\VaccineBatch;
 
@@ -72,15 +73,37 @@
     $medicineIssueCount = 0;
     $medicineLowStockCount = 0;
     $medicineExpiringCount = 0;
+    $medicineExpiredBatchCount = 0;
     $vaccineLowStockCount = 0;
     $vaccineExpiringBatchCount = 0;
     if ($role === 'admin') {
-        $medicineLowStockCount = Medicine::whereColumn('stock', '<=', 'reorder_level')->count();
-        $medicineExpiringCount = Medicine::whereNotNull('expiration_date')
-            ->whereDate('expiration_date', '<=', now()->addDays(30))
-            ->where('stock', '>', 0)
+        $today = now()->startOfDay();
+        $expiringSoonThreshold = $today->copy()->addDays(30);
+
+        $medicineLowStockCount = Medicine::query()
+            ->where('is_active', true)
+            ->whereColumn('stock', '<=', 'reorder_level')
             ->count();
-        $medicineIssueCount = $medicineLowStockCount + $medicineExpiringCount;
+
+        $medicineExpiringIds = MedicineSupply::query()
+            ->whereNotNull('expiration_date')
+            ->whereDate('expiration_date', '>=', $today)
+            ->whereDate('expiration_date', '<=', $expiringSoonThreshold)
+            ->whereNull('disposed_at')
+            ->whereHas('medicine', fn ($q) => $q->where('is_active', true))
+            ->pluck('medicine_id')
+            ->unique();
+
+        $medicineExpiringCount = $medicineExpiringIds->count();
+
+        $medicineExpiredBatchCount = MedicineSupply::query()
+            ->whereNotNull('expiration_date')
+            ->whereDate('expiration_date', '<', $today)
+            ->whereNull('disposed_at')
+            ->whereHas('medicine', fn ($q) => $q->where('is_active', true))
+            ->count();
+
+        $medicineIssueCount = $medicineLowStockCount + $medicineExpiringCount + $medicineExpiredBatchCount;
 
         $vaccineLowStockCount = Vaccine::all()->filter(fn($v) => $v->in_stock_quantity <= $v->min_stock_level)->count();
         $vaccineExpiringBatchCount = VaccineBatch::where('expiry_date', '<=', now()->addMonths(3))

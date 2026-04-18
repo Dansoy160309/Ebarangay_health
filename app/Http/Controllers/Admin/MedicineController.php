@@ -101,17 +101,22 @@ class MedicineController extends Controller
         }
         $expiringSupplyBatches = $expiringSupplyBatchesQuery->limit(5)->get();
 
-        $expiredSupplyBatchesQuery = MedicineSupply::with('medicine')
+        $expiredSupplyBatchesBaseQuery = MedicineSupply::query()
             ->whereNotNull('expiration_date')
             ->whereDate('expiration_date', '<', $today)
-            ->whereNull('disposed_at')
-            ->orderByDesc('expiration_date');
+            ->whereNull('disposed_at');
         if ($status === 'active') {
-            $expiredSupplyBatchesQuery->whereHas('medicine', fn ($q) => $q->where('is_active', true));
+            $expiredSupplyBatchesBaseQuery->whereHas('medicine', fn ($q) => $q->where('is_active', true));
         } elseif ($status === 'archived') {
-            $expiredSupplyBatchesQuery->whereHas('medicine', fn ($q) => $q->where('is_active', false));
+            $expiredSupplyBatchesBaseQuery->whereHas('medicine', fn ($q) => $q->where('is_active', false));
         }
-        $expiredSupplyBatches = $expiredSupplyBatchesQuery->limit(5)->get();
+        $expiredBatchCount = (clone $expiredSupplyBatchesBaseQuery)->count();
+
+        $expiredSupplyBatches = (clone $expiredSupplyBatchesBaseQuery)
+            ->with('medicine')
+            ->orderByDesc('expiration_date')
+            ->limit(5)
+            ->get();
 
         $nextExpiryByMedicine = MedicineSupply::query()
             ->selectRaw('medicine_id, MIN(expiration_date) as next_expiration')
@@ -151,7 +156,8 @@ class MedicineController extends Controller
             'expiringTodayIds',
             'expiringSoonIds',
             'expiringSupplyBatches',
-            'expiredSupplyBatches'
+            'expiredSupplyBatches',
+            'expiredBatchCount'
         ));
     }
 

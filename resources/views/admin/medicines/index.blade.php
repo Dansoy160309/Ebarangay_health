@@ -100,7 +100,7 @@
     @php
         $lowStockCount = count($lowStockIds ?? []);
         $expiringSoonCount = count($expiringSoonIds ?? []) + count($expiringTodayIds ?? []);
-        $expiredBatchCount = isset($expiredSupplyBatches) ? $expiredSupplyBatches->count() : 0;
+        $expiredBatchCount = $expiredBatchCount ?? 0;
         $totalAlertCount = $lowStockCount + $expiringSoonCount + $expiredBatchCount;
     @endphp
 
