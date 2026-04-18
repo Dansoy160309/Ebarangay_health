@@ -119,12 +119,18 @@
                 <div class="mt-3 space-y-1.5">
                     <p class="text-[10px] font-black text-red-900 uppercase tracking-wider">Expired Batches</p>
                     @foreach($expiredSupplyBatches as $batch)
+                        @php
+                            $batchDosage = trim(($batch->medicine?->dosage_form ?? '') . ' ' . ($batch->medicine?->strength ?? ''));
+                        @endphp
                         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-[11px] font-bold text-red-900 bg-red-50 border border-red-200 rounded-lg px-2.5 py-2">
                             <div class="flex items-center justify-between gap-3">
                                 <span>
                                     {{ $batch->batch_number ?: 'NO-BATCH' }}
                                     •
                                     {{ $batch->medicine?->generic_name ?? 'Unknown medicine' }}
+                                    @if($batchDosage !== '')
+                                        • {{ $batchDosage }}
+                                    @endif
                                 </span>
                                 <span class="whitespace-nowrap text-red-700">
                                     {{ $batch->expiration_date?->format('M d, Y') }}
@@ -179,12 +185,16 @@
                         @foreach($expiringSupplyBatches as $batch)
                             @php
                                 $batchExpiresToday = $batch->expiration_date && $batch->expiration_date->isSameDay(today());
+                                $batchDosage = trim(($batch->medicine?->dosage_form ?? '') . ' ' . ($batch->medicine?->strength ?? ''));
                             @endphp
                             <div class="flex items-center justify-between gap-3 text-[11px] font-bold text-orange-800 bg-orange-100/60 border border-orange-200 rounded-lg px-2.5 py-1.5">
                                 <span>
                                     {{ $batch->batch_number ?: 'NO-BATCH' }}
                                     •
                                     {{ $batch->medicine?->generic_name ?? 'Unknown medicine' }}
+                                    @if($batchDosage !== '')
+                                        • {{ $batchDosage }}
+                                    @endif
                                 </span>
                                 <span class="whitespace-nowrap {{ $batchExpiresToday ? 'text-amber-700' : 'text-orange-700' }}">
                                     {{ $batch->expiration_date?->format('M d, Y') }}
