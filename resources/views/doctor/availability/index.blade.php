@@ -19,7 +19,7 @@
                     My <span class="text-brand-600 underline decoration-brand-200 decoration-4 underline-offset-4">Duty Schedule</span>
                 </h1>
                 <p class="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed">
-                    Set your availability blocks so midwives can coordinate patient appointments effectively.
+                    Set your availability blocks so healthcare providers can coordinate patient appointments effectively.
                 </p>
             </div>
 
@@ -119,7 +119,7 @@
                                         <i class="bi bi-calendar-x text-4xl"></i>
                                     </div>
                                     <h3 class="text-xl font-bold text-gray-900 mb-1">No duty blocks found</h3>
-                                    <p class="text-gray-500 max-w-xs mx-auto">Start by adding your availability blocks so midwives can schedule appointments.</p>
+                                    <p class="text-gray-500 max-w-xs mx-auto">Start by adding your availability blocks so healthcare providers can schedule appointments.</p>
                                 </div>
                             </td>
                         </tr>

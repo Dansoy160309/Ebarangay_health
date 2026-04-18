@@ -139,7 +139,7 @@
                                             @if($slot->doctor)
                                                 Dr. {{ $slot->doctor->full_name }}
                                             @else
-                                                Midwife / Any
+                                                Healthcare Provider / Any
                                             @endif
                                         </div>
                                     </div>
@@ -186,7 +186,7 @@
                                 <button 
                                     onclick="openSlotModal(this)"
                                     data-service="{{ $slot->service }}"
-                                    data-doctor="{{ $slot->doctor ? 'Dr. ' . $slot->doctor->full_name : 'Midwife / Any' }}"
+                                    data-doctor="{{ $slot->doctor ? 'Dr. ' . $slot->doctor->full_name : 'Healthcare Provider / Any' }}"
                                     data-date="{{ \Carbon\Carbon::parse($slot->date)->format('F j, Y') }}"
                                     data-start-time="{{ \Carbon\Carbon::parse($slot->start_time)->format('h:i A') }}"
                                     data-end-time="{{ $slot->end_time ? \Carbon\Carbon::parse($slot->end_time)->format('h:i A') : 'N/A' }}"

@@ -192,13 +192,17 @@
                                 $service = \App\Models\Service::where('name', $appointment->service)->first();
                                 
                                 // Priority for Label:
-                                // 1. If a person is assigned, use their role (Doctor/Midwife)
+                                // 1. If a person is assigned, use their role (Doctor/Healthcare Provider)
                                 // 2. Fallback to the Service's preferred provider type
                                 // 3. Fallback to 'Service Provider'
                                 if ($provider) {
-                                    $providerLabel = $provider->isDoctor() ? 'Doctor' : ($provider->isMidwife() ? 'Midwife' : 'Service Provider');
+                                    $providerLabel = $provider->isDoctor() ? 'Doctor' : ($provider->isMidwife() ? 'Healthcare Provider' : 'Service Provider');
                                 } elseif ($service && $service->provider_type && $service->provider_type !== 'Both') {
+                                    $serviceProviderMap = [
+                                        'Midwife' => 'Healthcare Provider',
+                                    ];
                                     $providerLabel = $service->provider_type;
+                                    $providerLabel = $serviceProviderMap[$providerLabel] ?? $providerLabel;
                                 } else {
                                     $providerLabel = 'Service Provider';
                                 }
@@ -207,14 +211,15 @@
                                 $displayName = $provider ? $provider->full_name : 'Any Available ' . ($providerLabel !== 'Service Provider' ? $providerLabel : 'Clinician');
                                 
                                 if ($provider) {
-                                     $prefix = $provider->isDoctor() ? 'Dr. ' : ($provider->isMidwife() ? 'Midwife ' : '');
+                                     $prefix = $provider->isDoctor() ? 'Dr. ' : ($provider->isMidwife() ? 'Healthcare Provider ' : '');
                                      
                                      // Don't add prefix if the name already starts with it or similar titles
                                      $lowerName = strtolower($displayName);
                                      if (str_starts_with($lowerName, 'dr.') || 
                                          str_starts_with($lowerName, 'doctor') || 
                                          str_starts_with($lowerName, 'doc') || 
-                                         str_starts_with($lowerName, 'midwife')) {
+                                         str_starts_with($lowerName, 'midwife') ||
+                                         str_starts_with($lowerName, 'healthcare provider')) {
                                          $prefix = '';
                                      }
                                      $displayName = $prefix . $displayName;

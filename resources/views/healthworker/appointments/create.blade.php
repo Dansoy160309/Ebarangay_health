@@ -283,7 +283,7 @@
                                                 class="block w-full pl-4 pr-10 py-4 text-base border-gray-200 bg-gray-50 focus:bg-white focus:border-brand-500 focus:ring-0 rounded-xl transition-colors cursor-pointer shadow-sm">
                                             <option value="">-- Any Available Provider --</option>
                                             <template x-for="doctor in filteredDoctors" :key="doctor.id">
-                                                <option :value="doctor.id" x-text="(doctor.role === 'doctor' ? 'Dr. ' : 'Midwife ') + doctor.full_name" :selected="doctor.id == '{{ old('doctor_id') }}'"></option>
+                                                <option :value="doctor.id" x-text="(doctor.role === 'doctor' ? 'Dr. ' : 'Healthcare Provider ') + doctor.full_name" :selected="doctor.id == '{{ old('doctor_id') }}'"></option>
                                             </template>
                                         </select>
                                         <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-gray-400">

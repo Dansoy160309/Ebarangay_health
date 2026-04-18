@@ -63,7 +63,7 @@
                         <option value="" disabled {{ old('role') ? '' : 'selected' }}>-- Select Role --</option>
                         <option value="patient" {{ old('role') == 'patient' ? 'selected' : '' }}>🧍 Patient</option>
                         <option value="health_worker" {{ old('role') == 'health_worker' ? 'selected' : '' }}>🏥 Health Worker</option>
-                        <option value="midwife" {{ old('role') == 'midwife' ? 'selected' : '' }}>🩺 Midwife</option>
+                        <option value="midwife" {{ old('role') == 'midwife' ? 'selected' : '' }}>🩺 Healthcare Provider</option>
                         <option value="doctor" {{ old('role') == 'doctor' ? 'selected' : '' }}>👨‍⚕️ Doctor</option>
                     </select>
                 </div>

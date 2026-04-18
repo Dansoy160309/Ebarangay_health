@@ -118,7 +118,7 @@
                         </div>
                         <select name="doctor_id" id="doctor_id"
                                class="block w-full pl-10 pr-10 py-3 border-gray-300 rounded-xl shadow-sm focus:ring-brand-500 focus:border-brand-500 sm:text-sm appearance-none">
-                            <option value="">-- Any Available / Midwife --</option>
+                            <option value="">-- Any Available / Healthcare Provider --</option>
                             @foreach($doctors as $doctor)
                                 <option value="{{ $doctor->id }}" {{ old('doctor_id') == $doctor->id ? 'selected' : '' }}>
                                     Dr. {{ $doctor->full_name }}

@@ -539,7 +539,7 @@
                                         @if($slot->doctor->isDoctor())
                                             Dr. {{ $slot->doctor->last_name }}
                                         @elseif($slot->doctor->isMidwife())
-                                            Midwife {{ $slot->doctor->first_name }}
+                                            Healthcare Provider {{ $slot->doctor->first_name }}
                                         @else
                                             {{ $slot->doctor->full_name }}
                                         @endif
@@ -573,7 +573,7 @@
                             service: '{{ $slot->service }}',
                             date: '{{ $slot->date->format('M d, Y') }}',
                             time: '{{ $slot->displayTime() }}',
-                            provider: '{{ $slot->doctor ? ($slot->doctor->isDoctor() ? 'Dr. '.$slot->doctor->last_name : ($slot->doctor->isMidwife() ? 'Midwife '.$slot->doctor->first_name : $slot->doctor->full_name)) : 'Health Center' }}'
+                            provider: '{{ $slot->doctor ? ($slot->doctor->isDoctor() ? 'Dr. '.$slot->doctor->last_name : ($slot->doctor->isMidwife() ? 'Healthcare Provider '.$slot->doctor->first_name : $slot->doctor->full_name)) : 'Health Center' }}'
                         }"
                         :disabled="!{{ $slotAvailable ? 'true' : 'false' }}"
                         class="w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all shadow-lg disabled:opacity-50 disabled:shadow-none {{ $slotAvailable ? 'bg-brand-600 text-white shadow-brand-200 hover:bg-brand-700 hover:-translate-y-0.5' : 'bg-gray-100 text-gray-400 cursor-not-allowed' }}">
@@ -653,7 +653,7 @@
                                             @if($slot->doctor->isDoctor())
                                                 Dr. {{ $slot->doctor->last_name }}
                                             @elseif($slot->doctor->isMidwife())
-                                                Midwife {{ $slot->doctor->first_name }}
+                                                Healthcare Provider {{ $slot->doctor->first_name }}
                                             @else
                                                 {{ $slot->doctor->full_name }}
                                             @endif
@@ -687,7 +687,7 @@
                                 service: '{{ $slot->service }}',
                                 date: '{{ $slot->date->format('M d, Y') }}',
                                 time: '{{ $slot->displayTime() }}',
-                                provider: '{{ $slot->doctor ? ($slot->doctor->isDoctor() ? 'Dr. '.$slot->doctor->last_name : ($slot->doctor->isMidwife() ? 'Midwife '.$slot->doctor->first_name : $slot->doctor->full_name)) : 'Health Center' }}'
+                                provider: '{{ $slot->doctor ? ($slot->doctor->isDoctor() ? 'Dr. '.$slot->doctor->last_name : ($slot->doctor->isMidwife() ? 'Healthcare Provider '.$slot->doctor->first_name : $slot->doctor->full_name)) : 'Health Center' }}'
                             }"
                             :disabled="!{{ $slotAvailable ? 'true' : 'false' }}"
                             class="w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all shadow-lg disabled:opacity-50 disabled:shadow-none {{ $slotAvailable ? 'bg-brand-600 text-white shadow-brand-200 hover:bg-brand-700 hover:-translate-y-0.5' : 'bg-gray-100 text-gray-400 cursor-not-allowed' }}">

@@ -7,7 +7,7 @@
     @php
         $user = auth()->user();
         $routePrefix = $user->isMidwife() ? 'midwife' : 'doctor';
-        $providerLabel = $user->isMidwife() ? 'Midwife' : 'Doctor';
+        $providerLabel = $user->isMidwife() ? 'Healthcare Provider' : 'Doctor';
     @endphp
 
     {{-- Top-Aligned Compact Header --}}
@@ -52,7 +52,7 @@
     <div class="bg-white rounded-xl shadow-md shadow-gray-200/30 border border-gray-100 p-4 sm:p-5 mb-6">
         <div class="flex flex-col lg:flex-row gap-4">
             
-            <!-- Quick Navigation (Midwife Only) -->
+            <!-- Quick Navigation (Healthcare Provider Only) -->
             @if(auth()->user()->isMidwife())
             <div class="flex items-center p-1 bg-gray-50 rounded-lg border border-gray-100 shrink-0">
                 <a href="{{ route($routePrefix . '.appointments.index') }}" 

@@ -21,7 +21,7 @@
                                     'all' => 'All Users',
                                     'admin' => 'Admins',
                                     'doctor' => 'Doctors',
-                                    'midwife' => 'Midwives',
+                                    'midwife' => 'Healthcare Providers',
                                     'health_worker' => 'Health Workers',
                                     'patient' => 'Patients',
                                 ];
@@ -37,7 +37,7 @@
                             'all' => 'Manage all users and roles.',
                             'admin' => 'Manage admin accounts.',
                             'doctor' => 'Manage doctor accounts.',
-                            'midwife' => 'Manage midwife accounts.',
+                            'midwife' => 'Manage healthcare provider accounts.',
                             'health_worker' => 'Manage health worker accounts.',
                             'patient' => 'Manage patient accounts.',
                         ];
@@ -67,7 +67,7 @@
                     <a href="{{ route('admin.users.midwives') }}"
                        class="px-3 py-1.5 rounded-full text-xs font-semibold border {{ ($currentRole ?? '') === 'midwife' ? 'bg-pink-600 text-white border-pink-600 shadow-sm' : 'bg-white text-gray-600 border-transparent hover:bg-gray-100' }}">
                         <i class="bi bi-gender-female mr-1.5 text-[11px]"></i>
-                        <span>Midwives</span>
+                        <span>Healthcare Providers</span>
                     </a>
                     <a href="{{ route('admin.users.health_workers') }}"
                        class="px-3 py-1.5 rounded-full text-xs font-semibold border {{ ($currentRole ?? '') === 'health_worker' ? 'bg-blue-600 text-white border-blue-600 shadow-sm' : 'bg-white text-gray-600 border-transparent hover:bg-gray-100' }}">
@@ -124,7 +124,7 @@
                                 </span>
                             @elseif($user->role === 'midwife')
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-wide bg-pink-50 text-pink-700 border border-pink-100">
-                                    <i class="bi bi-gender-female"></i> Midwife
+                                    <i class="bi bi-gender-female"></i> Healthcare Provider
                                 </span>
                             @elseif($user->role === 'health_worker')
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-wide bg-blue-50 text-blue-700 border border-blue-100">
@@ -240,7 +240,7 @@
                                     </span>
                                 @elseif($user->role === 'midwife')
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-extrabold uppercase tracking-wide bg-pink-50 text-pink-700 border border-pink-100">
-                                        <i class="bi bi-gender-female"></i> Midwife
+                                        <i class="bi bi-gender-female"></i> Healthcare Provider
                                     </span>
                                 @elseif($user->role === 'health_worker')
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-extrabold uppercase tracking-wide bg-blue-50 text-blue-700 border border-blue-100">
@@ -325,7 +325,7 @@
                             $emptyTitles = [
                                 'admin' => 'No admin accounts yet',
                                 'doctor' => 'No doctor accounts yet',
-                                'midwife' => 'No midwife accounts yet',
+                                'midwife' => 'No healthcare provider accounts yet',
                                 'health_worker' => 'No health workers yet',
                                 'patient' => 'No patient accounts yet',
                                 'all' => 'No users found',

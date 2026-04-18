@@ -145,12 +145,12 @@
                         </div>
                         <select name="doctor_id" id="doctor-select" x-model="selectedDoctor"
                             class="block w-full pl-16 pr-10 py-5 bg-gray-50 border-none rounded-[2rem] focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 transition-all appearance-none">
-                            <option value="" data-role="none">-- No Doctor / Midwife Only --</option>
+                            <option value="" data-role="none">-- No Doctor / Healthcare Provider Only --</option>
                             @foreach($doctors as $doctor)
                                 <option value="{{ $doctor->id }}" 
                                     data-role="{{ $doctor->role }}"
                                     {{ old('doctor_id', $slotModel->doctor_id ?? '') == $doctor->id ? 'selected' : '' }}>
-                                    {{ $doctor->isDoctor() ? 'Dr.' : '' }} {{ $doctor->full_name }} {{ $doctor->isMidwife() ? '(Midwife)' : '' }}
+                                    {{ $doctor->isDoctor() ? 'Dr.' : '' }} {{ $doctor->full_name }} {{ $doctor->isMidwife() ? '(Healthcare Provider)' : '' }}
                                 </option>
                             @endforeach
                         </select>
@@ -454,7 +454,7 @@
             } else if (providerType === 'Midwife') {
                 doctorRequiredLabel.classList.remove('hidden');
                 doctorSelect.required = true;
-                doctorHelpText.textContent = 'A Midwife is required for this service';
+                doctorHelpText.textContent = 'A Healthcare Provider is required for this service';
                 doctorHelpText.className = 'text-[10px] text-brand-600 font-bold uppercase tracking-widest ml-4';
             } else {
                 doctorRequiredLabel.classList.add('hidden');

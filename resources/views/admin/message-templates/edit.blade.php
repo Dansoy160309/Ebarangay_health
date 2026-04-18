@@ -108,7 +108,7 @@
             '{appointment_version}': '2nd',
             '{health_center_name}': 'E-Barangay Health Center',
             '{contact_number}': '09123456789',
-            '{midwife_name}': 'Mae Midwife'
+            '{midwife_name}': 'Mae Healthcare Provider'
         };
 
         const bodyInput = document.getElementById('template-body');

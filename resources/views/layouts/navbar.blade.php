@@ -89,7 +89,7 @@
                         <div class="hidden sm:block text-left">
                             <p class="text-xs font-black text-gray-900 leading-none">{{ auth()->user()->full_name }}</p>
                             <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-1">
-                                {{ ucfirst(str_replace('_', ' ', auth()->user()->role)) }}
+                                {{ auth()->user()->role === 'midwife' ? 'Healthcare Provider' : ucfirst(str_replace('_', ' ', auth()->user()->role)) }}
                             </p>
                         </div>
                         <i class="bi bi-chevron-down text-[10px] text-gray-400"></i>

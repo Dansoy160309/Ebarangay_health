@@ -79,7 +79,7 @@
                         @endphp
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border {{ $colorClass }}">
                             <i class="bi {{ $icon }}"></i>
-                            {{ $service->provider_type }}
+                            {{ $service->provider_type === 'Midwife' ? 'Healthcare Provider' : $service->provider_type }}
                         </span>
                     </div>
 
@@ -181,7 +181,7 @@
                                 @endphp
                                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border {{ $colorClass }}">
                                     <i class="bi {{ $icon }}"></i>
-                                    {{ $service->provider_type }}
+                                    {{ $service->provider_type === 'Midwife' ? 'Healthcare Provider' : $service->provider_type }}
                                 </span>
                             </td>
 

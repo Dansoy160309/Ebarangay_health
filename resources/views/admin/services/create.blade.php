@@ -91,14 +91,14 @@
                             <div class="absolute inset-0 border-2 border-transparent peer-checked:border-blue-500 rounded-xl pointer-events-none"></div>
                         </label>
 
-                        {{-- Midwife Option --}}
+                        {{-- Healthcare Provider Option --}}
                         <label class="relative flex flex-col items-center p-4 border rounded-xl cursor-pointer hover:bg-pink-50 hover:border-pink-200 transition-all group">
                             <input type="radio" name="provider_type" value="Midwife" class="peer sr-only" {{ old('provider_type') == 'Midwife' ? 'checked' : '' }}>
                             <div class="w-12 h-12 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center text-2xl mb-3 peer-checked:bg-pink-600 peer-checked:text-white transition-colors">
                                 <i class="bi bi-person-hearts"></i>
                             </div>
-                            <span class="font-bold text-gray-900 peer-checked:text-pink-700">Midwife</span>
-                            <span class="text-xs text-gray-500 text-center mt-1">Managed by midwives</span>
+                            <span class="font-bold text-gray-900 peer-checked:text-pink-700">Healthcare Provider</span>
+                            <span class="text-xs text-gray-500 text-center mt-1">Managed by healthcare providers</span>
                             <div class="absolute inset-0 border-2 border-transparent peer-checked:border-pink-500 rounded-xl pointer-events-none"></div>
                         </label>
 

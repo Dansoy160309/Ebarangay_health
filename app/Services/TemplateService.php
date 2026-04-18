@@ -26,7 +26,7 @@ class TemplateService
             '{appointment_version}' => 'Count of missed appointments for this service',
             '{health_center_name}' => 'Name of the health center',
             '{contact_number}' => 'Health center contact number',
-            '{midwife_name}' => 'Name of the assigned midwife',
+            '{midwife_name}' => 'Name of the assigned healthcare provider',
         ];
     }
 

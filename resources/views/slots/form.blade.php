@@ -64,10 +64,10 @@
                         </div>
                         <select name="doctor_id" id="doctor-select"
                             class="block w-full pl-16 pr-10 py-5 bg-gray-50 border-none rounded-[2rem] focus:ring-4 focus:ring-brand-50 focus:bg-white text-base font-bold text-gray-900 transition-all appearance-none">
-                            <option value="">-- No Doctor / Midwife Only --</option>
+                            <option value="">-- No Doctor / Healthcare Provider Only --</option>
                             @foreach($doctors as $doctor)
                                 <option value="{{ $doctor->id }}" {{ old('doctor_id', $slotModel->doctor_id ?? '') == $doctor->id ? 'selected' : '' }}>
-                                    {{ $doctor->isDoctor() ? 'Dr.' : '' }} {{ $doctor->full_name }} {{ $doctor->isMidwife() ? '(Midwife)' : '' }}
+                                    {{ $doctor->isDoctor() ? 'Dr.' : '' }} {{ $doctor->full_name }} {{ $doctor->isMidwife() ? '(Healthcare Provider)' : '' }}
                                 </option>
                             @endforeach
                         </select>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', auth()->user()->isMidwife() ? 'Midwife Dashboard' : 'Doctor Dashboard')
+@section('title', auth()->user()->isMidwife() ? 'Healthcare Provider Dashboard' : 'Doctor Dashboard')
 
 @section('content')
 <div class="flex flex-col gap-4 sm:gap-5">
@@ -70,14 +70,14 @@
         </a>
     </div>
 
-    {{-- Midwife Specific Alerts --}}
+    {{-- Healthcare Provider Specific Alerts --}}
     @if($user->isMidwife())
     <div class="space-y-4">
         <h2 class="text-base font-black text-gray-900 uppercase tracking-tighter flex items-center gap-2">
             <span class="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-sm shadow-inner">
                 <i class="bi bi-shield-exclamation"></i>
             </span>
-            Midwife Monitoring Alerts
+            Healthcare Provider Monitoring Alerts
         </h2>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -165,7 +165,7 @@
                         <i class="bi bi-clipboard-check-fill text-lg"></i>
                     </div>
                     <div>
-                        <p class="text-sm font-black uppercase tracking-widest">✅ Ready for {{ $user->isMidwife() ? 'Midwife' : 'Doctor' }}</p>
+                        <p class="text-sm font-black uppercase tracking-widest">✅ Ready for {{ $user->isMidwife() ? 'Healthcare Provider' : 'Doctor' }}</p>
                         <p class="text-xs font-bold text-blue-700 mt-0.5">{{ count($todaysAppointmentsList) }} {{ count($todaysAppointmentsList) == 1 ? 'consultation' : 'consultations' }} waiting for you to review</p>
                     </div>
                 </div>

@@ -186,7 +186,7 @@
                                         @if($slot->doctor->isDoctor())
                                             Dr. {{ $slot->doctor->last_name }}
                                         @elseif($slot->doctor->isMidwife())
-                                            Midwife {{ $slot->doctor->first_name }}
+                                            Healthcare Provider {{ $slot->doctor->first_name }}
                                         @else
                                             {{ $slot->doctor->full_name }}
                                         @endif
@@ -290,7 +290,7 @@
                                                         @if($slot->doctor->isDoctor())
                                                             Dr. {{ $slot->doctor->last_name }}
                                                         @elseif($slot->doctor->isMidwife())
-                                                            Midwife {{ $slot->doctor->first_name }}
+                                                            Healthcare Provider {{ $slot->doctor->first_name }}
                                                         @else
                                                             {{ $slot->doctor->full_name }}
                                                         @endif
@@ -492,7 +492,7 @@
                                             @if($slot->doctor->isDoctor())
                                                 Dr. {{ $slot->doctor->last_name }}
                                             @elseif($slot->doctor->isMidwife())
-                                                Midwife {{ $slot->doctor->first_name }}
+                                                Healthcare Provider {{ $slot->doctor->first_name }}
                                             @else
                                                 {{ $slot->doctor->full_name }}
                                             @endif
@@ -537,7 +537,7 @@
                                     service: '{{ $slot->service }}',
                                     date: '{{ $slot->date?->format('M d, Y') }}',
                                     time: '{{ ($slot->start_time ? \Carbon\Carbon::parse($slot->start_time)->format('g:i A') : 'N/A') . ' - ' . ($slot->end_time ? \Carbon\Carbon::parse($slot->end_time)->format('g:i A') : '') }}',
-                                    provider: '{{ $slot->doctor ? ($slot->doctor->isDoctor() ? 'Dr. ' . $slot->doctor->last_name : 'Midwife ' . $slot->doctor->first_name) : 'Medical Team' }}'
+                                    provider: '{{ $slot->doctor ? ($slot->doctor->isDoctor() ? 'Dr. ' . $slot->doctor->last_name : 'Healthcare Provider ' . $slot->doctor->first_name) : 'Medical Team' }}'
                                 }"
                                 class="w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-lg group/btn"
                                 :class="{
@@ -636,7 +636,7 @@
                                             @if($slot->doctor->isDoctor())
                                                 Dr. {{ $slot->doctor->last_name }}
                                             @elseif($slot->doctor->isMidwife())
-                                                Midwife {{ $slot->doctor->first_name }}
+                                                Healthcare Provider {{ $slot->doctor->first_name }}
                                             @else
                                                 {{ $slot->doctor->full_name }}
                                             @endif
@@ -681,7 +681,7 @@
                                     service: '{{ $slot->service }}',
                                     date: '{{ $slot->date?->format('M d, Y') }}',
                                     time: '{{ ($slot->start_time ? \Carbon\Carbon::parse($slot->start_time)->format('g:i A') : 'N/A') . ' - ' . ($slot->end_time ? \Carbon\Carbon::parse($slot->end_time)->format('g:i A') : '') }}',
-                                    provider: '{{ $slot->doctor ? ($slot->doctor->isDoctor() ? 'Dr. ' . $slot->doctor->last_name : 'Midwife ' . $slot->doctor->first_name) : 'Medical Team' }}'
+                                    provider: '{{ $slot->doctor ? ($slot->doctor->isDoctor() ? 'Dr. ' . $slot->doctor->last_name : 'Healthcare Provider ' . $slot->doctor->first_name) : 'Medical Team' }}'
                                 }"
                                 class="w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-lg group/btn"
                                 :class="{
@@ -758,7 +758,7 @@
                                                     @if($appointment->slot->doctor->isDoctor())
                                                         Dr. {{ $appointment->slot->doctor->last_name }}
                                                     @elseif($appointment->slot->doctor->isMidwife())
-                                                        Midwife {{ $appointment->slot->doctor->first_name }}
+                                                        Healthcare Provider {{ $appointment->slot->doctor->first_name }}
                                                     @else
                                                         {{ $appointment->slot->doctor->full_name }}
                                                     @endif

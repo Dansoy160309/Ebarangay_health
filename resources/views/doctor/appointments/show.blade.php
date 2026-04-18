@@ -774,7 +774,7 @@
                             <div class="mt-8 border-t border-gray-100 pt-8">
                                 <div class="p-5 rounded-2xl border border-blue-200 bg-blue-50">
                                     <p class="text-xs font-black uppercase tracking-wider text-blue-700">Step 2: Digital Signature Block</p>
-                                    <p class="text-sm font-bold text-blue-800 mt-1">After you click Save Consultation, the signature block will appear here for doctor/midwife signing.</p>
+                                    <p class="text-sm font-bold text-blue-800 mt-1">After you click Save Consultation, the signature block will appear here for doctor/healthcare provider signing.</p>
                                 </div>
                             </div>
                         @endif
@@ -789,7 +789,7 @@
                                             </span>
                                             <div>
                                                 <h4 class="text-xl font-black text-gray-900 leading-tight">Digital Signature Block</h4>
-                                                <p class="text-[11px] font-black text-gray-500 uppercase tracking-wider mt-1">Doctor or midwife must sign before finishing consultation.</p>
+                                                <p class="text-[11px] font-black text-gray-500 uppercase tracking-wider mt-1">Doctor or healthcare provider must sign before finishing consultation.</p>
                                             </div>
                                         </div>
                                         <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-emerald-200 text-[10px] font-black uppercase tracking-widest text-emerald-700 w-fit">
@@ -825,7 +825,7 @@
 
                                             <div>
                                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Role</label>
-                                                <input type="text" value="{{ auth()->user()->isMidwife() ? 'Midwife' : 'Doctor' }}" readonly class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-700 font-bold">
+                                                <input type="text" value="{{ auth()->user()->isMidwife() ? 'Healthcare Provider' : 'Doctor' }}" readonly class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-700 font-bold">
                                             </div>
 
                                             <div class="md:col-span-2">

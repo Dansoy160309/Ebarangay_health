@@ -227,7 +227,7 @@
         </a>
     @endif
 
-    {{-- Midwife --}}
+    {{-- Healthcare Provider --}}
     @if($role === 'midwife')
         <a href="{{ $routes['appointment'] }}"
            @click="sidebarOpen = false"

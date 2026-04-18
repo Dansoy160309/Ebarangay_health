@@ -167,7 +167,7 @@
                     @elseif($record->creator->isDoctor())
                         <span class="bg-cyan-50 text-cyan-600 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Doctor</span>
                     @elseif($record->creator->isMidwife())
-                        <span class="bg-pink-50 text-pink-600 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Midwife</span>
+                        <span class="bg-pink-50 text-pink-600 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Healthcare Provider</span>
                     @endif
                 </div>
                 

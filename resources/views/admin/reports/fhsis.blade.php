@@ -156,7 +156,7 @@
             <div>
                 <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-10">Verified by:</p>
                 <div class="w-48 border-b-2 border-gray-900 mb-2"></div>
-                <p class="text-sm font-black text-gray-900">Health Officer / Midwife</p>
+                <p class="text-sm font-black text-gray-900">Health Officer / Healthcare Provider</p>
                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Barangay Health Center</p>
             </div>
         </div>

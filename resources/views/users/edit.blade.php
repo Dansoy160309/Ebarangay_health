@@ -72,7 +72,7 @@
                         <select name="role" id="role" class="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl focus:ring-4 focus:ring-brand-50 focus:bg-white text-sm font-bold text-gray-900 shadow-inner transition-all @error('role') ring-2 ring-red-500 @enderror" required>
                             <option value="patient" {{ old('role', $user->role) == 'patient' ? 'selected' : '' }}>🧍 Patient</option>
                             <option value="health_worker" {{ old('role', $user->role) == 'health_worker' ? 'selected' : '' }}>🏥 Health Worker</option>
-                            <option value="midwife" {{ old('role', $user->role) == 'midwife' ? 'selected' : '' }}>🩺 Midwife</option>
+                            <option value="midwife" {{ old('role', $user->role) == 'midwife' ? 'selected' : '' }}>🩺 Healthcare Provider</option>
                             <option value="doctor" {{ old('role', $user->role) == 'doctor' ? 'selected' : '' }}>👨‍⚕️ Doctor</option>
                             <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>👑 Admin</option>
                         </select>
